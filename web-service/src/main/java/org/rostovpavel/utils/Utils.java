@@ -1,4 +1,4 @@
-package org.rostovpavel.Utils;
+package org.rostovpavel.utils;
 
 import lombok.extern.log4j.Log4j2;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;

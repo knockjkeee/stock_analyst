@@ -1,4 +1,7 @@
-package org.rostovpavel.Utils;
+package org.rostovpavel;
+
+import org.rostovpavel.utils.DateTimeConfig;
+import org.rostovpavel.utils.DateTimeFormatter;
 
 import java.time.DayOfWeek;
 import java.time.Instant;
@@ -6,7 +9,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 
-public class test {
+public class TestMind {
     public static void main(String[] args) {
         var monday = DateTimeConfig.MONDAY.getValue();
         System.out.println("monday = " + Arrays.toString(monday));

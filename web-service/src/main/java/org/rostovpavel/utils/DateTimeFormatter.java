@@ -1,4 +1,4 @@
-package org.rostovpavel.Utils;
+package org.rostovpavel.utils;
 
 
 import com.google.protobuf.Timestamp;
@@ -8,7 +8,6 @@ import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
 
 import static ru.tinkoff.piapi.core.utils.DateUtils.*;
 

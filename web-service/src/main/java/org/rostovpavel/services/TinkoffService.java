@@ -2,7 +2,7 @@ package org.rostovpavel.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.rostovpavel.Utils.DateTimeFormatter;
+import org.rostovpavel.utils.DateTimeFormatter;
 import org.rostovpavel.models.Stock;
 import org.rostovpavel.models.StockDTO;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static ru.tinkoff.piapi.core.utils.DateUtils.timestampToString;
 import static ru.tinkoff.piapi.core.utils.MapperUtils.quotationToBigDecimal;
 
 @Log4j2
