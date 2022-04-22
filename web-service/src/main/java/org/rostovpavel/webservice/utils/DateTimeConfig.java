@@ -1,4 +1,4 @@
-package org.rostovpavel.utils;
+package org.rostovpavel.webservice.utils;
 
 import java.util.Arrays;
 

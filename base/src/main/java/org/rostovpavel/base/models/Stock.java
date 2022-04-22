@@ -1,11 +1,9 @@
-package org.rostovpavel.models;
+package org.rostovpavel.base.models;
 
-import com.google.protobuf.Timestamp;
-//import com.google.type.Date;
-import lombok.*;
+import lombok.Builder;
+import lombok.Value;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 
 @Value

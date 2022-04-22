@@ -1,4 +1,4 @@
-package org.rostovpavel.utils;
+package org.rostovpavel.webservice.utils;
 
 
 import com.google.protobuf.Timestamp;

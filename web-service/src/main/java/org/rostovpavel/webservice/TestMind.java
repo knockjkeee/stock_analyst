@@ -1,7 +1,7 @@
-package org.rostovpavel;
+package org.rostovpavel.webservice;
 
-import org.rostovpavel.utils.DateTimeConfig;
-import org.rostovpavel.utils.DateTimeFormatter;
+import org.rostovpavel.webservice.utils.DateTimeConfig;
+import org.rostovpavel.webservice.utils.DateTimeFormatter;
 
 import java.time.DayOfWeek;
 import java.time.Instant;

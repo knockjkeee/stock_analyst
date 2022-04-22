@@ -8,6 +8,7 @@
 
     <modules>
         <module>web-service</module>
+        <module>base</module>
     </modules>
 
     <groupId>org.rostovpavel</groupId>

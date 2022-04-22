@@ -1,10 +1,11 @@
-package org.rostovpavel.services;
+package org.rostovpavel.webservice.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.rostovpavel.utils.DateTimeFormatter;
-import org.rostovpavel.models.Stock;
-import org.rostovpavel.models.StockDTO;
+import org.rostovpavel.base.models.Stock;
+import org.rostovpavel.base.models.StockDTO;
+import org.rostovpavel.webservice.exception.StockNotFoundException;
+import org.rostovpavel.webservice.utils.DateTimeFormatter;
 import org.springframework.stereotype.Service;
 import ru.tinkoff.piapi.contract.v1.*;
 import ru.tinkoff.piapi.core.InvestApi;
@@ -24,8 +25,8 @@ public class TinkoffService {
 
     public StockDTO getCandles(String ticker) {
         String figi = getCurrentFigi(ticker, "SPBXM");
-//        List<HistoricCandle> currentHistoricCandle = getHistoricCandlesByFigi(figi);
-        List<Stock> stocks = getHistoricCandlesByFigi(figi).stream().map(historicCandle ->
+        List<HistoricCandle> currentHistoricCandle = getHistoricCandlesByFigi(figi);
+        List<Stock> stocks = currentHistoricCandle.stream().map(historicCandle ->
                 Stock.builder()
                         .open(quotationToBigDecimal(historicCandle.getOpen()))
                         .close(quotationToBigDecimal(historicCandle.getClose()))
@@ -44,13 +45,13 @@ public class TinkoffService {
         List<HistoricCandle> result = new ArrayList<>();
 
         for (int i = 0; i < dateConfig.length; i = i + 2) {
-            List<HistoricCandle> collect = api.getMarketDataService().getCandles(figi,
+            List<HistoricCandle> collect = new ArrayList<>(api.getMarketDataService().getCandles(figi,
                             currentNow.minus(dateConfig[i], ChronoUnit.DAYS),
                             currentNow.minus(dateConfig[i + 1], ChronoUnit.DAYS),
                             CandleInterval.CANDLE_INTERVAL_15_MIN)
-                    .join();
+                    .join());
             if (collect.isEmpty()) {
-                throw new RuntimeException(String.format("Collection by day %s-%s with interval %s is empty",
+                throw new StockNotFoundException(String.format("Collection by day %s-%s with interval %s is empty",
                         currentNow.minus(dateConfig[i], ChronoUnit.DAYS),
                         currentNow.minus(dateConfig[i + 1], ChronoUnit.DAYS),
                         CandleInterval.CANDLE_INTERVAL_15_MIN));
@@ -65,7 +66,7 @@ public class TinkoffService {
         return api.getInstrumentsService()
                 .getShareByTicker(ticker, classCode)
                 .join()
-                .orElseThrow( () -> new RuntimeException(ticker + " not found in InvestApi"))
+                .orElseThrow( () -> new StockNotFoundException(ticker + " not found in InvestApi with " + classCode))
                 .getFigi();
     }
 

@@ -1,4 +1,4 @@
-package org.rostovpavel.models;
+package org.rostovpavel.base.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Value;
