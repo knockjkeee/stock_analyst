@@ -1,4 +1,4 @@
-package org.rostovpavel.webservice.exception;
+package org.rostovpavel.base.exception;
 
 
 import lombok.AllArgsConstructor;
@@ -7,5 +7,5 @@ import lombok.Value;
 @Value
 @AllArgsConstructor
 public class Error {
-    private String error;
+    String error;
 }

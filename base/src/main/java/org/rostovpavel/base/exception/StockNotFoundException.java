@@ -1,4 +1,4 @@
-package org.rostovpavel.webservice.exception;
+package org.rostovpavel.base.exception;
 
 public class StockNotFoundException extends RuntimeException {
     public StockNotFoundException(String message) {

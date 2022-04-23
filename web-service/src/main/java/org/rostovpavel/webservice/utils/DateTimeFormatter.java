@@ -2,7 +2,10 @@ package org.rostovpavel.webservice.utils;
 
 
 import com.google.protobuf.Timestamp;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
+import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 
 import java.time.DayOfWeek;
 import java.time.Instant;
@@ -10,7 +13,9 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 
 import static ru.tinkoff.piapi.core.utils.DateUtils.*;
+import static ru.tinkoff.piapi.core.utils.MapperUtils.quotationToBigDecimal;
 
+@Log4j2
 public class DateTimeFormatter {
 
     public static int[] getCurrentDateConfig() {
@@ -46,5 +51,17 @@ public class DateTimeFormatter {
         return timestampToString(resultTimestamp);
     }
 
+    private static void printCandleToLog(HistoricCandle candle) {
+        var open = quotationToBigDecimal(candle.getOpen());
+        var close = quotationToBigDecimal(candle.getClose());
+        var high = quotationToBigDecimal(candle.getHigh());
+        var low = quotationToBigDecimal(candle.getLow());
+        var volume = candle.getVolume();
+        var time = timestampToString(candle.getTime());
+        log.info(
+                "цена открытия: {}, цена закрытия: {}, минимальная цена за 1 лот: {}, максимальная цена за 1 лот: {}, объем " +
+                        "торгов в лотах: {}, время свечи: {}",
+                open, close, low, high, volume, time);
+    }
 
 }

@@ -1,4 +1,4 @@
-package org.rostovpavel.webservice.exception;
+package org.rostovpavel.base.exception;
 
 
 import org.springframework.http.HttpStatus;

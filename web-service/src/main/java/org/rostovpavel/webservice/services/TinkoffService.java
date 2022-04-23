@@ -2,9 +2,9 @@ package org.rostovpavel.webservice.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.rostovpavel.base.exception.StockNotFoundException;
 import org.rostovpavel.base.models.Stock;
 import org.rostovpavel.base.models.StockDTO;
-import org.rostovpavel.webservice.exception.StockNotFoundException;
 import org.rostovpavel.webservice.utils.DateTimeFormatter;
 import org.springframework.stereotype.Service;
 import ru.tinkoff.piapi.contract.v1.*;
@@ -24,6 +24,10 @@ public class TinkoffService {
     private final InvestApi  api = InvestApi.create(System.getenv("token"));
 
     public StockDTO getCandles(String ticker) {
+        if (!ticker.isEmpty()) {
+            throw new StockNotFoundException("Error");
+        }
+
         String figi = getCurrentFigi(ticker, "SPBXM");
         List<HistoricCandle> currentHistoricCandle = getHistoricCandlesByFigi(figi);
         List<Stock> stocks = currentHistoricCandle.stream().map(historicCandle ->
