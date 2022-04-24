@@ -1,7 +1,8 @@
-package org.rostovpavel.base.models;
+package org.rostovpavel.base.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Value;
+import org.rostovpavel.base.models.Stock;
 
 import java.util.List;
 

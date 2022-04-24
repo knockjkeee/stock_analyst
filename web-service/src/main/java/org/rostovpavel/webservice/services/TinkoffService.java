@@ -4,15 +4,21 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.rostovpavel.base.exception.StockNotFoundException;
 import org.rostovpavel.base.models.Stock;
-import org.rostovpavel.base.models.StockDTO;
 import org.rostovpavel.webservice.utils.DateTimeFormatter;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import ru.tinkoff.piapi.contract.v1.*;
+import ru.tinkoff.piapi.contract.v1.CandleInterval;
+import ru.tinkoff.piapi.contract.v1.HistoricCandle;
+import ru.tinkoff.piapi.contract.v1.Share;
 import ru.tinkoff.piapi.core.InvestApi;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static ru.tinkoff.piapi.core.utils.MapperUtils.quotationToBigDecimal;
@@ -21,57 +27,61 @@ import static ru.tinkoff.piapi.core.utils.MapperUtils.quotationToBigDecimal;
 @Service
 @RequiredArgsConstructor
 public class TinkoffService {
-    private final InvestApi  api = InvestApi.create(System.getenv("token"));
+    private final InvestApi api = InvestApi.create(System.getenv("token"));
 
-    public StockDTO getCandles(String ticker) {
-        if (!ticker.isEmpty()) {
-            throw new StockNotFoundException("Error");
-        }
-
-        String figi = getCurrentFigi(ticker, "SPBXM");
-        List<HistoricCandle> currentHistoricCandle = getHistoricCandlesByFigi(figi);
-        List<Stock> stocks = currentHistoricCandle.stream().map(historicCandle ->
-                Stock.builder()
-                        .open(quotationToBigDecimal(historicCandle.getOpen()))
-                        .close(quotationToBigDecimal(historicCandle.getClose()))
-                        .high(quotationToBigDecimal(historicCandle.getHigh()))
-                        .low(quotationToBigDecimal(historicCandle.getLow()))
-                        .volume(historicCandle.getVolume())
-                        .date(DateTimeFormatter.getTimeStampToStringAtCurrentTimeZone(historicCandle.getTime()))
-                        .build())
+    public List<Stock> getListStockHistoricCandlesByFigi(String figi) {
+        List<CompletableFuture<List<HistoricCandle>>> dataHistoryCandleByDate = getDataHistoryCandleByDate(figi);
+        return dataHistoryCandleByDate
+                .stream()
+                .map(CompletableFuture::join)
+                .filter(hs -> !hs.isEmpty())
+                .map(histirycCandles -> {
+                    System.out.println("candles.size() = " + histirycCandles.size());
+                    List<Stock> stocks = histirycCandles
+                            .stream()
+                            .map(this::createStock).collect(Collectors.toList());
+                    Collections.reverse(stocks);
+                    return stocks;
+                })
+                .flatMap(Collection::stream)
                 .collect(Collectors.toList());
-        return new StockDTO(stocks);
     }
 
-    private List<HistoricCandle> getHistoricCandlesByFigi(String figi) {
+    private List<CompletableFuture<List<HistoricCandle>>> getDataHistoryCandleByDate(String figi) {
         int[] dateConfig = DateTimeFormatter.getCurrentDateConfig();
         Instant currentNow = Instant.now();
-        List<HistoricCandle> result = new ArrayList<>();
-
+        List<CompletableFuture<List<HistoricCandle>>> result = new ArrayList<>();
         for (int i = 0; i < dateConfig.length; i = i + 2) {
-            List<HistoricCandle> collect = new ArrayList<>(api.getMarketDataService().getCandles(figi,
-                            currentNow.minus(dateConfig[i], ChronoUnit.DAYS),
-                            currentNow.minus(dateConfig[i + 1], ChronoUnit.DAYS),
-                            CandleInterval.CANDLE_INTERVAL_15_MIN)
-                    .join());
-            if (collect.isEmpty()) {
-                throw new StockNotFoundException(String.format("Collection by day %s-%s with interval %s is empty",
-                        currentNow.minus(dateConfig[i], ChronoUnit.DAYS),
-                        currentNow.minus(dateConfig[i + 1], ChronoUnit.DAYS),
-                        CandleInterval.CANDLE_INTERVAL_15_MIN));
-            }
-            Collections.reverse(collect);
-            result.addAll(collect);
+            result.add(getDataHistoryCandleByDateConfig(figi, dateConfig, currentNow, i));
         }
         return result;
     }
 
-    private String getCurrentFigi(String ticker, String classCode) {
+    @Async
+    public CompletableFuture<List<HistoricCandle>> getDataHistoryCandleByDateConfig(String figi, int[] dateConfig, Instant currentNow, int i) {
+        return api.getMarketDataService().getCandles(figi,
+                currentNow.minus(dateConfig[i], ChronoUnit.DAYS),
+                currentNow.minus(dateConfig[i + 1], ChronoUnit.DAYS),
+                CandleInterval.CANDLE_INTERVAL_15_MIN);
+    }
+
+    public String getCurrentFigi(String ticker, String classCode) {
         return api.getInstrumentsService()
                 .getShareByTicker(ticker, classCode)
                 .join()
-                .orElseThrow( () -> new StockNotFoundException(ticker + " not found in InvestApi with " + classCode))
+                .orElseThrow(() -> new StockNotFoundException(ticker + " not found in InvestApi with " + classCode))
                 .getFigi();
+    }
+
+    private Stock createStock(HistoricCandle candle) {
+        return Stock.builder()
+                .open(quotationToBigDecimal(candle.getOpen()))
+                .close(quotationToBigDecimal(candle.getClose()))
+                .high(quotationToBigDecimal(candle.getHigh()))
+                .low(quotationToBigDecimal(candle.getLow()))
+                .volume(candle.getVolume())
+                .date(DateTimeFormatter.getTimeStampToStringAtCurrentTimeZone(candle.getTime()))
+                .build();
     }
 
     private static List<String> randomFigi(InvestApi api, int count) {

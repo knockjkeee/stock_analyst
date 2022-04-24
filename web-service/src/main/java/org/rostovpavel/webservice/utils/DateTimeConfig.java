@@ -7,7 +7,8 @@ public enum DateTimeConfig {
     TUESDAY(1, 0, 2, 1, 5, 4, 6, 5),
     WEDNESDAY(1, 0, 2, 1, 3, 2, 6, 5),
     THURSDAY(1, 0, 2, 1, 3, 2, 4, 3),
-    FRIDAY(1, 0, 2, 1, 3, 2, 4, 3);
+    FRIDAY(1, 0, 2, 1, 3, 2, 4, 3),
+    SUNDAY(1, 0, 2, 1, 3, 2, 4, 3);
 
     private int[] value;
 

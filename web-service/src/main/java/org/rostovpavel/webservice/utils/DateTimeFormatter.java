@@ -28,6 +28,7 @@ public class DateTimeFormatter {
             case WEDNESDAY -> values = DateTimeConfig.WEDNESDAY.getValue();
             case THURSDAY -> values = DateTimeConfig.THURSDAY.getValue();
             case FRIDAY -> values = DateTimeConfig.FRIDAY.getValue();
+            case SUNDAY -> values = DateTimeConfig.SUNDAY.getValue();
             default -> throw new IllegalStateException("Unexpected value:" + currentDayOfWeek + " when get current day of week");
         }
         return values;
