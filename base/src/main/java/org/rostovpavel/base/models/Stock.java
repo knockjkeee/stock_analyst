@@ -10,9 +10,9 @@ import java.math.BigDecimal;
 @Builder
 public class Stock {
     BigDecimal open;
-    BigDecimal close;
     BigDecimal high;
     BigDecimal low;
+    BigDecimal close;
     long volume;
     String date;
 }

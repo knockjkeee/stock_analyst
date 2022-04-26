@@ -9,6 +9,6 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class TickerData {
+public class TickerRequestBody {
     private List<String> tickers;
 }

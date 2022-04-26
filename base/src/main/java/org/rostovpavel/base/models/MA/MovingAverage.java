@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @Builder
 public class MovingAverage {
-    EMA ema;
     SMA sma;
+    EMA ema;
 }

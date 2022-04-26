@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import static ru.tinkoff.piapi.core.utils.MapperUtils.quotationToBigDecimal;
 
+
 @Log4j2
 @Service
 @RequiredArgsConstructor
@@ -76,9 +77,9 @@ public class TinkoffService {
     private Stock createStock(HistoricCandle candle) {
         return Stock.builder()
                 .open(quotationToBigDecimal(candle.getOpen()))
-                .close(quotationToBigDecimal(candle.getClose()))
                 .high(quotationToBigDecimal(candle.getHigh()))
                 .low(quotationToBigDecimal(candle.getLow()))
+                .close(quotationToBigDecimal(candle.getClose()))
                 .volume(candle.getVolume())
                 .date(DateTimeFormatter.getTimeStampToStringAtCurrentTimeZone(candle.getTime()))
                 .build();

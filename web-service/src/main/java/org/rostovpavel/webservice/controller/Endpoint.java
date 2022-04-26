@@ -1,27 +1,22 @@
 package org.rostovpavel.webservice.controller;
 
-import org.rostovpavel.base.dto.StockDTO;
-import org.rostovpavel.base.dto.StockDataDTO;
-import org.rostovpavel.base.models.MA.MovingAverage;
-import org.rostovpavel.base.models.TickerData;
-import org.rostovpavel.webservice.services.MAService;
-import org.rostovpavel.webservice.services.StockService;
+import org.rostovpavel.base.dto.TickersDTO;
+import org.rostovpavel.base.models.Ticker;
+import org.rostovpavel.base.models.TickerRequestBody;
+import org.rostovpavel.webservice.services.TickerDataService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1/api")
-public record Endpoint(StockService StockService, MAService maService) {
+public record Endpoint(TickerDataService tickerDataService) {
 
     @GetMapping("{ticker}")
-    public StockDTO getCandleByTicker(@PathVariable String ticker) {
-        StockService.ema();
-        StockDTO stockDataByTicker = StockService.getStockDataByTicker(ticker);
-        MovingAverage movingAverage = maService.getMovingAverage(stockDataByTicker);
-        return stockDataByTicker;
+    public Ticker getDataByTicker(@PathVariable String ticker) {
+        return tickerDataService.getDataByTicker(ticker);
     }
 
     @PostMapping("/data")
-    public StockDataDTO getCandleByTickers(@RequestBody TickerData data){
-        return StockService.getStockDataByTikers(data);
+    public TickersDTO getDataByTickers(@RequestBody TickerRequestBody data){
+        return tickerDataService.getDataByTickers(data);
     }
 }
