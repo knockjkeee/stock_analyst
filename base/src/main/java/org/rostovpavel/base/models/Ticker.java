@@ -3,6 +3,7 @@ package org.rostovpavel.base.models;
 
 import lombok.Builder;
 import lombok.Value;
+import org.rostovpavel.base.models.CCI.CommodityChannel;
 import org.rostovpavel.base.models.MA.MovingAverage;
 import org.rostovpavel.base.models.RSI.RelativeStrengthIndex;
 
@@ -15,4 +16,5 @@ public class Ticker {
     BigDecimal price;
     MovingAverage ma;
     RelativeStrengthIndex rsi;
+    CommodityChannel cci;
 }

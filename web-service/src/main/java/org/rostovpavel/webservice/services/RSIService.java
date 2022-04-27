@@ -9,6 +9,8 @@ import org.rostovpavel.base.models.Stock;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -22,11 +24,17 @@ public class RSIService {
 
 
     public RelativeStrengthIndex getRSI(StocksDTO data) {
-        List<Stock> stocks = data.getStocks();
+//        List<Stock> mStocks = data.getStocks();
+        List<Stock> stocks = new ArrayList<>(data.getStocks());
         Collections.reverse(stocks);
         double rs = getU(stocks) / Math.abs(getD(stocks));
         double rsi = 100 - (100 / (1 + rs));
-        return RelativeStrengthIndex.builder().currentRsi(BigDecimal.valueOf(rsi)).build();
+
+        return RelativeStrengthIndex.builder()
+                .currentRsi(new BigDecimal(rsi).setScale(2, RoundingMode.HALF_UP))
+                .upLine(70)
+                .downLine(30)
+                .build();
     }
 
 

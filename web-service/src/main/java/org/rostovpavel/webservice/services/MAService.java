@@ -55,7 +55,7 @@ public class MAService {
                 .map(Stock::getClose)
                 .reduce(BigDecimal::add)
                 .orElseThrow(() -> new StockNotFoundException("Error MA"))
-                .divide(BigDecimal.valueOf(length), 5, RoundingMode.HALF_UP);
+                .divide(BigDecimal.valueOf(length), 2, RoundingMode.HALF_UP);
     }
 
 
@@ -64,7 +64,7 @@ public class MAService {
                 .add(new BigDecimal(1)), 5, RoundingMode.HALF_UP);
 
         return (stocks.get(0).getClose().multiply(key))
-                .add((sma.multiply(new BigDecimal(1).subtract(key))));
+                .add((sma.multiply(new BigDecimal(1).subtract(key)))).setScale(2, RoundingMode.HALF_UP);
     }
 
 }
