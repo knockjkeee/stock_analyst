@@ -8,7 +8,8 @@ import org.rostovpavel.base.dto.TickersDTO;
 import org.rostovpavel.base.models.CCI.CommodityChannel;
 import org.rostovpavel.base.models.MA.MovingAverage;
 import org.rostovpavel.base.models.RSI.RelativeStrengthIndex;
-import org.rostovpavel.base.models.RSI_Stochastic.RelativeStrengthIndexStochastic;
+import org.rostovpavel.base.models.RSI_SO.RelativeStrengthIndexStochastic;
+import org.rostovpavel.base.models.SO.StochasticOscillator;
 import org.rostovpavel.base.models.Ticker;
 import org.rostovpavel.base.models.TickerRequestBody;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ public class TickerDataService {
     private final MAService maService;
     private final CCIService cciService;
     private final RSIStochService rsiStochService;
+    private final SOService soService;
 
     public Ticker getDataByTicker(@PathVariable String ticker) {
         StocksDTO stockDataByTicker = stockService.getStockDataByTicker(ticker);
@@ -47,21 +49,23 @@ public class TickerDataService {
         return new TickersDTO(collect);
     }
 
-    private Ticker generatedDataToTicker(String ticker, StocksDTO stockDataByTicker) {
-        BigDecimal price = stockDataByTicker.getStocks().get(0).getClose().setScale(2, RoundingMode.HALF_UP);
-        MovingAverage movingAverage = maService.getMovingAverage(stockDataByTicker);
-        CommodityChannel cci = cciService.getCCI(stockDataByTicker);
-        RelativeStrengthIndex rsi = rsiService.getRSI(0, stockDataByTicker);
-        RelativeStrengthIndexStochastic stochRSI = rsiStochService.getStochRSI(stockDataByTicker);
+    private Ticker generatedDataToTicker(String ticker, StocksDTO data) {
+        BigDecimal price = data.getStocks().get(0).getClose().setScale(2, RoundingMode.HALF_UP);
+        MovingAverage movingAverage = maService.getMovingAverage(data);
+        CommodityChannel cci = cciService.getCCI(data);
+        StochasticOscillator so = soService.getSO(data);
+        RelativeStrengthIndex rsi = rsiService.getRSI(0, data);
+        RelativeStrengthIndexStochastic stochRSI = rsiStochService.getStochRSI(data);
         //revers
         return Ticker.builder()
                 .name(ticker)
                 .price(price)
-                .candle(stockDataByTicker.getStocks().size())
+                .candle(data.getStocks().size())
                 .ma(movingAverage)
-                .cci(cci)
                 .rsi(rsi)
                 .stochRSI(stochRSI)
+                .cci(cci)
+                .so(so)
                 .build();
     }
 

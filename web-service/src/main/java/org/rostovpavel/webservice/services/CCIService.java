@@ -18,6 +18,8 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class CCIService {
     public static final int RANGE = 20;
+    private static final int UPLINE = 100;
+    private static final int DOWNLINE = -100;
 
     public CommodityChannel getCCI(StocksDTO date){
         List<Stock> stocks = date.getStocks();
@@ -32,8 +34,8 @@ public class CCIService {
 
         return CommodityChannel.builder()
                 .currentCCI(new BigDecimal(cci).setScale(2, RoundingMode.HALF_UP))
-                .upLine(100)
-                .downLine(-100)
+                .upLine(UPLINE)
+                .downLine(DOWNLINE)
                 .build();
 
     }

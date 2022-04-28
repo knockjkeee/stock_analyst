@@ -6,7 +6,8 @@ import lombok.Value;
 import org.rostovpavel.base.models.CCI.CommodityChannel;
 import org.rostovpavel.base.models.MA.MovingAverage;
 import org.rostovpavel.base.models.RSI.RelativeStrengthIndex;
-import org.rostovpavel.base.models.RSI_Stochastic.RelativeStrengthIndexStochastic;
+import org.rostovpavel.base.models.RSI_SO.RelativeStrengthIndexStochastic;
+import org.rostovpavel.base.models.SO.StochasticOscillator;
 
 import java.math.BigDecimal;
 
@@ -20,5 +21,6 @@ public class Ticker {
     RelativeStrengthIndex rsi;
     RelativeStrengthIndexStochastic stochRSI;
     CommodityChannel cci;
+    StochasticOscillator so;
 
 }

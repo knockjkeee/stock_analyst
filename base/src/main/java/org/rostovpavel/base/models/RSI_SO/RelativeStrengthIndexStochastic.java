@@ -1,4 +1,4 @@
-package org.rostovpavel.base.models.RSI_Stochastic;
+package org.rostovpavel.base.models.RSI_SO;
 
 import lombok.Builder;
 import lombok.Data;

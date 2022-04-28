@@ -3,7 +3,7 @@ package org.rostovpavel.webservice.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.rostovpavel.base.dto.StocksDTO;
-import org.rostovpavel.base.models.RSI_Stochastic.RelativeStrengthIndexStochastic;
+import org.rostovpavel.base.models.RSI_SO.RelativeStrengthIndexStochastic;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -16,11 +16,14 @@ import java.util.stream.IntStream;
 @Service
 @RequiredArgsConstructor
 public class RSIStochService {
+    private static final int RANGE = 14;
+    private static final double UPLINE = 0.8;
+    private static final double DOWNLINE = 0.2;
+
     private final RSIService rsiService;
 
-
     public RelativeStrengthIndexStochastic getStochRSI(StocksDTO data) {
-        List<Double> collect = IntStream.range(0, 14).mapToObj(index -> {
+        List<Double> collect = IntStream.range(0, RANGE).mapToObj(index -> {
             return rsiService.getRSI(index, data).getCurrentRSI().doubleValue();
         }).collect(Collectors.toList());
 
@@ -32,9 +35,9 @@ public class RSIStochService {
         double max = collect.stream().mapToDouble(Double::doubleValue).max().getAsDouble();
         double stochRSI = (collect.get(0) - min) / (max - min);
         return RelativeStrengthIndexStochastic.builder()
-                .upLine(0.8)
+                .upLine(UPLINE)
                 .currentStochRSI(new BigDecimal(stochRSI).setScale(2, RoundingMode.HALF_UP))
-                .downLine(0.2)
+                .downLine(DOWNLINE)
                 .build();
     }
 

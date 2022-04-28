@@ -21,6 +21,8 @@ import java.util.stream.IntStream;
 @RequiredArgsConstructor
 public class RSIService {
     private static final int [] DEEP_DAY = new int[] {14, 13}; //+1
+    private static final int UPLINE = 70;
+    private static final int DOWNLINE = 30;
 
 
     public RelativeStrengthIndex getRSI(int index, StocksDTO data) {
@@ -35,8 +37,8 @@ public class RSIService {
 
         return RelativeStrengthIndex.builder()
                 .currentRSI(new BigDecimal(rsi).setScale(2, RoundingMode.HALF_UP))
-                .upLine(70)
-                .downLine(30)
+                .upLine(UPLINE)
+                .downLine(DOWNLINE)
                 .build();
     }
 
