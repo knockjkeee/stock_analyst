@@ -1,7 +1,5 @@
 package org.rostovpavel.webservice.utils;
 
-import java.util.Arrays;
-
 public enum DateTimeConfig {
     MONDAY(1, 0, 3, 2, 4, 3, 5, 4), //+3 -> +2
     TUESDAY(1, 0, 2, 1, 4, 3, 5, 4), //+3 -> +2
@@ -17,7 +15,7 @@ public enum DateTimeConfig {
     }
 
     public int[] getValue() {
-        System.out.println("Arrays.toString(DAY) = " + Arrays.toString(value));
+//        System.out.println("Arrays.toString(DAY) = " + Arrays.toString(value));
         return value;
     }
 }

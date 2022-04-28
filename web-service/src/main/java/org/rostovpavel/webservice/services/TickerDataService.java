@@ -57,6 +57,7 @@ public class TickerDataService {
         return Ticker.builder()
                 .name(ticker)
                 .price(price)
+                .candle(stockDataByTicker.getStocks().size())
                 .ma(movingAverage)
                 .cci(cci)
                 .rsi(rsi)

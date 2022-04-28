@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.rostovpavel.base.exception.StockNotFoundException;
 import org.rostovpavel.base.models.Stock;
-import org.rostovpavel.webservice.utils.DateTimeFormatter;
+import org.rostovpavel.webservice.utils.DateFormatter;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
@@ -37,11 +37,13 @@ public class TinkoffService {
                 .map(CompletableFuture::join)
                 .filter(hs -> !hs.isEmpty())
                 .map(histirycCandles -> {
-                    System.out.println("candles.size() = " + histirycCandles.size());
+                   // System.out.println("candles.size() = " + histirycCandles.size());
                     List<Stock> stocks = histirycCandles
                             .stream()
                             .map(this::createStock).collect(Collectors.toList());
                     Collections.reverse(stocks);
+                    log.info(DateFormatter.getTimeToString(stocks.get(0).getDate()) + "/" +
+                                    DateFormatter.getTimeToString(stocks.get(stocks.size() - 1).getDate()));
                     return stocks;
                 })
                 .flatMap(Collection::stream)
@@ -49,7 +51,7 @@ public class TinkoffService {
     }
 
     private List<CompletableFuture<List<HistoricCandle>>> getDataHistoryCandleByDate(String figi) {
-        int[] dateConfig = DateTimeFormatter.getCurrentDateConfig();
+        int[] dateConfig = DateFormatter.getCurrentDateConfig();
         Instant currentNow = Instant.now();
         List<CompletableFuture<List<HistoricCandle>>> result = new ArrayList<>();
         for (int i = 0; i < dateConfig.length; i = i + 2) {
@@ -81,7 +83,7 @@ public class TinkoffService {
                 .low(quotationToBigDecimal(candle.getLow()))
                 .close(quotationToBigDecimal(candle.getClose()))
                 .volume(candle.getVolume())
-                .date(DateTimeFormatter.getTimeStampToStringAtCurrentTimeZone(candle.getTime()))
+                .date(DateFormatter.getTimeStampToStringAtCurrentTimeZone(candle.getTime()))
                 .build();
     }
 

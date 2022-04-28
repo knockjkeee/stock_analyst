@@ -2,7 +2,6 @@ package org.rostovpavel.webservice.utils;
 
 
 import com.google.protobuf.Timestamp;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
@@ -10,17 +9,22 @@ import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 import static ru.tinkoff.piapi.core.utils.DateUtils.*;
 import static ru.tinkoff.piapi.core.utils.MapperUtils.quotationToBigDecimal;
 
 @Log4j2
-public class DateTimeFormatter {
+public class DateFormatter {
+    private static final String format = "dd-MM-yyyy HH:mm:ss";
+//    private static final DateTimeFormatter format = DateTimeFormatter.new DateTimeFormatter("dd-MMM-yyyy HH:mm:ss");
+
 
     public static int[] getCurrentDateConfig() {
         DayOfWeek currentDayOfWeek = Instant.now().atZone(ZoneId.systemDefault()).getDayOfWeek();
-        System.out.println("currentDayOfWeek = " + currentDayOfWeek);
+        //System.out.println("currentDayOfWeek = " + currentDayOfWeek);
         int[] values;
         switch (currentDayOfWeek) {
             case MONDAY -> values = DateTimeConfig.MONDAY.getValue();
@@ -32,6 +36,11 @@ public class DateTimeFormatter {
             default -> throw new IllegalStateException("Unexpected value:" + currentDayOfWeek + " when get current day of week");
         }
         return values;
+    }
+
+    public static String getTimeToString(String date){
+        ZonedDateTime zonedDateTime = ZonedDateTime.parse(date);
+        return zonedDateTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm:ss"));
     }
 
 

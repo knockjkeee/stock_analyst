@@ -21,6 +21,7 @@ public class StockService {
 
     public StocksDTO getStockDataByTicker(String ticker) {
         String figi = tinkoffService.getCurrentFigi(ticker, "SPBXM");
+        log.info("ticker = " + ticker);
         List<Stock> currentHistoricCandle = tinkoffService.getListStockHistoricCandlesByFigi(figi);
         return new StocksDTO(currentHistoricCandle);
     }
@@ -28,6 +29,7 @@ public class StockService {
     public StocksDataDTO getStockDataByTikers(TickerRequestBody data){
         List<StockData> date = data.getTickers().stream()
                 .map(ticker -> {
+                    log.info("ticker = " + ticker);
                     String figi = tinkoffService.getCurrentFigi(ticker, "SPBXM");
                     List<Stock> candle = tinkoffService.getListStockHistoricCandlesByFigi(figi);
                     return StockData.builder()

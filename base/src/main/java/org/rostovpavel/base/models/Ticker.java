@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 public class Ticker {
     String name;
     BigDecimal price;
+    int candle;
     MovingAverage ma;
     RelativeStrengthIndex rsi;
     RelativeStrengthIndexStochastic stochRSI;

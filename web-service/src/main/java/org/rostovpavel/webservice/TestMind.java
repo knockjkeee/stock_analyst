@@ -1,7 +1,7 @@
 package org.rostovpavel.webservice;
 
 import org.rostovpavel.webservice.utils.DateTimeConfig;
-import org.rostovpavel.webservice.utils.DateTimeFormatter;
+import org.rostovpavel.webservice.utils.DateFormatter;
 
 import java.time.DayOfWeek;
 import java.time.Instant;
@@ -21,7 +21,7 @@ public class TestMind {
         DayOfWeek dayOfWeek = Instant.now().atZone(ZoneId.systemDefault()).getDayOfWeek();
 
 
-        int[] currentDateConfig = DateTimeFormatter.getCurrentDateConfig();
+        int[] currentDateConfig = DateFormatter.getCurrentDateConfig();
 
 
         Instant now = Instant.now();
