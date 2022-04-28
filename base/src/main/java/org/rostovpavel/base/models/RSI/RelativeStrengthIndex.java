@@ -9,6 +9,6 @@ import java.math.BigDecimal;
 @Builder
 public class RelativeStrengthIndex {
     int upLine;
-    BigDecimal currentRsi;
+    BigDecimal currentRSI;
     int downLine;
 }

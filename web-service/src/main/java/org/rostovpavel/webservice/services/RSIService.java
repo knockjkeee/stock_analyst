@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Log4j2
@@ -23,15 +23,18 @@ public class RSIService {
     private static final int [] DEEP_DAY = new int[] {14, 13}; //+1
 
 
-    public RelativeStrengthIndex getRSI(StocksDTO data) {
+    public RelativeStrengthIndex getRSI(int index, StocksDTO data) {
 //        List<Stock> mStocks = data.getStocks();
-        List<Stock> stocks = new ArrayList<>(data.getStocks());
+        //List<Stock> stocks = new ArrayList<>(data.getStocks());
+        List<Stock> stocks = IntStream.range(index, data.getStocks().size())
+                .mapToObj(i -> data.getStocks().get(i))
+                .collect(Collectors.toList());
         Collections.reverse(stocks);
         double rs = getU(stocks) / Math.abs(getD(stocks));
         double rsi = 100 - (100 / (1 + rs));
 
         return RelativeStrengthIndex.builder()
-                .currentRsi(new BigDecimal(rsi).setScale(2, RoundingMode.HALF_UP))
+                .currentRSI(new BigDecimal(rsi).setScale(2, RoundingMode.HALF_UP))
                 .upLine(70)
                 .downLine(30)
                 .build();
