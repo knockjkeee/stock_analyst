@@ -31,18 +31,18 @@ public class MAService {
                     BigDecimal sma = getSMA(stocks, len);
                     BigDecimal ema = getEMA(stocks, sma, len);
                     switch (len) {
-                        case 20:
+                        case 20 -> {
                             smaRes.setSma20(sma);
                             emaRes.setEma20(ema);
-                            break;
-                        case 50:
+                        }
+                        case 50 -> {
                             smaRes.setSma50(sma);
                             emaRes.setEma50(ema);
-                            break;
-                        case 100:
+                        }
+                        case 100 -> {
                             smaRes.setSma100(sma);
                             emaRes.setEma100(ema);
-                            break;
+                        }
                     }
                 });
         return MovingAverage.builder().ema(emaRes).sma(smaRes).build();

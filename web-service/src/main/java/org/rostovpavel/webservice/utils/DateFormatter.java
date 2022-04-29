@@ -18,9 +18,6 @@ import static ru.tinkoff.piapi.core.utils.MapperUtils.quotationToBigDecimal;
 
 @Log4j2
 public class DateFormatter {
-    private static final String format = "dd-MM-yyyy HH:mm:ss";
-//    private static final DateTimeFormatter format = DateTimeFormatter.new DateTimeFormatter("dd-MMM-yyyy HH:mm:ss");
-
 
     public static int[] getCurrentDateConfig() {
         DayOfWeek currentDayOfWeek = Instant.now().atZone(ZoneId.systemDefault()).getDayOfWeek();

@@ -26,8 +26,6 @@ public class RSIService {
 
 
     public RelativeStrengthIndex getRSI(int index, StocksDTO data) {
-//        List<Stock> mStocks = data.getStocks();
-        //List<Stock> stocks = new ArrayList<>(data.getStocks());
         List<Stock> stocks = IntStream.range(index, data.getStocks().size())
                 .mapToObj(i -> data.getStocks().get(i))
                 .collect(Collectors.toList());
@@ -48,7 +46,7 @@ public class RSIService {
         IntStream.range(1, stocks.size()).forEach(index -> {
             double cVal = stocks.get(index).getClose().doubleValue();
             double pVal = stocks.get(index - 1).getClose().doubleValue();
-            double gVal = 0.0;
+            double gVal;
             if ((cVal - pVal) > 0) {
                 gVal = cVal - pVal;
             } else {
@@ -64,7 +62,7 @@ public class RSIService {
         IntStream.range(1, stocks.size()).forEach(index -> {
             double cVal = stocks.get(index).getClose().doubleValue();
             double pVal = stocks.get(index - 1).getClose().doubleValue();
-            double gVal = 0.0;
+            double gVal;
             if ((cVal - pVal) < 0) {
                 gVal = cVal - pVal;
             } else {

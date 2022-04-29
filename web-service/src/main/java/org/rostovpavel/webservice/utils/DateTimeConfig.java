@@ -8,7 +8,7 @@ public enum DateTimeConfig {
     FRIDAY(1, 0, 2, 1, 3, 2, 4, 3),
     SUNDAY(1, 0, 2, 1, 3, 2, 4, 3);
 
-    private int[] value;
+    private final int[] value;
 
     DateTimeConfig(int... value) {
         this.value = value;

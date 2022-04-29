@@ -23,34 +23,28 @@ public class SOService {
 
 
     public StochasticOscillator getSO(StocksDTO data) {
-        List<Double> collect = IntStream.range(0, 3).mapToObj(index -> {
-            return getK(index, data);
-        }).collect(Collectors.toList());
+        List<BigDecimal> collect = IntStream.range(0, 3).mapToObj(index -> getK(index, data)).collect(Collectors.toList());
 
-        Double K = collect.get(0);
-        double D = collect.stream().mapToDouble(Double::doubleValue).sum() / collect.size();
+        BigDecimal K = collect.get(0);
+        BigDecimal D = (collect.stream().reduce(BigDecimal.ZERO, BigDecimal::add)).
+                divide(BigDecimal.valueOf(collect.size()), 6, RoundingMode.HALF_UP);
         return StochasticOscillator.builder()
                 .upLine(UPLINE)
-                .currentK(new BigDecimal(K).setScale(2, RoundingMode.HALF_UP))
-                .currentD(new BigDecimal(D).setScale(2, RoundingMode.HALF_UP))
+                .currentK(K.setScale(4, RoundingMode.HALF_UP))
+                .currentD(D.setScale(4, RoundingMode.HALF_UP))
                 .downLine(DOWNLINE)
                 .build();
     }
 
-    private double getK(int i, StocksDTO data) {
-        List<Double> high = IntStream.range(i, DEEP_DAY + i).mapToObj(index -> {
-            return data.getStocks().get(index).getHigh().doubleValue();
-        }).collect(Collectors.toList());
+    private BigDecimal getK(int i, StocksDTO data) {
+        List<BigDecimal> high = IntStream.range(i, DEEP_DAY + i).mapToObj(index -> data.getStocks().get(index).getHigh()).collect(Collectors.toList());
 
-        List<Double> low = IntStream.range(0, DEEP_DAY).mapToObj(index -> {
-            return data.getStocks().get(index).getLow().doubleValue();
-        }).collect(Collectors.toList());
+        List<BigDecimal> low = IntStream.range(0, DEEP_DAY).mapToObj(index -> data.getStocks().get(index).getLow()).collect(Collectors.toList());
 
-        double max = high.stream().mapToDouble(Double::doubleValue).max().getAsDouble();
-        double min = low.stream().mapToDouble(Double::doubleValue).min().getAsDouble();
+        BigDecimal max = high.stream().max(BigDecimal::compareTo).get();
+        BigDecimal min = low.stream().min(BigDecimal::compareTo).get();
 
         Stock stock = data.getStocks().get(0);
-        double result = (stock.getClose().doubleValue() - min) / (max - min) * 100;
-        return result;
+        return (stock.getClose().subtract(min)).divide((max.subtract(min)), 5, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100.0));
     }
 }

@@ -41,13 +41,8 @@ public class TickerDataService {
 
 
     public TickersDTO getDataByTickers(@RequestBody TickerRequestBody data){
-
         StocksDataDTO stockDataByTikers = stockService.getStockDataByTikers(data);
-
-        List<Ticker> collect = stockDataByTikers.getStocks().stream().map(stockData -> {
-            return generatedDataToTicker(stockData.getName(), stockData.getCandle());
-        }).collect(Collectors.toList());
-
+        List<Ticker> collect = stockDataByTikers.getStocks().stream().map(stockData -> generatedDataToTicker(stockData.getName(), stockData.getCandle())).collect(Collectors.toList());
         return new TickersDTO(collect);
     }
 
@@ -59,8 +54,6 @@ public class TickerDataService {
         RelativeStrengthIndex rsi = rsiService.getRSI(0, data);
         RelativeStrengthIndexStochastic stochRSI = rsiStochService.getStochRSI(data);
         MovingAverageConvergenceDivergence macd = macdService.getMACD(data);
-
-        //revers
         return Ticker.builder()
                 .name(ticker)
                 .price(price)

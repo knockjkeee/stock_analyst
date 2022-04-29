@@ -45,9 +45,7 @@ public class MACDService {
     }
 
     private List<BigDecimal> getDifferenceBetweenCollect(List<BigDecimal> whereData, List<BigDecimal> whatData) {
-        return IntStream.range(0, whatData.size()).mapToObj(index -> {
-            return whereData.get(index).subtract(whatData.get(index));
-        }).collect(Collectors.toList());
+        return IntStream.range(0, whatData.size()).mapToObj(index -> whereData.get(index).subtract(whatData.get(index))).collect(Collectors.toList());
     }
 
 

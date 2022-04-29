@@ -23,13 +23,7 @@ public class RSIStochService {
     private final RSIService rsiService;
 
     public RelativeStrengthIndexStochastic getStochRSI(StocksDTO data) {
-        List<Double> collect = IntStream.range(0, RANGE).mapToObj(index -> {
-            return rsiService.getRSI(index, data).getCurrentRSI().doubleValue();
-        }).collect(Collectors.toList());
-
-//        List<Double> collect = Arrays.asList(57.97, 62.93, 63.26, 56.06, 62.38, 54.71, 50.42, 39.99
-//                , 41.46, 41.87, 45.46, 37.3, 33.08, 37.77);
-//        Collections.reverse(collect);
+        List<Double> collect = IntStream.range(0, RANGE).mapToObj(index -> rsiService.getRSI(index, data).getCurrentRSI().doubleValue()).collect(Collectors.toList());
 
         double min = collect.stream().mapToDouble(Double::doubleValue).min().getAsDouble();
         double max = collect.stream().mapToDouble(Double::doubleValue).max().getAsDouble();
@@ -40,5 +34,4 @@ public class RSIStochService {
                 .downLine(DOWNLINE)
                 .build();
     }
-
 }
