@@ -37,7 +37,6 @@ public class TinkoffService {
                 .map(CompletableFuture::join)
                 .filter(hs -> !hs.isEmpty())
                 .map(histirycCandles -> {
-                   // System.out.println("candles.size() = " + histirycCandles.size());
                     List<Stock> stocks = histirycCandles
                             .stream()
                             .map(this::createStock).collect(Collectors.toList());

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -23,28 +24,37 @@ public class SOService {
 
 
     public StochasticOscillator getSO(StocksDTO data) {
-        List<BigDecimal> collect = IntStream.range(0, 3).mapToObj(index -> getK(index, data)).collect(Collectors.toList());
+        List<BigDecimal> modeK = IntStream.range(0, 5).mapToObj(index -> getK(index, data)).collect(Collectors.toList());
+        BigDecimal K = modeK.stream().limit(3).reduce(BigDecimal.ZERO, BigDecimal::add)
+                .divide(BigDecimal.valueOf(3), 5, RoundingMode.UP);
+        List<BigDecimal> collectK = IntStream.range(0, 3).mapToObj(index -> getKRes(index, modeK)).collect(Collectors.toList());
+        BigDecimal D = collectK.stream().reduce(BigDecimal.ZERO, BigDecimal::add)
+                .divide(BigDecimal.valueOf(collectK.size()), 5, RoundingMode.UP);
 
-        BigDecimal K = collect.get(0);
-        BigDecimal D = (collect.stream().reduce(BigDecimal.ZERO, BigDecimal::add)).
-                divide(BigDecimal.valueOf(collect.size()), 6, RoundingMode.HALF_UP);
         return StochasticOscillator.builder()
                 .upLine(UPLINE)
-                .currentK(K.setScale(4, RoundingMode.HALF_UP))
-                .currentD(D.setScale(4, RoundingMode.HALF_UP))
+                .currentK(K.setScale(2, RoundingMode.HALF_UP))
+                .currentD(D.setScale(2, RoundingMode.HALF_UP))
                 .downLine(DOWNLINE)
                 .build();
     }
 
+    private BigDecimal getKRes(int index, List<BigDecimal> data){
+        List<BigDecimal> collect = IntStream.range(index, 3 + index).mapToObj(data::get).collect(Collectors.toList());
+
+        return collect.stream().reduce(BigDecimal.ZERO, BigDecimal::add).divide(BigDecimal.valueOf(collect.size()), 6, RoundingMode.UP);
+    }
+
     private BigDecimal getK(int i, StocksDTO data) {
-        List<BigDecimal> high = IntStream.range(i, DEEP_DAY + i).mapToObj(index -> data.getStocks().get(index).getHigh()).collect(Collectors.toList());
+        List<Stock> collect = IntStream.range(i, DEEP_DAY + i).mapToObj(index -> data.getStocks().get(index)).collect(Collectors.toList());
+        List<BigDecimal> low = collect.stream().map(Stock::getLow).collect(Collectors.toList());
+        List<BigDecimal> high = collect.stream().map(Stock::getHigh).collect(Collectors.toList());
+        BigDecimal max = high.stream().max(Comparator.naturalOrder()).orElse(BigDecimal.ZERO);
+        BigDecimal min = low.stream().min(Comparator.naturalOrder()).orElse(BigDecimal.ZERO);
+        Stock stock = data.getStocks().get(i);
+        BigDecimal closeLowestLow = stock.getClose().subtract(min);
+        BigDecimal highestHighLowestLow = max.subtract(min);
 
-        List<BigDecimal> low = IntStream.range(0, DEEP_DAY).mapToObj(index -> data.getStocks().get(index).getLow()).collect(Collectors.toList());
-
-        BigDecimal max = high.stream().max(BigDecimal::compareTo).get();
-        BigDecimal min = low.stream().min(BigDecimal::compareTo).get();
-
-        Stock stock = data.getStocks().get(0);
-        return (stock.getClose().subtract(min)).divide((max.subtract(min)), 5, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100.0));
+        return (closeLowestLow.divide(highestHighLowestLow, 6, RoundingMode.HALF_UP)).multiply(BigDecimal.valueOf(100));
     }
 }
