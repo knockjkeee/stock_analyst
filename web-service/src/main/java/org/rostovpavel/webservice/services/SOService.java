@@ -51,7 +51,6 @@ public class SOService {
 
         Stock stock = data.getStocks().get(0);
         double result = (stock.getClose().doubleValue() - min) / (max - min) * 100;
-        log.info(result);
         return result;
     }
 }

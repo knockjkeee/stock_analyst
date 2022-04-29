@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Value;
 import org.rostovpavel.base.models.CCI.CommodityChannel;
 import org.rostovpavel.base.models.MA.MovingAverage;
+import org.rostovpavel.base.models.MACD.MovingAverageConvergenceDivergence;
 import org.rostovpavel.base.models.RSI.RelativeStrengthIndex;
 import org.rostovpavel.base.models.RSI_SO.RelativeStrengthIndexStochastic;
 import org.rostovpavel.base.models.SO.StochasticOscillator;
@@ -22,5 +23,6 @@ public class Ticker {
     RelativeStrengthIndexStochastic stochRSI;
     CommodityChannel cci;
     StochasticOscillator so;
+    MovingAverageConvergenceDivergence macd;
 
 }

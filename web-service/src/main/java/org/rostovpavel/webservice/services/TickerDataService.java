@@ -7,6 +7,7 @@ import org.rostovpavel.base.dto.StocksDataDTO;
 import org.rostovpavel.base.dto.TickersDTO;
 import org.rostovpavel.base.models.CCI.CommodityChannel;
 import org.rostovpavel.base.models.MA.MovingAverage;
+import org.rostovpavel.base.models.MACD.MovingAverageConvergenceDivergence;
 import org.rostovpavel.base.models.RSI.RelativeStrengthIndex;
 import org.rostovpavel.base.models.RSI_SO.RelativeStrengthIndexStochastic;
 import org.rostovpavel.base.models.SO.StochasticOscillator;
@@ -31,6 +32,7 @@ public class TickerDataService {
     private final CCIService cciService;
     private final RSIStochService rsiStochService;
     private final SOService soService;
+    private final MACDService macdService;
 
     public Ticker getDataByTicker(@PathVariable String ticker) {
         StocksDTO stockDataByTicker = stockService.getStockDataByTicker(ticker);
@@ -56,6 +58,8 @@ public class TickerDataService {
         StochasticOscillator so = soService.getSO(data);
         RelativeStrengthIndex rsi = rsiService.getRSI(0, data);
         RelativeStrengthIndexStochastic stochRSI = rsiStochService.getStochRSI(data);
+        MovingAverageConvergenceDivergence macd = macdService.getMACD(data);
+
         //revers
         return Ticker.builder()
                 .name(ticker)
@@ -66,6 +70,7 @@ public class TickerDataService {
                 .stochRSI(stochRSI)
                 .cci(cci)
                 .so(so)
+                .macd(macd)
                 .build();
     }
 
