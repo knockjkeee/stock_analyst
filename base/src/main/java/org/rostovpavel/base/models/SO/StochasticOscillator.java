@@ -12,4 +12,5 @@ public class StochasticOscillator {
     BigDecimal currentK;
     BigDecimal currentD;
     int downLine;
+    String signal;
 }

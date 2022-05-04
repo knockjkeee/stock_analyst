@@ -69,9 +69,6 @@ public class RSIService {
         return Signal.NONE;
     }
 
-
-
-
     @NotNull
     private List<Stock> getStocks(int index, StocksDTO data) {
         return IntStream.range(index, data.getStocks().size())
