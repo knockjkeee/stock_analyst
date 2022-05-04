@@ -5,6 +5,8 @@ import lombok.extern.log4j.Log4j2;
 import org.rostovpavel.base.dto.StocksDTO;
 import org.rostovpavel.base.dto.StocksDataDTO;
 import org.rostovpavel.base.dto.TickersDTO;
+import org.rostovpavel.base.models.ATR.AverageTrueRange;
+import org.rostovpavel.base.models.BB.BollingerBands;
 import org.rostovpavel.base.models.CCI.CommodityChannel;
 import org.rostovpavel.base.models.MA.MovingAverage;
 import org.rostovpavel.base.models.MACD.MovingAverageConvergenceDivergence;
@@ -33,6 +35,8 @@ public class TickerDataService {
     private final RSIStochService rsiStochService;
     private final SOService soService;
     private final MACDService macdService;
+    private final BBService bbService;
+    private final ATRService atrService;
 
     public Ticker getDataByTicker(@PathVariable String ticker) {
         StocksDTO stockDataByTicker = stockService.getStockDataByTicker(ticker);
@@ -54,16 +58,21 @@ public class TickerDataService {
         RelativeStrengthIndex rsi = rsiService.getRSI(0, data);
         RelativeStrengthIndexStochastic stochRSI = rsiStochService.getStochRSI(data);
         MovingAverageConvergenceDivergence macd = macdService.getMACD(data);
+        BollingerBands bb = bbService.getBollingerBands(data);
+        AverageTrueRange atr = atrService.getATR(data);
+
         return Ticker.builder()
                 .name(ticker)
                 .price(price)
                 .candle(data.getStocks().size())
-                .ma(movingAverage)
+                .movingAverage(movingAverage)
                 .rsi(rsi)
                 .stochRSI(stochRSI)
                 .cci(cci)
-                .so(so)
+                .stochasticOscillator(so)
                 .macd(macd)
+                .bollingerBands(bb)
+                .atr(atr)
                 .build();
     }
 

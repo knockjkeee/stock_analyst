@@ -3,6 +3,8 @@ package org.rostovpavel.base.models;
 
 import lombok.Builder;
 import lombok.Value;
+import org.rostovpavel.base.models.ATR.AverageTrueRange;
+import org.rostovpavel.base.models.BB.BollingerBands;
 import org.rostovpavel.base.models.CCI.CommodityChannel;
 import org.rostovpavel.base.models.MA.MovingAverage;
 import org.rostovpavel.base.models.MACD.MovingAverageConvergenceDivergence;
@@ -18,11 +20,13 @@ public class Ticker {
     String name;
     BigDecimal price;
     int candle;
-    MovingAverage ma;
+    MovingAverage movingAverage;
     RelativeStrengthIndex rsi;
     RelativeStrengthIndexStochastic stochRSI;
     CommodityChannel cci;
-    StochasticOscillator so;
+    StochasticOscillator stochasticOscillator;
     MovingAverageConvergenceDivergence macd;
+    BollingerBands bollingerBands;
+    AverageTrueRange atr;
 
 }

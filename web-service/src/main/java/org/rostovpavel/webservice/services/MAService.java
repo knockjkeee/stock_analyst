@@ -28,7 +28,7 @@ public class MAService {
 
         Arrays.stream(LENGTH_MA)
                 .forEach(len -> {
-                    BigDecimal sma = getSMA(stocks, len);
+                    BigDecimal sma = getSMAbyClose(stocks, len);
                     BigDecimal ema = getEMA(stocks, sma, len);
                     switch (len) {
                         case 20 -> {
@@ -48,7 +48,7 @@ public class MAService {
         return MovingAverage.builder().ema(emaRes).sma(smaRes).build();
     }
 
-    private BigDecimal getSMA(List<Stock> stocks, int length) {
+    public BigDecimal getSMAbyClose(List<Stock> stocks, int length) {
         return stocks
                 .stream()
                 .limit(length)
