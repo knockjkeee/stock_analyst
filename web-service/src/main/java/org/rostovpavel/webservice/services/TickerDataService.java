@@ -55,7 +55,7 @@ public class TickerDataService {
         MovingAverage movingAverage = maService.getMovingAverage(data);
         CommodityChannel cci = cciService.getCCI(data);
         StochasticOscillator so = soService.getSO(data);
-        RelativeStrengthIndex rsi = rsiService.getRSI(0, data);
+        RelativeStrengthIndex rsi = rsiService.getRSI(data);
         RelativeStrengthIndexStochastic stochRSI = rsiStochService.getStochRSI(data);
         MovingAverageConvergenceDivergence macd = macdService.getMACD(data);
         BollingerBands bb = bbService.getBollingerBands(data);

@@ -11,4 +11,5 @@ public class RelativeStrengthIndex {
     int upLine;
     BigDecimal currentRSI;
     int downLine;
+    String signal;
 }

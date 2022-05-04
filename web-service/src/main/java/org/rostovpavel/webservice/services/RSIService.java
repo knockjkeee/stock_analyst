@@ -3,13 +3,16 @@ package org.rostovpavel.webservice.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.NotNull;
 import org.rostovpavel.base.dto.StocksDTO;
 import org.rostovpavel.base.models.RSI.RelativeStrengthIndex;
+import org.rostovpavel.base.models.Signal;
 import org.rostovpavel.base.models.Stock;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -26,9 +29,7 @@ public class RSIService {
 
 
     public RelativeStrengthIndex getRSI(int index, StocksDTO data) {
-        List<Stock> stocks = IntStream.range(index, data.getStocks().size())
-                .mapToObj(i -> data.getStocks().get(i))
-                .collect(Collectors.toList());
+        List<Stock> stocks = getStocks(index, data);
         Collections.reverse(stocks);
         double rs = getU(stocks) / Math.abs(getD(stocks));
         double rsi = 100 - (100 / (1 + rs));
@@ -40,6 +41,43 @@ public class RSIService {
                 .build();
     }
 
+    public RelativeStrengthIndex getRSI(StocksDTO data) {
+        List<Double> rsiArr = new ArrayList<>();
+        IntStream.range(0,2).forEach(e -> {
+            List<Stock> stocks = getStocks(e, data);
+            Collections.reverse(stocks);
+            double rs = getU(stocks) / Math.abs(getD(stocks));
+            double rsi = 100 - (100 / (1 + rs));
+            rsiArr.add(rsi);
+        });
+
+        return RelativeStrengthIndex.builder()
+                .currentRSI(BigDecimal.valueOf(rsiArr.get(0)).setScale(2, RoundingMode.HALF_UP))
+                .upLine(UPLINE)
+                .downLine(DOWNLINE)
+                .signal(compareRsiToBuySell(rsiArr).getValue())
+                .build();
+    }
+
+    private Signal compareRsiToBuySell(List<Double> data) {
+        if ((data.get(0) < DOWNLINE ) && ( data.get(1) >= DOWNLINE)) {
+            return Signal.BUY;
+        }
+        if ((data.get(0) > UPLINE ) && ( data.get(1) <= UPLINE)) {
+            return Signal.SELL;
+        }
+        return Signal.NONE;
+    }
+
+
+
+
+    @NotNull
+    private List<Stock> getStocks(int index, StocksDTO data) {
+        return IntStream.range(index, data.getStocks().size())
+                .mapToObj(i -> data.getStocks().get(i))
+                .collect(Collectors.toList());
+    }
 
     private double getU(List<Stock> stocks) {
         AtomicReference<Double> result = new AtomicReference<>(0.0);
