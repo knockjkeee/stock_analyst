@@ -9,6 +9,9 @@ import java.math.BigDecimal;
 @Builder
 public class EMA {
     BigDecimal ema20;
+    String signalEma20;
     BigDecimal ema50;
+    String signalEma50;
     BigDecimal ema100;
+    String signalEma100;
 }

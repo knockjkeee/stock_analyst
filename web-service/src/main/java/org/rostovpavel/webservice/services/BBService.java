@@ -23,7 +23,7 @@ public class BBService {
 
     public BollingerBands getBollingerBands(StocksDTO data) {
         List<Stock> stocks = data.getStocks().stream().limit(SMA_DAY_LENGTH).collect(Collectors.toList());
-        BigDecimal sma20 = maService.getSMAbyClose(stocks, SMA_DAY_LENGTH);
+        BigDecimal sma20 = maService.getSMA(stocks, SMA_DAY_LENGTH);
 
 //        AtomicReference<Double> res = new AtomicReference<>(0.0);
 //        stocks.forEach(stock -> {
