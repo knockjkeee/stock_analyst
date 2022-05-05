@@ -1,4 +1,4 @@
-package org.rostovpavel.webservice.services;
+package org.rostovpavel.webservice.services.indicators;
 
 
 import lombok.RequiredArgsConstructor;
@@ -22,13 +22,12 @@ import java.util.stream.IntStream;
 @Log4j2
 @Service
 @RequiredArgsConstructor
-public class RSIService {
-    private static final int [] DEEP_DAY = new int[] {14, 13}; //+1
+public class RSIService implements IndicatorService {
+    private static final int[] DEEP_DAY = new int[]{14, 13}; //+1
     private static final int UPLINE = 70;
     private static final int DOWNLINE = 30;
 
-
-    public RelativeStrengthIndex getRSI(int index, StocksDTO data) {
+    public RelativeStrengthIndex getData(int index, StocksDTO data) {
         List<Stock> stocks = getStocks(index, data);
         Collections.reverse(stocks);
         double rs = getU(stocks) / Math.abs(getD(stocks));
@@ -41,29 +40,29 @@ public class RSIService {
                 .build();
     }
 
-    public RelativeStrengthIndex getRSI(StocksDTO data) {
+    @Override
+    public RelativeStrengthIndex getData(StocksDTO data) {
         List<Double> rsiArr = new ArrayList<>();
-        IntStream.range(0,2).forEach(e -> {
+        IntStream.range(0, 2).forEach(e -> {
             List<Stock> stocks = getStocks(e, data);
             Collections.reverse(stocks);
             double rs = getU(stocks) / Math.abs(getD(stocks));
             double rsi = 100 - (100 / (1 + rs));
             rsiArr.add(rsi);
         });
-
         return RelativeStrengthIndex.builder()
                 .currentRSI(BigDecimal.valueOf(rsiArr.get(0)).setScale(2, RoundingMode.HALF_UP))
                 .upLine(UPLINE)
                 .downLine(DOWNLINE)
-                .signal(compareRsiToBuySell(rsiArr).getValue())
+                ._key(compareRsiToBuySell(rsiArr).getValue())
                 .build();
     }
 
     private Signal compareRsiToBuySell(List<Double> data) {
-        if ((data.get(0) < DOWNLINE ) && ( data.get(1) >= DOWNLINE)) {
+        if ((data.get(0) < DOWNLINE) && (data.get(1) >= DOWNLINE)) {
             return Signal.BUY;
         }
-        if ((data.get(0) > UPLINE ) && ( data.get(1) <= UPLINE)) {
+        if ((data.get(0) > UPLINE) && (data.get(1) <= UPLINE)) {
             return Signal.SELL;
         }
         return Signal.NONE;

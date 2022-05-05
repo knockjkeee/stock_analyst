@@ -1,4 +1,4 @@
-package org.rostovpavel.webservice.services;
+package org.rostovpavel.webservice.services.indicators;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -15,36 +15,27 @@ import java.util.stream.Collectors;
 @Log4j2
 @Service
 @RequiredArgsConstructor
-public class BBService {
-    private final MAService maService;
-
+public class BBService implements IndicatorService{
     public static final int SMA_DAY_LENGTH = 20;
     public static final int SMA_MULTIPLIER_LENGTH = 2;
 
-    public BollingerBands getBollingerBands(StocksDTO data) {
+    private final MAService maService;
+
+    @Override
+    public BollingerBands getData(StocksDTO data) {
         List<Stock> stocks = data.getStocks().stream().limit(SMA_DAY_LENGTH).collect(Collectors.toList());
         BigDecimal sma20 = maService.getSMA(stocks, SMA_DAY_LENGTH);
-
-//        AtomicReference<Double> res = new AtomicReference<>(0.0);
-//        stocks.forEach(stock -> {
-//            BigDecimal subtract = stock.getClose().subtract(sma20);
-//            BigDecimal multiply = subtract.multiply(subtract);
-//            res.set(multiply.setScale(4, RoundingMode.HALF_UP).doubleValue() + res.get());
-////            res.set(Math.pow(stock.getClose().doubleValue() - sma20.doubleValue(), 2));
-//    });
 
         List<BigDecimal> collect = stocks.stream().map(stock -> {
             if (stock.getClose().compareTo(sma20) == 0){
                 return BigDecimal.ZERO;
             }else{
                 BigDecimal subtract = stock.getClose().subtract(sma20);
-                BigDecimal multiply = subtract.multiply(subtract);
-                return multiply;
+                return subtract.multiply(subtract);
             }
         }).collect(Collectors.toList());
         BigDecimal res = collect
                 .stream().reduce(BigDecimal.ZERO, BigDecimal::add);
-
 
         BigDecimal sd = BigDecimal.valueOf(Math.sqrt(res.doubleValue() / SMA_DAY_LENGTH));
         BigDecimal upperBand = sma20.add((sd).multiply(BigDecimal.valueOf(SMA_MULTIPLIER_LENGTH)));

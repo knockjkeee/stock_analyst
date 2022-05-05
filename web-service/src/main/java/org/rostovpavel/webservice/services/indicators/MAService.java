@@ -1,4 +1,4 @@
-package org.rostovpavel.webservice.services;
+package org.rostovpavel.webservice.services.indicators;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -20,10 +20,11 @@ import java.util.stream.IntStream;
 @Log4j2
 @Service
 @RequiredArgsConstructor
-public class MAService {
+public class MAService implements IndicatorService {
     private final static int[] LENGTH_MA = new int[]{20, 50, 100};
 
-    public MovingAverage getMovingAverage(StocksDTO date) {
+    @Override
+    public MovingAverage getData(StocksDTO date) {
         List<SMA> smaData = Arrays.asList(SMA.builder().build(), SMA.builder().build());
         List<EMA> emaData = Arrays.asList(EMA.builder().build(), EMA.builder().build());
         List<Stock> stocks = date.getStocks();
@@ -58,33 +59,33 @@ public class MAService {
                     .forEach(len -> {
                         switch (len) {
                             case 20 -> {
-                                smaData.get(index).setSignalSma20(
-                                        compareCloseWithMAToBuySell(stocks,
+                                smaData.get(index).set_keySma20(
+                                        compareMAToBuySell(stocks,
                                                 smaData.get(0).getSma20(), smaData.get(1).getSma20()).getValue()
                                 );
 
-                                emaData.get(index).setSignalEma20(
-                                        compareCloseWithMAToBuySell(stocks,
+                                emaData.get(index).set_keyEma20(
+                                        compareMAToBuySell(stocks,
                                                 emaData.get(0).getEma20(), emaData.get(1).getEma20()).getValue()
                                 );
                             }
                             case 50 -> {
-                                smaData.get(index).setSignalSma50(
-                                        compareCloseWithMAToBuySell(stocks,
+                                smaData.get(index).set_keySma50(
+                                        compareMAToBuySell(stocks,
                                                 smaData.get(0).getSma50(), smaData.get(1).getSma50()).getValue()
                                 );
-                                emaData.get(index).setSignalEma50(
-                                        compareCloseWithMAToBuySell(stocks,
+                                emaData.get(index).set_keyEma50(
+                                        compareMAToBuySell(stocks,
                                                 emaData.get(0).getEma50(), emaData.get(1).getEma50()).getValue()
                                 );
                             }
                             case 100 -> {
-                                smaData.get(index).setSignalSma100(
-                                        compareCloseWithMAToBuySell(stocks,
+                                smaData.get(index).set_keySma100(
+                                        compareMAToBuySell(stocks,
                                                 smaData.get(0).getSma100(), smaData.get(1).getSma100()).getValue()
                                 );
-                                emaData.get(index).setSignalEma100(
-                                        compareCloseWithMAToBuySell(stocks,
+                                emaData.get(index).set_keyEma100(
+                                        compareMAToBuySell(stocks,
                                                 emaData.get(0).getEma100(), emaData.get(1).getEma100()).getValue()
                                 );
                             }
@@ -93,8 +94,7 @@ public class MAService {
         });
     }
 
-
-    private Signal compareCloseWithMAToBuySell(List<Stock> stocks, BigDecimal curMA, BigDecimal preMA) {
+    public Signal compareMAToBuySell(List<Stock> stocks, BigDecimal curMA, BigDecimal preMA) {
         if ((stocks.get(0).getClose().compareTo(curMA) > 0) && (stocks.get(1).getClose().compareTo(preMA) <= 0)) {
             return Signal.BUY;
         }
@@ -118,7 +118,6 @@ public class MAService {
     private BigDecimal getEMA(List<Stock> stocks, BigDecimal sma, int length) {
         BigDecimal key = new BigDecimal(2).divide(new BigDecimal(length)
                 .add(new BigDecimal(1)), 5, RoundingMode.HALF_UP);
-
         return (stocks.get(0).getClose().multiply(key))
                 .add((sma.multiply(new BigDecimal(1).subtract(key)))).setScale(2, RoundingMode.HALF_UP);
     }

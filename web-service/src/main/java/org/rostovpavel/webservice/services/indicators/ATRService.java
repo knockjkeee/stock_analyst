@@ -1,4 +1,4 @@
-package org.rostovpavel.webservice.services;
+package org.rostovpavel.webservice.services.indicators;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -21,16 +21,17 @@ import java.util.stream.Stream;
 @Log4j2
 @Service
 @RequiredArgsConstructor
-public class ATRService {
+public class ATRService implements IndicatorService{
     private static final int [] DEEP_DAY = new int[] {14, 13}; //+1
 
-    public AverageTrueRange getATR(StocksDTO data) {
+    @Override
+    public AverageTrueRange getData(StocksDTO data) {
         List<Stock> stocks = IntStream.range(0, data.getStocks().size() - 1)
                 .mapToObj(i -> data.getStocks().get(i))
                 .collect(Collectors.toList());
 
         List<BigDecimal> atArr = getTR(stocks);
-        List<BigDecimal> atrArr = getATR(atArr);
+        List<BigDecimal> atrArr = getData(atArr);
 
         BigDecimal stopLoseLong = data.getStocks().get(1).getClose().subtract(atrArr.get(1).multiply(new BigDecimal(3))).setScale(3, RoundingMode.HALF_UP);
 
@@ -44,7 +45,7 @@ public class ATRService {
 
     }
 
-    private List<BigDecimal> getATR(List<BigDecimal> data) {
+    private List<BigDecimal> getData(List<BigDecimal> data) {
         List<BigDecimal> atArr = new ArrayList<>(data);
         Collections.reverse(atArr);
         AtomicReference<Double> result = new AtomicReference<>(0.0);
@@ -57,7 +58,6 @@ public class ATRService {
         Collections.reverse(collect);
         return collect;
     }
-
 
     private List<BigDecimal> getTR(List<Stock> stocks) {
 

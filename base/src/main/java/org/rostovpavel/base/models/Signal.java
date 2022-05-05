@@ -2,7 +2,9 @@ package org.rostovpavel.base.models;
 
 public enum Signal {
     BUY("BUY"),
+    BUYPLUS("BUY++"),
     SELL("SELL"),
+    SELLMINUS("SELL--"),
     NONE("");
 
     private final String value;

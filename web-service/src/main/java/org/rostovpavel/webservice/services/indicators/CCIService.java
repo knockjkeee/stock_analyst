@@ -1,4 +1,4 @@
-package org.rostovpavel.webservice.services;
+package org.rostovpavel.webservice.services.indicators;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -16,12 +16,13 @@ import java.util.stream.IntStream;
 @Log4j2
 @Service
 @RequiredArgsConstructor
-public class CCIService {
+public class CCIService implements IndicatorService {
     public static final int RANGE = 20;
     private static final int UPLINE = 100;
     private static final int DOWNLINE = -100;
 
-    public CommodityChannel getCCI(StocksDTO date){
+    @Override
+    public CommodityChannel getData(StocksDTO date) {
         List<Stock> stocks = date.getStocks();
         List<Double> tpData = IntStream.range(0, RANGE).mapToObj(index -> {
             Stock stock = stocks.get(index);
@@ -30,7 +31,7 @@ public class CCIService {
 
         double smaOfTP = getSmaOfTP(tpData);
         double meanDeviation = getMeanDeviation(tpData, smaOfTP);
-        double cci = getCCI(tpData, smaOfTP, meanDeviation);
+        double cci = getData(tpData, smaOfTP, meanDeviation);
 
         return CommodityChannel.builder()
                 .currentCCI(new BigDecimal(cci).setScale(2, RoundingMode.HALF_UP))
@@ -40,7 +41,7 @@ public class CCIService {
 
     }
 
-    private double getCCI(List<Double> tpData, double smaOfTP, double meanDeviation) {
+    private double getData(List<Double> tpData, double smaOfTP, double meanDeviation) {
         return (tpData.get(0) - smaOfTP) / (0.015 * meanDeviation);
     }
 

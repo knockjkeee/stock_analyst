@@ -1,4 +1,4 @@
-package org.rostovpavel.webservice.services;
+package org.rostovpavel.webservice.services.indicators;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -15,15 +15,16 @@ import java.util.stream.IntStream;
 @Log4j2
 @Service
 @RequiredArgsConstructor
-public class RSIStochService {
+public class RSIStochService implements IndicatorService {
     private static final int RANGE = 14;
     private static final double UPLINE = 0.8;
     private static final double DOWNLINE = 0.2;
 
     private final RSIService rsiService;
 
-    public RelativeStrengthIndexStochastic getStochRSI(StocksDTO data) {
-        List<Double> collect = IntStream.range(0, RANGE).mapToObj(index -> rsiService.getRSI(index, data).getCurrentRSI().doubleValue()).collect(Collectors.toList());
+    @Override
+    public RelativeStrengthIndexStochastic getData(StocksDTO data) {
+        List<Double> collect = IntStream.range(0, RANGE).mapToObj(index -> rsiService.getData(index, data).getCurrentRSI().doubleValue()).collect(Collectors.toList());
 
         double min = collect.stream().mapToDouble(Double::doubleValue).min().getAsDouble();
         double max = collect.stream().mapToDouble(Double::doubleValue).max().getAsDouble();

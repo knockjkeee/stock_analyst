@@ -15,6 +15,7 @@ import org.rostovpavel.base.models.RSI_SO.RelativeStrengthIndexStochastic;
 import org.rostovpavel.base.models.SO.StochasticOscillator;
 import org.rostovpavel.base.models.Ticker;
 import org.rostovpavel.base.models.TickerRequestBody;
+import org.rostovpavel.webservice.services.indicators.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,14 +53,14 @@ public class TickerDataService {
 
     private Ticker generatedDataToTicker(String ticker, StocksDTO data) {
         BigDecimal price = data.getStocks().get(0).getClose().setScale(2, RoundingMode.HALF_UP);
-        MovingAverage movingAverage = maService.getMovingAverage(data);
-        CommodityChannel cci = cciService.getCCI(data);
-        StochasticOscillator so = soService.getSO(data);
-        RelativeStrengthIndex rsi = rsiService.getRSI(data);
-        RelativeStrengthIndexStochastic stochRSI = rsiStochService.getStochRSI(data);
-        MovingAverageConvergenceDivergence macd = macdService.getMACD(data);
-        BollingerBands bb = bbService.getBollingerBands(data);
-        AverageTrueRange atr = atrService.getATR(data);
+        MovingAverage movingAverage = maService.getData(data);
+        CommodityChannel cci = cciService.getData(data);
+        StochasticOscillator so = soService.getData(data);
+        RelativeStrengthIndex rsi = rsiService.getData(data);
+        RelativeStrengthIndexStochastic stochRSI = rsiStochService.getData(data);
+        MovingAverageConvergenceDivergence macd = macdService.getData(data);
+        BollingerBands bb = bbService.getData(data);
+        AverageTrueRange atr = atrService.getData(data);
 
         return Ticker.builder()
                 .name(ticker)

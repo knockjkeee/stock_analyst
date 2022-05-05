@@ -2,15 +2,16 @@ package org.rostovpavel.base.models.SO;
 
 import lombok.Builder;
 import lombok.Data;
+import org.rostovpavel.base.models.Indicator;
 
 import java.math.BigDecimal;
 
 @Data
 @Builder
-public class StochasticOscillator {
+public class StochasticOscillator implements Indicator {
     int upLine;
     BigDecimal currentK;
     BigDecimal currentD;
     int downLine;
-    String signal;
+    String _key;
 }
