@@ -12,4 +12,9 @@ public class AverageTrueRange implements Indicator {
     BigDecimal atr;
     BigDecimal stopLoseLong;
     BigDecimal stopLoseShort;
+
+    @Override
+    public int getScore() {
+        return 0;
+    }
 }

@@ -12,4 +12,9 @@ public class RelativeStrengthIndexStochastic implements Indicator {
     double upLine;
     BigDecimal currentStochRSI;
     double downLine;
+
+    @Override
+    public int getScore() {
+        return 0;
+    }
 }

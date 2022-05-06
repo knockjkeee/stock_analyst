@@ -14,4 +14,9 @@ public class StochasticOscillator implements Indicator {
     BigDecimal currentD;
     int downLine;
     String _key;
+
+    @Override
+    public int getScore() {
+        return 1;
+    }
 }

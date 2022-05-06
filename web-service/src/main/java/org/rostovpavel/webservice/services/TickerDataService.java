@@ -51,7 +51,7 @@ public class TickerDataService {
         return new TickersDTO(collect);
     }
 
-    private Ticker generatedDataToTicker(String ticker, StocksDTO data) {
+    private Ticker generatedDataToTicker(String name, StocksDTO data) {
         BigDecimal price = data.getStocks().get(0).getClose().setScale(2, RoundingMode.HALF_UP);
         MovingAverage movingAverage = maService.getData(data);
         CommodityChannel cci = cciService.getData(data);
@@ -62,8 +62,8 @@ public class TickerDataService {
         BollingerBands bb = bbService.getData(data);
         AverageTrueRange atr = atrService.getData(data);
 
-        return Ticker.builder()
-                .name(ticker)
+        Ticker ticker = Ticker.builder()
+                .name(name)
                 .price(price)
                 .candle(data.getStocks().size())
                 .movingAverage(movingAverage)
@@ -75,6 +75,10 @@ public class TickerDataService {
                 .bollingerBands(bb)
                 .atr(atr)
                 .build();
+        int scoreIndicators = ticker.getScoreIndicators();
+        ticker.setScore(scoreIndicators);
+
+        return ticker;
     }
 
 }

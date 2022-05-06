@@ -13,4 +13,9 @@ public class RelativeStrengthIndex implements Indicator {
     BigDecimal currentRSI;
     int downLine;
     String _key;
+
+    @Override
+    public int getScore() {
+        return 0;
+    }
 }

@@ -9,4 +9,9 @@ import org.rostovpavel.base.models.Indicator;
 public class MovingAverage implements Indicator {
     SMA sma;
     EMA ema;
+
+    @Override
+    public int getScore() {
+        return 0;
+    }
 }

@@ -12,4 +12,9 @@ public class CommodityChannel implements Indicator {
     int upLine;
     BigDecimal currentCCI;
     int downLine;
+
+    @Override
+    public int getScore() {
+        return 0;
+    }
 }

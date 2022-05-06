@@ -13,4 +13,11 @@ public class BollingerBands implements Indicator {
     BigDecimal upperBand;
     BigDecimal lowerBand;
     BigDecimal widthBand;
+    String wbProcent;
+    String _key;
+
+    @Override
+    public int getScore() {
+        return 0;
+    }
 }

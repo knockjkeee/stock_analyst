@@ -13,4 +13,9 @@ public class MovingAverageConvergenceDivergence implements Indicator {
     BigDecimal signal;
     BigDecimal histogram;
     String _key;
+
+    @Override
+    public int getScore() {
+        return 0;
+    }
 }
