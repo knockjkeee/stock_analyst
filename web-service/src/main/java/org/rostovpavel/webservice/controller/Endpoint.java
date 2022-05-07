@@ -27,7 +27,7 @@ public record Endpoint(TickerDataService tickerDataService) {
     @GetMapping("/test")
     public TickersDTO getTest(){
         List<String> date = Arrays.asList(
-                "CLOV", "ENDP", "TAL", "SPCE", "ASTR", "SNAP", "CCL", "CNK", "RIG", "FTI"
+                "CLOV", "ENDP", "TAL", "SPCE", "ASTR", "SNAP", "CCL", "CNK", "RIG", "FTI", "LI", "WISH", "AAL", "CCXI", "VIR", "SAVA", "ZY", "DNLI", "F", "AA"
         );
         TickerRequestBody tickerRequestBody = new TickerRequestBody();
         tickerRequestBody.setTickers(date);

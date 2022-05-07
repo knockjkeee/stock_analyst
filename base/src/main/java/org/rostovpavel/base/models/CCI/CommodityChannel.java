@@ -14,7 +14,31 @@ public class CommodityChannel implements Indicator {
     int downLine;
 
     @Override
-    public int getScore() {
-        return 0;
+    public int getScore(BigDecimal price) {
+        return prepareScore(price);
+    }
+
+    @Override
+    public int prepareScore(BigDecimal price) {
+        int sum = 0;
+        sum = getScoreToKey(sum, price);
+        sum = getScoreToLine(sum, price);
+        return sum;
+    }
+
+    @Override
+    public int getScoreToKey(int sum, BigDecimal price) {
+        return sum;
+    }
+
+    @Override
+    public int getScoreToLine(int sum, BigDecimal price) {
+        if (currentCCI.compareTo(BigDecimal.valueOf(upLine)) > 0) {
+            sum -= 25;
+        }
+        if (currentCCI.compareTo(BigDecimal.valueOf(downLine)) < 0) {
+            sum +=25;
+        }
+        return sum;
     }
 }

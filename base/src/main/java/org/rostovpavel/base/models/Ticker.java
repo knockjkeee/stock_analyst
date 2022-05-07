@@ -34,7 +34,7 @@ public class Ticker {
 
     public int getScoreIndicators() {
         List<Indicator> indicators = getIndicators();
-        return indicators.stream().mapToInt(Indicator::getScore).sum();
+        return indicators.stream().mapToInt(ind -> ind.getScore(price)).sum();
     }
 
     private List<Indicator> getIndicators() {

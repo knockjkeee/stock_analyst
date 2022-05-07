@@ -14,7 +14,22 @@ public class AverageTrueRange implements Indicator {
     BigDecimal stopLoseShort;
 
     @Override
-    public int getScore() {
+    public int getScore(BigDecimal price) {
+        return 0;
+    }
+
+    @Override
+    public int prepareScore(BigDecimal price) {
+        return 0;
+    }
+
+    @Override
+    public int getScoreToKey(int sum, BigDecimal price) {
+        return 0;
+    }
+
+    @Override
+    public int getScoreToLine(int sum, BigDecimal price) {
         return 0;
     }
 }
