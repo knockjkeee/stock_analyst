@@ -14,6 +14,8 @@ public class RelativeStrengthIndex implements Indicator {
     BigDecimal currentRSI;
     int downLine;
     String _key;
+    int scoreToKeys;
+    int scoreToLine;
 
     @Override
     public int getScore(BigDecimal price) {
@@ -30,23 +32,31 @@ public class RelativeStrengthIndex implements Indicator {
 
     @Override
     public int getScoreToKey(int sum, BigDecimal price) {
+        int temp = 0;
         if (Signal.BUY.getValue().equals(_key)) {
-            sum += 50;
+            sum += 75;
+            temp += 75;
         }
         if (Signal.SELL.getValue().equals(_key)) {
-            sum -= 50;
+            sum -= 75;
+            temp -= 75;
         }
+        setScoreToKeys(temp);
         return sum;
     }
 
     @Override
     public int getScoreToLine(int sum, BigDecimal price) {
-        if (currentRSI.compareTo(BigDecimal.valueOf(upLine)) > 0) {
-            sum -= 50;
-        }
+        int temp = 0;
         if (currentRSI.compareTo(BigDecimal.valueOf(downLine)) < 0) {
-            sum +=50;
+            sum +=25;
+            temp +=25;
         }
+        if (currentRSI.compareTo(BigDecimal.valueOf(upLine)) > 0) {
+            sum -= 25;
+            temp -= 25;
+        }
+        setScoreToLine(temp);
         return sum;
     }
 }

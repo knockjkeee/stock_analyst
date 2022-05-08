@@ -12,10 +12,13 @@ import java.math.BigDecimal;
 public class MovingAverage implements Indicator {
     SMA sma;
     EMA ema;
+    int innerScore;
 
     @Override
     public int getScore(BigDecimal price) {
-        return prepareScore(price);
+        int i = prepareScore(price);
+        setInnerScore(i);
+        return i;
     }
 
     @Override
@@ -37,7 +40,6 @@ public class MovingAverage implements Indicator {
     public int getScoreToLine(int sum, BigDecimal price) {
         return sum;
     }
-
 
     private int getScoreToBUY(int sum, BigDecimal price) {
         if (Signal.BUY.getValue().equals(getSma()._keySma20)) {

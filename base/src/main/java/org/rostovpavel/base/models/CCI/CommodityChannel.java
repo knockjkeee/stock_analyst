@@ -3,6 +3,7 @@ package org.rostovpavel.base.models.CCI;
 import lombok.Builder;
 import lombok.Data;
 import org.rostovpavel.base.models.Indicator;
+import org.rostovpavel.base.models.Signal;
 
 import java.math.BigDecimal;
 
@@ -12,6 +13,9 @@ public class CommodityChannel implements Indicator {
     int upLine;
     BigDecimal currentCCI;
     int downLine;
+    String _key;
+    int scoreToKeys;
+    int scoreToLine;
 
     @Override
     public int getScore(BigDecimal price) {
@@ -28,17 +32,31 @@ public class CommodityChannel implements Indicator {
 
     @Override
     public int getScoreToKey(int sum, BigDecimal price) {
+        int temp = 0;
+        if (Signal.BUY.getValue().equals(_key)) {
+            sum += 25;
+            temp += 25;
+        }
+        if (Signal.SELL.getValue().equals(_key)) {
+            sum -= 25;
+            temp -= 25;
+        }
+        setScoreToKeys(temp);
         return sum;
     }
 
     @Override
     public int getScoreToLine(int sum, BigDecimal price) {
+        int temp = 0;
         if (currentCCI.compareTo(BigDecimal.valueOf(upLine)) > 0) {
             sum -= 25;
+            temp -= 25;
         }
         if (currentCCI.compareTo(BigDecimal.valueOf(downLine)) < 0) {
             sum +=25;
+            temp +=25;
         }
+        setScoreToLine(temp);
         return sum;
     }
 }

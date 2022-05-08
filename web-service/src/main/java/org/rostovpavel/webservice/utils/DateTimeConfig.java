@@ -6,7 +6,7 @@ public enum DateTimeConfig {
     WEDNESDAY(1, 0, 2, 1, 3, 2, 5, 4), //+3 -> +2
     THURSDAY(1, 0, 2, 1, 3, 2, 4, 3),
     FRIDAY(1, 0, 2, 1, 3, 2, 4, 3),
-    //TODO test day
+    //test day
     SATURDAY(1, 0, 2, 1, 3, 2, 4, 3),
     SUNDAY(1, 0, 2, 1, 3, 2, 4, 3);
 

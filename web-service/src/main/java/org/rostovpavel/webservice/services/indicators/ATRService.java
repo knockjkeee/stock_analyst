@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.rostovpavel.base.dto.StocksDTO;
 import org.rostovpavel.base.models.ATR.AverageTrueRange;
+import org.rostovpavel.base.models.Signal;
 import org.rostovpavel.base.models.Stock;
 import org.springframework.stereotype.Service;
 
@@ -41,8 +42,35 @@ public class ATRService implements IndicatorService{
                 .atr(atrArr.get(0).setScale(3, RoundingMode.HALF_UP))
                 .stopLoseLong(stopLoseLong)
                 .stopLoseShort(stopLoseSort)
+                ._key(compareATRToBuySell(atrArr).getValue())
                 .build();
+    }
 
+    private Signal compareATRToBuySell(List<BigDecimal> atr){
+        if (((atr.get(1).compareTo(atr.get(2)) > 0)
+                && (atr.get(0).compareTo(atr.get(1)) > 0)) ||
+                ((atr.get(1).compareTo(atr.get(2)) < 0)
+                        && (atr.get(0).compareTo(atr.get(1)) > 0)
+                        && (atr.get(0).compareTo(atr.get(2)) > 0))) {
+            return Signal.BUYPLUS;
+        }
+        if ((atr.get(1).compareTo(atr.get(2)) < 0)
+                && (atr.get(0).compareTo(atr.get(1)) > 0)) {
+            return Signal.BUY;
+        }
+
+        if (((atr.get(1).compareTo(atr.get(2)) < 0)
+                && (atr.get(0).compareTo(atr.get(1)) < 0)) ||
+                ((atr.get(1).compareTo(atr.get(2)) > 0)
+                        && (atr.get(0).compareTo(atr.get(1)) < 0)
+                        && (atr.get(0).compareTo(atr.get(2)) < 0))) {
+            return Signal.SELLMINUS;
+        }
+        if ((atr.get(1).compareTo(atr.get(2)) > 0)
+                && (atr.get(0).compareTo(atr.get(1)) < 0)) {
+            return Signal.SELL;
+        }
+        return Signal.NONE;
     }
 
     private List<BigDecimal> getData(List<BigDecimal> data) {
