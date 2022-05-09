@@ -67,7 +67,7 @@ public class BBService implements IndicatorService{
                 .lowerBand(loBandArr.get(0).setScale(3, RoundingMode.HALF_UP))
                 .widthBand(bandArr.get(0).setScale(3, RoundingMode.HALF_UP))
                 ._key(compareBBToBuySell(closeArr, upBandArr, loBandArr).getValue())
-                .wbProcent(procent + "%")
+                .wbProcent(procent.setScale(2, RoundingMode.HALF_UP))
                 .build();
     }
 

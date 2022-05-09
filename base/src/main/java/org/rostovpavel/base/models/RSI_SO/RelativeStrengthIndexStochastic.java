@@ -3,6 +3,7 @@ package org.rostovpavel.base.models.RSI_SO;
 import lombok.Builder;
 import lombok.Data;
 import org.rostovpavel.base.models.Indicator;
+import org.rostovpavel.base.models.Signal;
 
 import java.math.BigDecimal;
 
@@ -12,6 +13,8 @@ public class RelativeStrengthIndexStochastic implements Indicator {
     double upLine;
     BigDecimal currentStochRSI;
     double downLine;
+    String _key;
+    int scoreToKeys;
     int scoreToLine;
 
     @Override
@@ -29,7 +32,16 @@ public class RelativeStrengthIndexStochastic implements Indicator {
 
     @Override
     public int getScoreToKey(int sum, BigDecimal price) {
-        //TODO add KEY
+        int temp = 0;
+        if (Signal.BUY.getValue().equals(_key)) {
+            sum += 25;
+            temp += 25;
+        }
+        if (Signal.SELL.getValue().equals(_key)) {
+            sum -= 25;
+            temp -= 25;
+        }
+        setScoreToKeys(temp);
         return sum;
     }
 

@@ -22,8 +22,8 @@ import java.util.stream.Stream;
 @Log4j2
 @Service
 @RequiredArgsConstructor
-public class ATRService implements IndicatorService{
-    private static final int [] DEEP_DAY = new int[] {14, 13}; //+1
+public class ATRService implements IndicatorService {
+    private static final int[] DEEP_DAY = new int[]{14, 13}; //+1
 
     @Override
     public AverageTrueRange getData(StocksDTO data) {
@@ -46,29 +46,28 @@ public class ATRService implements IndicatorService{
                 .build();
     }
 
-    private Signal compareATRToBuySell(List<BigDecimal> atr){
-        if (((atr.get(1).compareTo(atr.get(2)) > 0)
-                && (atr.get(0).compareTo(atr.get(1)) > 0)) ||
-                ((atr.get(1).compareTo(atr.get(2)) < 0)
-                        && (atr.get(0).compareTo(atr.get(1)) > 0)
-                        && (atr.get(0).compareTo(atr.get(2)) > 0))) {
-            return Signal.BUYPLUS;
-        }
-        if ((atr.get(1).compareTo(atr.get(2)) < 0)
+    private Signal compareATRToBuySell(List<BigDecimal> atr) {
+        if ((atr.get(4).compareTo(atr.get(5)) > 0)
+                && (atr.get(3).compareTo(atr.get(4)) > 0)
+                && (atr.get(2).compareTo(atr.get(3)) > 0)
+                && (atr.get(1).compareTo(atr.get(2)) > 0)
                 && (atr.get(0).compareTo(atr.get(1)) > 0)) {
-            return Signal.BUY;
+            return Signal.VAlHIGH;
         }
-
-        if (((atr.get(1).compareTo(atr.get(2)) < 0)
-                && (atr.get(0).compareTo(atr.get(1)) < 0)) ||
-                ((atr.get(1).compareTo(atr.get(2)) > 0)
-                        && (atr.get(0).compareTo(atr.get(1)) < 0)
-                        && (atr.get(0).compareTo(atr.get(2)) < 0))) {
-            return Signal.SELLMINUS;
+        if ((atr.get(3).compareTo(atr.get(4)) > 0)
+                && (atr.get(2).compareTo(atr.get(3)) > 0)
+                && (atr.get(1).compareTo(atr.get(2)) > 0)
+                && (atr.get(0).compareTo(atr.get(1)) > 0)) {
+            return Signal.VAlMEDIUM;
+        }
+        if ((atr.get(2).compareTo(atr.get(3)) > 0)
+                && (atr.get(1).compareTo(atr.get(2)) > 0)
+                && (atr.get(0).compareTo(atr.get(1)) > 0)) {
+            return Signal.VAlLOW;
         }
         if ((atr.get(1).compareTo(atr.get(2)) > 0)
-                && (atr.get(0).compareTo(atr.get(1)) < 0)) {
-            return Signal.SELL;
+                && (atr.get(0).compareTo(atr.get(1)) > 0)) {
+            return Signal.VAlSMALL;
         }
         return Signal.NONE;
     }
@@ -89,19 +88,19 @@ public class ATRService implements IndicatorService{
 
     private List<BigDecimal> getTR(List<Stock> stocks) {
 
-       return IntStream.range(0, stocks.size() - 14).mapToObj(index -> {
-           BigDecimal hiLow = (stocks.get(index).getHigh().subtract(stocks.get(index).getLow())).abs();
-           if (stocks.get(index).getHigh().compareTo(stocks.get(index).getLow()) == 0) {
-               hiLow = BigDecimal.ZERO;
-           }
+        return IntStream.range(0, stocks.size() - 14).mapToObj(index -> {
+            BigDecimal hiLow = (stocks.get(index).getHigh().subtract(stocks.get(index).getLow())).abs();
+            if (stocks.get(index).getHigh().compareTo(stocks.get(index).getLow()) == 0) {
+                hiLow = BigDecimal.ZERO;
+            }
             BigDecimal hiClose = (stocks.get(index).getHigh().subtract(stocks.get(index + 1).getClose())).abs();
-           if (stocks.get(index).getHigh().compareTo(stocks.get(index + 1).getClose()) == 0) {
-               hiClose = BigDecimal.ZERO;
-           }
+            if (stocks.get(index).getHigh().compareTo(stocks.get(index + 1).getClose()) == 0) {
+                hiClose = BigDecimal.ZERO;
+            }
             BigDecimal closeLow = (stocks.get(index + 1).getClose().subtract(stocks.get(index).getLow())).abs();
-           if (stocks.get(index).getLow().compareTo(stocks.get(index + 1).getClose()) == 0) {
-               closeLow = BigDecimal.ZERO;
-           }
+            if (stocks.get(index).getLow().compareTo(stocks.get(index + 1).getClose()) == 0) {
+                closeLow = BigDecimal.ZERO;
+            }
 
             return Stream.of(hiLow, hiClose, closeLow).max(Comparator.naturalOrder()).orElse(BigDecimal.ZERO);
         }).collect(Collectors.toList());

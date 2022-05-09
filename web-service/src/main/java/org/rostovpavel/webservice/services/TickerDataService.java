@@ -2,6 +2,7 @@ package org.rostovpavel.webservice.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.NotNull;
 import org.rostovpavel.base.dto.StocksDTO;
 import org.rostovpavel.base.dto.StocksDataDTO;
 import org.rostovpavel.base.dto.TickersDTO;
@@ -44,7 +45,6 @@ public class TickerDataService {
         return generatedDataToTicker(ticker, stockDataByTicker);
     }
 
-
     public TickersDTO getDataByTickers(@RequestBody TickerRequestBody data){
         StocksDataDTO stockDataByTikers = stockService.getStockDataByTikers(data);
         List<Ticker> collect = stockDataByTikers.getStocks().stream().map(stockData -> generatedDataToTicker(stockData.getName(), stockData.getCandle())).collect(Collectors.toList());
@@ -53,6 +53,11 @@ public class TickerDataService {
 
     private Ticker generatedDataToTicker(String name, StocksDTO data) {
         BigDecimal price = data.getStocks().get(0).getClose().setScale(2, RoundingMode.HALF_UP);
+        return generateTicker(name, data, price);
+    }
+
+    @NotNull
+    private Ticker generateTicker(String name, StocksDTO data, BigDecimal price) {
         MovingAverage movingAverage = maService.getData(data);
         CommodityChannel cci = cciService.getData(data);
         StochasticOscillator so = soService.getData(data);
@@ -77,7 +82,7 @@ public class TickerDataService {
                 .build();
         int scoreIndicators = ticker.getScoreIndicators();
         ticker.setScore(scoreIndicators);
-
+        ticker.setPowerVal(atr.getScoreVolatility());
         return ticker;
     }
 

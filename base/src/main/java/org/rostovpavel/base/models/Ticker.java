@@ -23,6 +23,7 @@ public class Ticker {
     BigDecimal price;
     int candle;
     int score;
+    int powerVal;
     MovingAverage movingAverage;
     RelativeStrengthIndex rsi;
     RelativeStrengthIndexStochastic stochRSI;

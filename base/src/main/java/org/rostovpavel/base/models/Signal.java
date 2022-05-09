@@ -5,6 +5,10 @@ public enum Signal {
     BUYPLUS("BUY++"),
     SELL("SELL"),
     SELLMINUS("SELL--"),
+    VAlHIGH("HIGH"),
+    VAlMEDIUM("MEDIUM"),
+    VAlLOW("LOW"),
+    VAlSMALL("SMALL"),
     NONE("");
 
     private final String value;

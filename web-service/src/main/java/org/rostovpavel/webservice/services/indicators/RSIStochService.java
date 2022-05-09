@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.rostovpavel.base.dto.StocksDTO;
 import org.rostovpavel.base.models.RSI_SO.RelativeStrengthIndexStochastic;
+import org.rostovpavel.base.models.Signal;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -24,15 +26,34 @@ public class RSIStochService implements IndicatorService {
 
     @Override
     public RelativeStrengthIndexStochastic getData(StocksDTO data) {
-        List<Double> collect = IntStream.range(0, RANGE).mapToObj(index -> rsiService.getData(index, data).getCurrentRSI().doubleValue()).collect(Collectors.toList());
+        List<BigDecimal> rsiStochArr  = new ArrayList<>();
 
-        double min = collect.stream().mapToDouble(Double::doubleValue).min().getAsDouble();
-        double max = collect.stream().mapToDouble(Double::doubleValue).max().getAsDouble();
-        double stochRSI = (collect.get(0) - min) / (max - min);
+        IntStream.range(0, 2).forEach(i -> {
+            List<Double> collect = IntStream.range(i, RANGE + i).mapToObj(index -> rsiService.getData(index, data).getCurrentRSI().doubleValue()).collect(Collectors.toList());
+
+            double min = collect.stream().mapToDouble(Double::doubleValue).min().getAsDouble();
+            double max = collect.stream().mapToDouble(Double::doubleValue).max().getAsDouble();
+            double stochRSI = (collect.get(0) - min) / (max - min);
+            rsiStochArr.add(BigDecimal.valueOf(stochRSI));
+        });
+
         return RelativeStrengthIndexStochastic.builder()
                 .upLine(UPLINE)
-                .currentStochRSI(new BigDecimal(stochRSI).setScale(2, RoundingMode.HALF_UP))
+                .currentStochRSI(rsiStochArr.get(0).setScale(2, RoundingMode.HALF_UP))
                 .downLine(DOWNLINE)
+                ._key(compareRSIStochToBuySell(rsiStochArr).getValue())
                 .build();
+    }
+
+
+    private Signal compareRSIStochToBuySell(List<BigDecimal> rsiStoch) {
+
+        if ((rsiStoch.get(0).compareTo(BigDecimal.valueOf(DOWNLINE)) < 0) && (rsiStoch.get(1).compareTo(BigDecimal.valueOf(DOWNLINE)) >= 0)) {
+            return Signal.BUY;
+        }
+        if ((rsiStoch.get(0).compareTo(BigDecimal.valueOf(UPLINE)) > 0) && (rsiStoch.get(1).compareTo(BigDecimal.valueOf(UPLINE)) <= 0)) {
+            return Signal.SELL;
+        }
+        return Signal.NONE;
     }
 }

@@ -14,7 +14,7 @@ public class AverageTrueRange implements Indicator {
     BigDecimal stopLoseLong;
     BigDecimal stopLoseShort;
     String _key;
-    int scoreToKeys;
+    int scoreVolatility;
 
     @Override
     public int getScore(BigDecimal price) {
@@ -26,29 +26,24 @@ public class AverageTrueRange implements Indicator {
         int sum = 0;
         sum = getScoreToKey(sum, price);
         sum = getScoreToLine(sum, price);
-        return sum;
+        setScoreVolatility(sum);
+        return 0;
     }
 
     @Override
     public int getScoreToKey(int sum, BigDecimal price) {
-        int temp = 0;
-        if (Signal.BUY.getValue().equals(_key)) {
+        if (Signal.VAlSMALL.getValue().equals(_key)) {
             sum += 25;
-            temp += 25;
         }
-        if (Signal.SELL.getValue().equals(_key)) {
-            sum -= 25;
-            temp -= 25;
-        }
-        if (Signal.BUYPLUS.getValue().equals(_key)) {
+        if (Signal.VAlLOW.getValue().equals(_key)) {
             sum += 50;
-            temp += 50;
         }
-        if (Signal.SELLMINUS.getValue().equals(_key)) {
-            sum -= 50;
-            temp -= 50;
+        if (Signal.VAlMEDIUM.getValue().equals(_key)) {
+            sum += 75;
         }
-        setScoreToKeys(temp);
+        if (Signal.VAlHIGH.getValue().equals(_key)) {
+            sum += 100;
+        }
         return sum;
     }
 
