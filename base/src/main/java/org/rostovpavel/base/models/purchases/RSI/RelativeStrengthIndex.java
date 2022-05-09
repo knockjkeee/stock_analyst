@@ -1,17 +1,17 @@
-package org.rostovpavel.base.models.CCI;
+package org.rostovpavel.base.models.purchases.RSI;
 
 import lombok.Builder;
 import lombok.Data;
-import org.rostovpavel.base.models.Indicator;
+import org.rostovpavel.base.models.IndicatorPurchases;
 import org.rostovpavel.base.models.Signal;
 
 import java.math.BigDecimal;
 
 @Data
 @Builder
-public class CommodityChannel implements Indicator {
+public class RelativeStrengthIndex implements IndicatorPurchases {
     int upLine;
-    BigDecimal currentCCI;
+    BigDecimal currentRSI;
     int downLine;
     String _key;
     int scoreToKeys;
@@ -34,12 +34,12 @@ public class CommodityChannel implements Indicator {
     public int getScoreToKey(int sum, BigDecimal price) {
         int temp = 0;
         if (Signal.BUY.getValue().equals(_key)) {
-            sum += 25;
-            temp += 25;
+            sum += 75;
+            temp += 75;
         }
         if (Signal.SELL.getValue().equals(_key)) {
-            sum -= 25;
-            temp -= 25;
+            sum -= 75;
+            temp -= 75;
         }
         setScoreToKeys(temp);
         return sum;
@@ -48,13 +48,13 @@ public class CommodityChannel implements Indicator {
     @Override
     public int getScoreToLine(int sum, BigDecimal price) {
         int temp = 0;
-        if (currentCCI.compareTo(BigDecimal.valueOf(upLine)) > 0) {
+        if (currentRSI.compareTo(BigDecimal.valueOf(downLine)) < 0) {
+            sum += 25;
+            temp += 25;
+        }
+        if (currentRSI.compareTo(BigDecimal.valueOf(upLine)) > 0) {
             sum -= 25;
             temp -= 25;
-        }
-        if (currentCCI.compareTo(BigDecimal.valueOf(downLine)) < 0) {
-            sum +=25;
-            temp +=25;
         }
         setScoreToLine(temp);
         return sum;

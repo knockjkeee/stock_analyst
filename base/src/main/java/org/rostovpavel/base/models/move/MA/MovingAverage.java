@@ -1,15 +1,15 @@
-package org.rostovpavel.base.models.MA;
+package org.rostovpavel.base.models.move.MA;
 
 import lombok.Builder;
 import lombok.Data;
-import org.rostovpavel.base.models.Indicator;
+import org.rostovpavel.base.models.IndicatorMove;
 import org.rostovpavel.base.models.Signal;
 
 import java.math.BigDecimal;
 
 @Data
 @Builder
-public class MovingAverage implements Indicator {
+public class MovingAverage implements IndicatorMove {
     SMA sma;
     EMA ema;
     int innerScore;

@@ -1,23 +1,25 @@
-package org.rostovpavel.base.models.SO;
+package org.rostovpavel.base.models.move.BB;
 
 import lombok.Builder;
 import lombok.Data;
 import org.rostovpavel.base.models.Indicator;
+import org.rostovpavel.base.models.IndicatorMove;
 import org.rostovpavel.base.models.Signal;
 
 import java.math.BigDecimal;
 
 @Data
 @Builder
-public class StochasticOscillator implements Indicator {
-    int upLine;
-    BigDecimal currentK;
-    BigDecimal currentD;
-    int downLine;
-    String _key;
+public class BollingerBands implements IndicatorMove {
+    BigDecimal middleBand;
+    BigDecimal upperBand;
+    BigDecimal lowerBand;
+    BigDecimal widthBand;
+    BigDecimal wbProcent;
     int scoreToKeys;
     int scoreToLine;
     int scoreToSignal;
+    String _key;
 
     @Override
     public int getScore(BigDecimal price) {
@@ -51,17 +53,13 @@ public class StochasticOscillator implements Indicator {
     @Override
     public int getScoreToLine(int sum, BigDecimal price) {
         int temp = 0;
-        if ((currentD.compareTo(BigDecimal.valueOf(downLine)) < 0)
-                && (currentK.compareTo(BigDecimal.valueOf(downLine)) < 0)
-        ) {
+        if ( (price.compareTo(upperBand) < 0) && (price.compareTo(middleBand) > 0) ) {
             sum += 25;
             temp += 25;
         }
-        if ((currentD.compareTo(BigDecimal.valueOf(upLine)) > 0)
-                && (currentK.compareTo(BigDecimal.valueOf(upLine)) > 0)
-        ) {
-            sum -= 25;
-            temp -= 25;
+        if ( (price.compareTo(lowerBand) > 0) && (price.compareTo(middleBand) < 0) ) {
+            sum -=25;
+            temp -=25;
         }
         setScoreToLine(temp);
         return sum;
@@ -69,15 +67,21 @@ public class StochasticOscillator implements Indicator {
 
     private int getScoreToSignal(int sum, BigDecimal price) {
         int temp = 0;
-        if (currentD.compareTo(currentK) < 0) {
-            sum += 25;
-            temp += 25;
+        //TODO check !=0
+        if (getScoreToLine() > 0) {
+            if (wbProcent.compareTo(BigDecimal.valueOf(6)) > 0) {
+                sum += 25;
+                temp += 25;
+            }
         }
-        if (currentD.compareTo(currentK) > 0) {
-            sum -= 25;
-            temp -= 25;
+        if (getScoreToLine() < 0) {
+            if (wbProcent.compareTo(BigDecimal.valueOf(6)) > 0) {
+                sum -= 25;
+                temp -= 25;
+            }
         }
         setScoreToSignal(temp);
         return sum;
     }
+
 }

@@ -3,14 +3,14 @@ package org.rostovpavel.base.models;
 
 import lombok.Builder;
 import lombok.Data;
-import org.rostovpavel.base.models.ATR.AverageTrueRange;
-import org.rostovpavel.base.models.BB.BollingerBands;
-import org.rostovpavel.base.models.CCI.CommodityChannel;
-import org.rostovpavel.base.models.MA.MovingAverage;
-import org.rostovpavel.base.models.MACD.MovingAverageConvergenceDivergence;
-import org.rostovpavel.base.models.RSI.RelativeStrengthIndex;
-import org.rostovpavel.base.models.RSI_SO.RelativeStrengthIndexStochastic;
-import org.rostovpavel.base.models.SO.StochasticOscillator;
+import org.rostovpavel.base.models.power.ATR.AverageTrueRange;
+import org.rostovpavel.base.models.move.BB.BollingerBands;
+import org.rostovpavel.base.models.purchases.CCI.CommodityChannel;
+import org.rostovpavel.base.models.move.MA.MovingAverage;
+import org.rostovpavel.base.models.move.MACD.MovingAverageConvergenceDivergence;
+import org.rostovpavel.base.models.purchases.RSI.RelativeStrengthIndex;
+import org.rostovpavel.base.models.purchases.RSI_SO.RelativeStrengthIndexStochastic;
+import org.rostovpavel.base.models.move.SO.StochasticOscillator;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -22,23 +22,52 @@ public class Ticker {
     String name;
     BigDecimal price;
     int candle;
-    int score;
-    int powerVal;
+    int scoreMove;
+    int scorePower;
+    int scorePurchases;
     MovingAverage movingAverage;
+    MovingAverageConvergenceDivergence macd;
+    BollingerBands bollingerBands;
+    StochasticOscillator stochasticOscillator;
+
     RelativeStrengthIndex rsi;
     RelativeStrengthIndexStochastic stochRSI;
     CommodityChannel cci;
-    StochasticOscillator stochasticOscillator;
-    MovingAverageConvergenceDivergence macd;
-    BollingerBands bollingerBands;
+
     AverageTrueRange atr;
 
-    public int getScoreIndicators() {
-        List<Indicator> indicators = getIndicators();
-        return indicators.stream().mapToInt(ind -> ind.getScore(price)).sum();
+    public void generateScoreIndicators(){
+        getScoreIndicatorsMove();
+        getScoreIndicatorsPower();
+        getScoreIndicatorsPurchases();
     }
 
-    private List<Indicator> getIndicators() {
-        return Arrays.asList(movingAverage, rsi, stochRSI, cci, stochasticOscillator, macd, bollingerBands, atr);
+    private void getScoreIndicatorsMove() {
+        List<IndicatorMove> indicators = getIndicatorsMove();
+        int sum = indicators.stream().mapToInt(ind -> ind.getScore(price)).sum();
+        setScoreMove(sum); ;
+    }
+    private void getScoreIndicatorsPower() {
+        List<IndicatorPower> indicators = getIndicatorsPower();
+        int sum = indicators.stream().mapToInt(ind -> ind.getScore(price)).sum();
+        setScorePower(sum); ;
+    }
+
+    private void getScoreIndicatorsPurchases() {
+        List<IndicatorPurchases> indicators = getIndicatorsPurchases();
+        int sum = indicators.stream().mapToInt(ind -> ind.getScore(price)).sum();
+        setScorePurchases(sum); ;
+    }
+
+    private List<IndicatorMove> getIndicatorsMove() {
+        return Arrays.asList(movingAverage, macd, bollingerBands, stochasticOscillator);
+    }
+
+    private List<IndicatorPower> getIndicatorsPower() {
+        return List.of(atr);
+    }
+
+    private List<IndicatorPurchases> getIndicatorsPurchases() {
+        return Arrays.asList(rsi, stochRSI, cci);
     }
 }

@@ -3,7 +3,7 @@ package org.rostovpavel.webservice.services.indicators;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.rostovpavel.base.dto.StocksDTO;
-import org.rostovpavel.base.models.ATR.AverageTrueRange;
+import org.rostovpavel.base.models.power.ATR.AverageTrueRange;
 import org.rostovpavel.base.models.Signal;
 import org.rostovpavel.base.models.Stock;
 import org.springframework.stereotype.Service;

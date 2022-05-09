@@ -3,7 +3,7 @@ package org.rostovpavel.webservice.services.indicators;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.rostovpavel.base.dto.StocksDTO;
-import org.rostovpavel.base.models.MACD.MovingAverageConvergenceDivergence;
+import org.rostovpavel.base.models.move.MACD.MovingAverageConvergenceDivergence;
 import org.rostovpavel.base.models.Signal;
 import org.rostovpavel.base.models.Stock;
 import org.springframework.stereotype.Service;
@@ -67,11 +67,9 @@ public class MACDService implements IndicatorService {
         return Signal.NONE;
     }
 
-
     private List<BigDecimal> getDifferenceBetweenCollect(List<BigDecimal> whereData, List<BigDecimal> whatData) {
         return IntStream.range(0, whatData.size()).mapToObj(index -> whereData.get(index).subtract(whatData.get(index))).collect(Collectors.toList());
     }
-
 
     private List<BigDecimal> getSliceByDay(List<BigDecimal> stocks, int val) {
         AtomicReference<Double> result = new AtomicReference<>(0.0);
@@ -79,7 +77,7 @@ public class MACDService implements IndicatorService {
             double cVal = stocks.get(index).doubleValue();
             result.set(cVal * (2 / (val + 1.0)) + result.get() * (1 - (2 / (val + 1.0))));
             return BigDecimal.valueOf(result.get())
-                    .setScale(6, RoundingMode.HALF_UP);
+                    .setScale(8, RoundingMode.HALF_UP);
         }).collect(Collectors.toList());
     }
 }

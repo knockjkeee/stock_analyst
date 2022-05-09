@@ -1,15 +1,15 @@
-package org.rostovpavel.base.models.ATR;
+package org.rostovpavel.base.models.power.ATR;
 
 import lombok.Builder;
 import lombok.Data;
-import org.rostovpavel.base.models.Indicator;
+import org.rostovpavel.base.models.IndicatorPower;
 import org.rostovpavel.base.models.Signal;
 
 import java.math.BigDecimal;
 
 @Data
 @Builder
-public class AverageTrueRange implements Indicator {
+public class AverageTrueRange implements IndicatorPower {
     BigDecimal atr;
     BigDecimal stopLoseLong;
     BigDecimal stopLoseShort;
@@ -27,7 +27,7 @@ public class AverageTrueRange implements Indicator {
         sum = getScoreToKey(sum, price);
         sum = getScoreToLine(sum, price);
         setScoreVolatility(sum);
-        return 0;
+        return sum;
     }
 
     @Override

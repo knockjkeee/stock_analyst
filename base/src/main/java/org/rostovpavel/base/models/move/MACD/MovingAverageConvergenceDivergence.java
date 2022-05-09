@@ -1,21 +1,23 @@
-package org.rostovpavel.base.models.RSI_SO;
+package org.rostovpavel.base.models.move.MACD;
 
 import lombok.Builder;
 import lombok.Data;
 import org.rostovpavel.base.models.Indicator;
+import org.rostovpavel.base.models.IndicatorMove;
 import org.rostovpavel.base.models.Signal;
 
 import java.math.BigDecimal;
 
 @Data
 @Builder
-public class RelativeStrengthIndexStochastic implements Indicator {
-    double upLine;
-    BigDecimal currentStochRSI;
-    double downLine;
+public class MovingAverageConvergenceDivergence implements IndicatorMove {
+    BigDecimal MACD;
+    BigDecimal signal;
+    BigDecimal histogram;
     String _key;
     int scoreToKeys;
     int scoreToLine;
+    int scoreToSignal;
 
     @Override
     public int getScore(BigDecimal price) {
@@ -27,6 +29,7 @@ public class RelativeStrengthIndexStochastic implements Indicator {
         int sum = 0;
         sum = getScoreToKey(sum, price);
         sum = getScoreToLine(sum, price);
+        sum = getScoreToSignal(sum, price);
         return sum;
     }
 
@@ -41,6 +44,14 @@ public class RelativeStrengthIndexStochastic implements Indicator {
             sum -= 25;
             temp -= 25;
         }
+        if (Signal.BUYPLUS.getValue().equals(_key)) {
+            sum += 50;
+            temp += 50;
+        }
+        if (Signal.SELLMINUS.getValue().equals(_key)) {
+            sum -= 50;
+            temp -= 50;
+        }
         setScoreToKeys(temp);
         return sum;
     }
@@ -48,15 +59,29 @@ public class RelativeStrengthIndexStochastic implements Indicator {
     @Override
     public int getScoreToLine(int sum, BigDecimal price) {
         int temp = 0;
-        if (currentStochRSI.compareTo(BigDecimal.valueOf(downLine)) < 0) {
-            sum +=25;
-            temp +=25;
+        if (histogram.compareTo(BigDecimal.valueOf(0)) > 0) {
+            sum += 25;
+            temp += 25;
         }
-        if (currentStochRSI.compareTo(BigDecimal.valueOf(upLine)) > 0) {
+        if (histogram.compareTo(BigDecimal.valueOf(0)) < 0) {
             sum -= 25;
             temp -= 25;
         }
         setScoreToLine(temp);
+        return sum;
+    }
+
+    private int getScoreToSignal(int sum, BigDecimal price) {
+        int temp = 0;
+        if (MACD.compareTo(signal) > 0) {
+            sum += 25;
+            temp += 25;
+        }
+        if (MACD.compareTo(signal) < 0) {
+            sum -= 25;
+            temp -= 25;
+        }
+        setScoreToSignal(temp);
         return sum;
     }
 }

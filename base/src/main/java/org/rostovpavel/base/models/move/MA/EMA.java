@@ -1,4 +1,4 @@
-package org.rostovpavel.base.models.MA;
+package org.rostovpavel.base.models.move.MA;
 
 import lombok.Builder;
 import lombok.Data;

@@ -6,14 +6,14 @@ import org.jetbrains.annotations.NotNull;
 import org.rostovpavel.base.dto.StocksDTO;
 import org.rostovpavel.base.dto.StocksDataDTO;
 import org.rostovpavel.base.dto.TickersDTO;
-import org.rostovpavel.base.models.ATR.AverageTrueRange;
-import org.rostovpavel.base.models.BB.BollingerBands;
-import org.rostovpavel.base.models.CCI.CommodityChannel;
-import org.rostovpavel.base.models.MA.MovingAverage;
-import org.rostovpavel.base.models.MACD.MovingAverageConvergenceDivergence;
-import org.rostovpavel.base.models.RSI.RelativeStrengthIndex;
-import org.rostovpavel.base.models.RSI_SO.RelativeStrengthIndexStochastic;
-import org.rostovpavel.base.models.SO.StochasticOscillator;
+import org.rostovpavel.base.models.power.ATR.AverageTrueRange;
+import org.rostovpavel.base.models.move.BB.BollingerBands;
+import org.rostovpavel.base.models.purchases.CCI.CommodityChannel;
+import org.rostovpavel.base.models.move.MA.MovingAverage;
+import org.rostovpavel.base.models.move.MACD.MovingAverageConvergenceDivergence;
+import org.rostovpavel.base.models.purchases.RSI.RelativeStrengthIndex;
+import org.rostovpavel.base.models.purchases.RSI_SO.RelativeStrengthIndexStochastic;
+import org.rostovpavel.base.models.move.SO.StochasticOscillator;
 import org.rostovpavel.base.models.Ticker;
 import org.rostovpavel.base.models.TickerRequestBody;
 import org.rostovpavel.webservice.services.indicators.*;
@@ -59,12 +59,12 @@ public class TickerDataService {
     @NotNull
     private Ticker generateTicker(String name, StocksDTO data, BigDecimal price) {
         MovingAverage movingAverage = maService.getData(data);
-        CommodityChannel cci = cciService.getData(data);
+        MovingAverageConvergenceDivergence macd = macdService.getData(data);
+        BollingerBands bb = bbService.getData(data);
         StochasticOscillator so = soService.getData(data);
         RelativeStrengthIndex rsi = rsiService.getData(data);
         RelativeStrengthIndexStochastic stochRSI = rsiStochService.getData(data);
-        MovingAverageConvergenceDivergence macd = macdService.getData(data);
-        BollingerBands bb = bbService.getData(data);
+        CommodityChannel cci = cciService.getData(data);
         AverageTrueRange atr = atrService.getData(data);
 
         Ticker ticker = Ticker.builder()
@@ -72,17 +72,15 @@ public class TickerDataService {
                 .price(price)
                 .candle(data.getStocks().size())
                 .movingAverage(movingAverage)
+                .macd(macd)
+                .bollingerBands(bb)
+                .stochasticOscillator(so)
                 .rsi(rsi)
                 .stochRSI(stochRSI)
                 .cci(cci)
-                .stochasticOscillator(so)
-                .macd(macd)
-                .bollingerBands(bb)
                 .atr(atr)
                 .build();
-        int scoreIndicators = ticker.getScoreIndicators();
-        ticker.setScore(scoreIndicators);
-        ticker.setPowerVal(atr.getScoreVolatility());
+        ticker.generateScoreIndicators();
         return ticker;
     }
 
