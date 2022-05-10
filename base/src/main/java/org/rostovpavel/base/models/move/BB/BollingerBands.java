@@ -2,11 +2,11 @@ package org.rostovpavel.base.models.move.BB;
 
 import lombok.Builder;
 import lombok.Data;
-import org.rostovpavel.base.models.Indicator;
 import org.rostovpavel.base.models.IndicatorMove;
 import org.rostovpavel.base.models.Signal;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Data
 @Builder
@@ -53,13 +53,15 @@ public class BollingerBands implements IndicatorMove {
     @Override
     public int getScoreToLine(int sum, BigDecimal price) {
         int temp = 0;
-        if ( (price.compareTo(upperBand) < 0) && (price.compareTo(middleBand) > 0) ) {
-            sum += 25;
-            temp += 25;
-        }
-        if ( (price.compareTo(lowerBand) > 0) && (price.compareTo(middleBand) < 0) ) {
-            sum -=25;
-            temp -=25;
+        if (wbProcent.compareTo(BigDecimal.valueOf(6)) > 0) {
+            if ((price.compareTo(upperBand) < 0) && (price.compareTo(middleBand) > 0)) {
+                sum += 25;
+                temp += 25;
+            }
+            if ((price.compareTo(lowerBand) > 0) && (price.compareTo(middleBand) < 0)) {
+                sum -= 25;
+                temp -= 25;
+            }
         }
         setScoreToLine(temp);
         return sum;
@@ -67,15 +69,20 @@ public class BollingerBands implements IndicatorMove {
 
     private int getScoreToSignal(int sum, BigDecimal price) {
         int temp = 0;
-        //TODO check !=0
         if (getScoreToLine() > 0) {
-            if (wbProcent.compareTo(BigDecimal.valueOf(6)) > 0) {
+            //BigDecimal diffMiddle = middleBand.add(widthBand.divide(BigDecimal.valueOf(4), 5, RoundingMode.HALF_UP));
+            BigDecimal diffMiddle = middleBand.add((upperBand.subtract(middleBand)).divide(BigDecimal.valueOf(2) , 5, RoundingMode.HALF_UP));
+            if ( ((price.compareTo(upperBand) <= 0) && (price.compareTo(diffMiddle) > 0))
+                    || ((price.compareTo(upperBand) >= 0) && (price.compareTo(diffMiddle) > 0)) ) {
                 sum += 25;
                 temp += 25;
             }
         }
         if (getScoreToLine() < 0) {
-            if (wbProcent.compareTo(BigDecimal.valueOf(6)) > 0) {
+           // BigDecimal diffMiddle = middleBand.subtract(widthBand.divide(BigDecimal.valueOf(4), 5, RoundingMode.HALF_UP));
+            BigDecimal diffMiddle = middleBand.subtract((middleBand.subtract(lowerBand)).divide(BigDecimal.valueOf(2) , 5, RoundingMode.HALF_UP));
+            if ( ((price.compareTo(lowerBand) >= 0) && (price.compareTo(diffMiddle) < 0))
+                    || ((price.compareTo(lowerBand) <= 0) && (price.compareTo(diffMiddle) < 0)) ) {
                 sum -= 25;
                 temp -= 25;
             }

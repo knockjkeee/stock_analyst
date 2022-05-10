@@ -48,7 +48,7 @@ public record Endpoint(TickerDataService tickerDataService) {
         TickerRequestBody tickerRequestBody = new TickerRequestBody();
         tickerRequestBody.setTickers(date);
         List<Ticker> collect = tickerDataService.getDataByTickers(tickerRequestBody).getStocks()
-                .stream().filter(e -> e.getScoreMove() > 99 || e.getScoreMove() < -99).collect(Collectors.toList());
+                .stream().filter(e -> e.getScoreMove() > 120 || e.getScoreMove() < -120).collect(Collectors.toList());
         return new TickersDTO(collect);
     }
 
@@ -73,7 +73,7 @@ public record Endpoint(TickerDataService tickerDataService) {
         tickerRequestBody.setTickers(date);
         List<Ticker> collect = tickerDataService.getDataByTickers(tickerRequestBody).getStocks()
                 .stream()
-                .filter(e -> e.getScorePurchases() != 0)
+                .filter(e -> e.getScorePurchases() < -100 && e.getScorePurchases() > 100)
                 .collect(Collectors.toList());
         return new TickersDTO(collect);
     }

@@ -2,11 +2,11 @@ package org.rostovpavel.base.models.move.MACD;
 
 import lombok.Builder;
 import lombok.Data;
-import org.rostovpavel.base.models.Indicator;
 import org.rostovpavel.base.models.IndicatorMove;
 import org.rostovpavel.base.models.Signal;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Data
 @Builder
@@ -14,6 +14,7 @@ public class MovingAverageConvergenceDivergence implements IndicatorMove {
     BigDecimal MACD;
     BigDecimal signal;
     BigDecimal histogram;
+    BigDecimal procent;
     String _key;
     int scoreToKeys;
     int scoreToLine;
@@ -74,10 +75,22 @@ public class MovingAverageConvergenceDivergence implements IndicatorMove {
     private int getScoreToSignal(int sum, BigDecimal price) {
         int temp = 0;
         if (MACD.compareTo(signal) > 0) {
+            BigDecimal procent = signal.divide(MACD, 5, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)).subtract(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP).abs();
+            setProcent(procent);
+            if (procent.compareTo(BigDecimal.valueOf(7)) > 0){
+                sum += 25;
+                temp += 25;
+            }
             sum += 25;
             temp += 25;
         }
         if (MACD.compareTo(signal) < 0) {
+            BigDecimal procent = MACD.divide(signal, 5, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)).subtract(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP).abs();
+            setProcent(procent);
+            if (procent.compareTo(BigDecimal.valueOf(7)) > 0){
+                sum -= 25;
+                temp -= 25;
+            }
             sum -= 25;
             temp -= 25;
         }

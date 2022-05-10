@@ -2,11 +2,11 @@ package org.rostovpavel.base.models.move.SO;
 
 import lombok.Builder;
 import lombok.Data;
-import org.rostovpavel.base.models.Indicator;
 import org.rostovpavel.base.models.IndicatorMove;
 import org.rostovpavel.base.models.Signal;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Data
 @Builder
@@ -15,6 +15,7 @@ public class StochasticOscillator implements IndicatorMove {
     BigDecimal currentK;
     BigDecimal currentD;
     int downLine;
+    BigDecimal procent;
     String _key;
     int scoreToKeys;
     int scoreToLine;
@@ -29,8 +30,8 @@ public class StochasticOscillator implements IndicatorMove {
     public int prepareScore(BigDecimal price) {
         int sum = 0;
         sum = getScoreToKey(sum, price);
-        sum = getScoreToLine(sum, price);
         sum = getScoreToSignal(sum, price);
+        sum = getScoreToLine(sum, price);
         return sum;
     }
 
@@ -52,34 +53,39 @@ public class StochasticOscillator implements IndicatorMove {
     @Override
     public int getScoreToLine(int sum, BigDecimal price) {
         int temp = 0;
-        //TODO check !=0
-        if (getScoreToKeys() != 0) {
-            if ((currentD.compareTo(BigDecimal.valueOf(downLine)) < 0)
-                    && (currentK.compareTo(BigDecimal.valueOf(downLine)) < 0)
-            ) {
-                sum += 25;
-                temp += 25;
-            }
-            if ((currentD.compareTo(BigDecimal.valueOf(upLine)) > 0)
-                    && (currentK.compareTo(BigDecimal.valueOf(upLine)) > 0)
-            ) {
-                sum -= 25;
-                temp -= 25;
-            }
-            setScoreToLine(temp);
+        if ((currentD.compareTo(BigDecimal.valueOf(downLine)) < 0)
+                && (currentK.compareTo(BigDecimal.valueOf(downLine)) < 0)
+                && getScoreToSignal() !=0) {
+            sum += 25;
+            temp += 25;
         }
+        if ((currentD.compareTo(BigDecimal.valueOf(upLine)) > 0)
+                && (currentK.compareTo(BigDecimal.valueOf(upLine)) > 0)
+                && getScoreToSignal() !=0) {
+            sum -= 25;
+            temp -= 25;
+        }
+        setScoreToLine(temp);
         return sum;
     }
 
     private int getScoreToSignal(int sum, BigDecimal price) {
         int temp = 0;
         if (currentD.compareTo(currentK) < 0) {
-            sum += 25;
-            temp += 25;
+            BigDecimal procent = currentD.divide(currentK, 5, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)).subtract(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP).abs();
+            setProcent(procent);
+            if (procent.compareTo(BigDecimal.valueOf(6)) > 0) {
+                sum += 25;
+                temp += 25;
+            }
         }
         if (currentD.compareTo(currentK) > 0) {
-            sum -= 25;
-            temp -= 25;
+            BigDecimal procent = currentK.divide(currentD, 5, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)).subtract(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP).abs();
+            setProcent(procent);
+            if (procent.compareTo(BigDecimal.valueOf(6)) > 0) {
+                sum -= 25;
+                temp -= 25;
+            }
         }
         setScoreToSignal(temp);
         return sum;
