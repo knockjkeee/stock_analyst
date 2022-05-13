@@ -40,15 +40,16 @@ public class Ticker {
     AverageDirectionalMovementIndex adx;
 
     public void generateScoreIndicators(){
-        getScoreIndicatorsMove();
         getScoreIndicatorsPowerVal();
         getScoreIndicatorsPowerTrend();
         getScoreIndicatorsPurchases();
+        getScoreIndicatorsMove();
     }
 
     private void getScoreIndicatorsMove() {
         List<IndicatorMove> indicators = getIndicatorsMove();
-        int sum = indicators.stream().mapToInt(ind -> ind.getScore(price)).sum();
+                                                                //power purchases + adx.getScoreLine()
+        int sum = indicators.stream().mapToInt(ind -> ind.getScore(price)).sum() + adx.getScoreLine();
         setScoreMove(sum);
     }
 

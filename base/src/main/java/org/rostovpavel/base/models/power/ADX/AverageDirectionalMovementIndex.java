@@ -58,23 +58,28 @@ public class AverageDirectionalMovementIndex implements IndicatorPowerTrend {
 
     @Override
     public int getScoreToLine(int sum, BigDecimal price) {
-        int temp = 0;
+        int scoreLine = 0;
         if (dlP.compareTo(dlM) > 0){
-            BigDecimal procent = dlM.divide(dlP, 5, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)).subtract(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP).abs();
+            BigDecimal procent = generateProcent(dlM, dlP);
             setProcent(procent);
             if (procent.compareTo(BigDecimal.valueOf(55)) > 0) {
                 sum += 25;
-                temp += 25;
+                scoreLine += 25;
             }
         }else{
-            BigDecimal procent = dlP.divide(dlM, 5, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)).subtract(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP).abs();
+            BigDecimal procent = generateProcent(dlP, dlM);
             setProcent(procent);
             if (procent.compareTo(BigDecimal.valueOf(55)) > 0) {
-                sum += 25;
-                temp += 25;
+                sum -= 25;
+                scoreLine -= 25;
             }
         }
-        setScoreLine(temp);
+        setScoreLine(scoreLine);
         return sum;
+    }
+
+
+    private BigDecimal generateProcent(BigDecimal one, BigDecimal two){
+        return one.divide(two, 5, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)).subtract(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP).abs();
     }
 }

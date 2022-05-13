@@ -70,27 +70,27 @@ public class MovingAverage implements IndicatorMove {
     }
 
     private int getLineScoreToBUY(int sum, BigDecimal price) {
-        if (((price.compareTo(getSma().sma20) > 0)
-                && (getSma().sma20.compareTo(getSma().sma50) > 0)
-                && (getSma().sma50.compareTo(getSma().sma100) > 0))
-                ||
-                ((price.compareTo(getSma().sma20) > 0)
-                        && (getSma().sma20.compareTo(getSma().sma50) > 0))
-        ) {
+        if ((price.compareTo(getSma().sma20) > 0)
+                        && (getSma().sma20.compareTo(getSma().sma50) > 0)) {
             sum += 25;
+        }
+        if ((price.compareTo(getSma().sma20) > 0)
+                && (getSma().sma20.compareTo(getSma().sma50) > 0)
+                && (getSma().sma50.compareTo(getSma().sma100) > 0)){
+            sum += 50;
         }
         return sum;
     }
 
     private int getLineScoreToSELL(int sum, BigDecimal price) {
-        if (((price.compareTo(getSma().sma20) < 0)
+        if ((price.compareTo(getSma().sma20) < 0)
+                && (getSma().sma20.compareTo(getSma().sma50) < 0)) {
+            sum += 25;
+        }
+        if ((price.compareTo(getSma().sma20) < 0)
                 && (getSma().sma20.compareTo(getSma().sma50) < 0)
-                && (getSma().sma50.compareTo(getSma().sma100) < 0))
-                ||
-                ((price.compareTo(getSma().sma20) < 0)
-                        && (getSma().sma20.compareTo(getSma().sma50) < 0))
-        ) {
-            sum -= 25;
+                && (getSma().sma50.compareTo(getSma().sma100) < 0)){
+            sum += 50;
         }
         return sum;
     }

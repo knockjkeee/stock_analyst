@@ -37,57 +37,61 @@ public class StochasticOscillator implements IndicatorMove {
 
     @Override
     public int getScoreToKey(int sum, BigDecimal price) {
-        int temp = 0;
+        int scoreKey = 0;
         if (Signal.BUY.getValue().equals(_key)) {
             sum += 50;
-            temp += 50;
+            scoreKey += 50;
         }
         if (Signal.SELL.getValue().equals(_key)) {
             sum -= 50;
-            temp -= 50;
+            scoreKey -= 50;
         }
-        setScoreToKeys(temp);
+        setScoreToKeys(scoreKey);
         return sum;
     }
 
     @Override
     public int getScoreToLine(int sum, BigDecimal price) {
-        int temp = 0;
+        int scoreLine = 0;
         if ((currentD.compareTo(BigDecimal.valueOf(downLine)) < 0)
                 && (currentK.compareTo(BigDecimal.valueOf(downLine)) < 0)
                 && getScoreToSignal() !=0) {
             sum += 25;
-            temp += 25;
+            scoreLine += 25;
         }
         if ((currentD.compareTo(BigDecimal.valueOf(upLine)) > 0)
                 && (currentK.compareTo(BigDecimal.valueOf(upLine)) > 0)
                 && getScoreToSignal() !=0) {
             sum -= 25;
-            temp -= 25;
+            scoreLine -= 25;
         }
-        setScoreToLine(temp);
+        setScoreToLine(scoreLine);
         return sum;
     }
 
     private int getScoreToSignal(int sum, BigDecimal price) {
-        int temp = 0;
+        int scoreSignal = 0;
         if (currentD.compareTo(currentK) < 0) {
-            BigDecimal procent = currentD.divide(currentK, 5, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)).subtract(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP).abs();
+            BigDecimal procent = generateProcent(currentD, currentK);
             setProcent(procent);
             if (procent.compareTo(BigDecimal.valueOf(6)) > 0) {
                 sum += 25;
-                temp += 25;
+                scoreSignal += 25;
             }
         }
         if (currentD.compareTo(currentK) > 0) {
-            BigDecimal procent = currentK.divide(currentD, 5, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)).subtract(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP).abs();
+            BigDecimal procent = generateProcent(currentK, currentD);
             setProcent(procent);
             if (procent.compareTo(BigDecimal.valueOf(6)) > 0) {
                 sum -= 25;
-                temp -= 25;
+                scoreSignal -= 25;
             }
         }
-        setScoreToSignal(temp);
+        setScoreToSignal(scoreSignal);
         return sum;
+    }
+
+    private BigDecimal generateProcent(BigDecimal one, BigDecimal two) {
+        return one.divide(two, 5, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)).subtract(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP).abs();
     }
 }
