@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.rostovpavel.base.dto.StocksDTO;
 import org.rostovpavel.base.dto.StocksDataDTO;
 import org.rostovpavel.base.dto.TickersDTO;
+import org.rostovpavel.base.models.power.ADX.AverageDirectionalMovementIndex;
 import org.rostovpavel.base.models.power.ATR.AverageTrueRange;
 import org.rostovpavel.base.models.move.BB.BollingerBands;
 import org.rostovpavel.base.models.purchases.CCI.CommodityChannel;
@@ -39,6 +40,7 @@ public class TickerDataService {
     private final MACDService macdService;
     private final BBService bbService;
     private final ATRService atrService;
+    private final ADXService adxService;
 
     public Ticker getDataByTicker(@PathVariable String ticker) {
         StocksDTO stockDataByTicker = stockService.getStockDataByTicker(ticker);
@@ -65,7 +67,8 @@ public class TickerDataService {
         RelativeStrengthIndex rsi = rsiService.getData(data);
         RelativeStrengthIndexStochastic stochRSI = rsiStochService.getData(data);
         CommodityChannel cci = cciService.getData(data);
-        AverageTrueRange atr = atrService.getData(data);
+        AverageTrueRange atr = atrService.getData(data); //first atr!!!
+        AverageDirectionalMovementIndex adx = adxService.getData(data);
 
         Ticker ticker = Ticker.builder()
                 .name(name)
@@ -79,6 +82,7 @@ public class TickerDataService {
                 .stochRSI(stochRSI)
                 .cci(cci)
                 .atr(atr)
+                .adx(adx)
                 .build();
         ticker.generateScoreIndicators();
         return ticker;

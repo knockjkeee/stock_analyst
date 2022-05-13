@@ -2,14 +2,14 @@ package org.rostovpavel.base.models.power.ATR;
 
 import lombok.Builder;
 import lombok.Data;
-import org.rostovpavel.base.models.IndicatorPower;
+import org.rostovpavel.base.models.IndicatorPowerVal;
 import org.rostovpavel.base.models.Signal;
 
 import java.math.BigDecimal;
 
 @Data
 @Builder
-public class AverageTrueRange implements IndicatorPower {
+public class AverageTrueRange implements IndicatorPowerVal {
     BigDecimal atr;
     BigDecimal stopLoseLong;
     BigDecimal stopLoseShort;

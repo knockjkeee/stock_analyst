@@ -3,6 +3,7 @@ package org.rostovpavel.base.models;
 
 import lombok.Builder;
 import lombok.Data;
+import org.rostovpavel.base.models.power.ADX.AverageDirectionalMovementIndex;
 import org.rostovpavel.base.models.power.ATR.AverageTrueRange;
 import org.rostovpavel.base.models.move.BB.BollingerBands;
 import org.rostovpavel.base.models.purchases.CCI.CommodityChannel;
@@ -23,7 +24,8 @@ public class Ticker {
     BigDecimal price;
     int candle;
     int scoreMove;
-    int scorePower;
+    int scorePowerVal;
+    int scorePowerTrend;
     int scorePurchases;
     MovingAverage movingAverage;
     MovingAverageConvergenceDivergence macd;
@@ -35,36 +37,49 @@ public class Ticker {
     CommodityChannel cci;
 
     AverageTrueRange atr;
+    AverageDirectionalMovementIndex adx;
 
     public void generateScoreIndicators(){
         getScoreIndicatorsMove();
-        getScoreIndicatorsPower();
+        getScoreIndicatorsPowerVal();
+        getScoreIndicatorsPowerTrend();
         getScoreIndicatorsPurchases();
     }
 
     private void getScoreIndicatorsMove() {
         List<IndicatorMove> indicators = getIndicatorsMove();
         int sum = indicators.stream().mapToInt(ind -> ind.getScore(price)).sum();
-        setScoreMove(sum); ;
+        setScoreMove(sum);
     }
-    private void getScoreIndicatorsPower() {
-        List<IndicatorPower> indicators = getIndicatorsPower();
+
+    private void getScoreIndicatorsPowerVal() {
+        List<IndicatorPowerVal> indicators = getIndicatorsPowerVal();
         int sum = indicators.stream().mapToInt(ind -> ind.getScore(price)).sum();
-        setScorePower(sum); ;
+        setScorePowerVal(sum);
+    }
+
+    private void getScoreIndicatorsPowerTrend() {
+        List<IndicatorPowerTrend> indicators = getIndicatorsPowerTrend();
+        int sum = indicators.stream().mapToInt(ind -> ind.getScore(price)).sum();
+        setScorePowerTrend(sum);
     }
 
     private void getScoreIndicatorsPurchases() {
         List<IndicatorPurchases> indicators = getIndicatorsPurchases();
         int sum = indicators.stream().mapToInt(ind -> ind.getScore(price)).sum();
-        setScorePurchases(sum); ;
+        setScorePurchases(sum);
     }
 
     private List<IndicatorMove> getIndicatorsMove() {
         return Arrays.asList(movingAverage, macd, bollingerBands, stochasticOscillator);
     }
 
-    private List<IndicatorPower> getIndicatorsPower() {
+    private List<IndicatorPowerVal> getIndicatorsPowerVal() {
         return List.of(atr);
+    }
+
+    private List<IndicatorPowerTrend> getIndicatorsPowerTrend() {
+        return List.of(adx);
     }
 
     private List<IndicatorPurchases> getIndicatorsPurchases() {

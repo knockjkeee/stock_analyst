@@ -1,5 +1,6 @@
 package org.rostovpavel.webservice.controller;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.rostovpavel.base.dto.TickersDTO;
 import org.rostovpavel.base.models.Ticker;
@@ -25,8 +26,9 @@ public record Endpoint(TickerDataService tickerDataService) {
         return tickerDataService.getDataByTickers(data);
     }
 
+    @Contract(value = " -> new", pure = true)
     @NotNull
-    private String[] getNameTickers() {
+    private String @NotNull [] getNameTickers() {
         return new String[]{"CLOV", "ENDP", "TAL", "SPCE", "ASTR", "SNAP", "CCL", "CNK", "RIG", "FTI", "LI", "WISH", "AAL", "CCXI", "VIR", "SAVA", "ZY", "DNLI", "F", "AA"};
     }
 
@@ -40,8 +42,9 @@ public record Endpoint(TickerDataService tickerDataService) {
         return tickerDataService.getDataByTickers(tickerRequestBody);
     }
 
+    @Contract(" -> new")
     @GetMapping("/move")
-    public TickersDTO gatFilterMove(){
+    public @NotNull TickersDTO gatFilterMove(){
         List<String> date = Arrays.asList(
                 getNameTickers()
         );
@@ -52,20 +55,48 @@ public record Endpoint(TickerDataService tickerDataService) {
         return new TickersDTO(collect);
     }
 
-    @GetMapping("/val")
-    public TickersDTO getFilterVal(){
+    @Contract(" -> new")
+    @GetMapping("/up")
+    public @NotNull TickersDTO gatFilterUp(){
         List<String> date = Arrays.asList(
                 getNameTickers()
         );
         TickerRequestBody tickerRequestBody = new TickerRequestBody();
         tickerRequestBody.setTickers(date);
         List<Ticker> collect = tickerDataService.getDataByTickers(tickerRequestBody).getStocks()
-                .stream().filter(e -> e.getScorePower() > 0).collect(Collectors.toList());
+                .stream().filter(e -> e.getScoreMove() > 125 || e.getScoreMove() < -125).collect(Collectors.toList());
         return new TickersDTO(collect);
     }
 
+    @Contract(" -> new")
+    @GetMapping("/val")
+    public @NotNull TickersDTO getFilterVal(){
+        List<String> date = Arrays.asList(
+                getNameTickers()
+        );
+        TickerRequestBody tickerRequestBody = new TickerRequestBody();
+        tickerRequestBody.setTickers(date);
+        List<Ticker> collect = tickerDataService.getDataByTickers(tickerRequestBody).getStocks()
+                .stream().filter(e -> e.getScorePowerVal() > 0).collect(Collectors.toList());
+        return new TickersDTO(collect);
+    }
+
+    @Contract(" -> new")
+    @GetMapping("/trend")
+    public @NotNull TickersDTO getFilterTrend(){
+        List<String> date = Arrays.asList(
+                getNameTickers()
+        );
+        TickerRequestBody tickerRequestBody = new TickerRequestBody();
+        tickerRequestBody.setTickers(date);
+        List<Ticker> collect = tickerDataService.getDataByTickers(tickerRequestBody).getStocks()
+                .stream().filter(e -> e.getScorePowerTrend() > 0).collect(Collectors.toList());
+        return new TickersDTO(collect);
+    }
+
+    @Contract(" -> new")
     @GetMapping("/pur")
-    public TickersDTO getFilterPurchases(){
+    public @NotNull TickersDTO getFilterPurchases(){
         List<String> date = Arrays.asList(
                 getNameTickers()
         );

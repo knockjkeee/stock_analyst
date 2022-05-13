@@ -24,6 +24,7 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class ATRService implements IndicatorService {
     private static final int[] DEEP_DAY = new int[]{14, 13}; //+1
+    private List<BigDecimal> pubAT;
 
     @Override
     public AverageTrueRange getData(StocksDTO data) {
@@ -32,6 +33,7 @@ public class ATRService implements IndicatorService {
                 .collect(Collectors.toList());
 
         List<BigDecimal> atArr = getTR(stocks);
+        pubAT = new ArrayList<>(atArr);
         List<BigDecimal> atrArr = getData(atArr);
 
         BigDecimal stopLoseLong = data.getStocks().get(1).getClose().subtract(atrArr.get(1).multiply(new BigDecimal(3))).setScale(3, RoundingMode.HALF_UP);
@@ -106,4 +108,7 @@ public class ATRService implements IndicatorService {
         }).collect(Collectors.toList());
     }
 
+    public List<BigDecimal> getPubAT() {
+        return pubAT;
+    }
 }
