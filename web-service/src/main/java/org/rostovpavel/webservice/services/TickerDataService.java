@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.rostovpavel.base.dto.StocksDTO;
 import org.rostovpavel.base.dto.StocksDataDTO;
 import org.rostovpavel.base.dto.TickersDTO;
+import org.rostovpavel.base.models.move.AO.AwesomeOscillator;
 import org.rostovpavel.base.models.power.ADX.AverageDirectionalMovementIndex;
 import org.rostovpavel.base.models.power.ATR.AverageTrueRange;
 import org.rostovpavel.base.models.move.BB.BollingerBands;
@@ -41,6 +42,7 @@ public class TickerDataService {
     private final BBService bbService;
     private final ATRService atrService;
     private final ADXService adxService;
+    private final AOService aoService;
 
     public Ticker getDataByTicker(@PathVariable String ticker) {
         StocksDTO stockDataByTicker = stockService.getStockDataByTicker(ticker);
@@ -64,6 +66,8 @@ public class TickerDataService {
         MovingAverageConvergenceDivergence macd = macdService.getData(data);
         BollingerBands bb = bbService.getData(data);
         StochasticOscillator so = soService.getData(data);
+        AwesomeOscillator ao = aoService.getData(data);
+
         RelativeStrengthIndex rsi = rsiService.getData(data);
         RelativeStrengthIndexStochastic stochRSI = rsiStochService.getData(data);
         CommodityChannel cci = cciService.getData(data);
@@ -78,6 +82,7 @@ public class TickerDataService {
                 .macd(macd)
                 .bollingerBands(bb)
                 .stochasticOscillator(so)
+                .awesomeOscillator(ao)
                 .rsi(rsi)
                 .stochRSI(stochRSI)
                 .cci(cci)

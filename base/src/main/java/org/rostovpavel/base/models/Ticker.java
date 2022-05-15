@@ -3,6 +3,7 @@ package org.rostovpavel.base.models;
 
 import lombok.Builder;
 import lombok.Data;
+import org.rostovpavel.base.models.move.AO.AwesomeOscillator;
 import org.rostovpavel.base.models.power.ADX.AverageDirectionalMovementIndex;
 import org.rostovpavel.base.models.power.ATR.AverageTrueRange;
 import org.rostovpavel.base.models.move.BB.BollingerBands;
@@ -31,6 +32,7 @@ public class Ticker {
     MovingAverageConvergenceDivergence macd;
     BollingerBands bollingerBands;
     StochasticOscillator stochasticOscillator;
+    AwesomeOscillator awesomeOscillator;
 
     RelativeStrengthIndex rsi;
     RelativeStrengthIndexStochastic stochRSI;
@@ -38,6 +40,7 @@ public class Ticker {
 
     AverageTrueRange atr;
     AverageDirectionalMovementIndex adx;
+
 
     public void generateScoreIndicators(){
         getScoreIndicatorsPowerVal();
@@ -72,7 +75,7 @@ public class Ticker {
     }
 
     private List<IndicatorMove> getIndicatorsMove() {
-        return Arrays.asList(movingAverage, macd, bollingerBands, stochasticOscillator);
+        return Arrays.asList(movingAverage, macd, bollingerBands, stochasticOscillator, awesomeOscillator);
     }
 
     private List<IndicatorPowerVal> getIndicatorsPowerVal() {
