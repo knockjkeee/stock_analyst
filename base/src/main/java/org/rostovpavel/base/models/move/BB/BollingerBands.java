@@ -73,16 +73,16 @@ public class BollingerBands implements IndicatorMove {
             BigDecimal diffMiddle = generateDiffMiddle(upperBand, middleBand);
             if ( ((price.compareTo(upperBand) <= 0) && (price.compareTo(diffMiddle) > 0))
                     || ((price.compareTo(upperBand) >= 0) && (price.compareTo(diffMiddle) > 0)) ) {
-                sum += 25;
-                scoreSignal += 25;
+                sum += 50;
+                scoreSignal += 50;
             }
         }
         if (getScoreToLine() < 0) {
             BigDecimal diffMiddle = generateDiffMiddle(middleBand, lowerBand);
             if ( ((price.compareTo(lowerBand) >= 0) && (price.compareTo(diffMiddle) < 0))
                     || ((price.compareTo(lowerBand) <= 0) && (price.compareTo(diffMiddle) < 0)) ) {
-                sum -= 25;
-                scoreSignal -= 25;
+                sum -= 50;
+                scoreSignal -= 50;
             }
         }
         setScoreToSignal(scoreSignal);

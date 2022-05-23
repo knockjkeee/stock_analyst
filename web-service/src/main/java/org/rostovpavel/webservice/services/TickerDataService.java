@@ -7,6 +7,7 @@ import org.rostovpavel.base.dto.StocksDTO;
 import org.rostovpavel.base.dto.StocksDataDTO;
 import org.rostovpavel.base.dto.TickersDTO;
 import org.rostovpavel.base.models.move.AO.AwesomeOscillator;
+import org.rostovpavel.base.models.move.ST.SuperTrend;
 import org.rostovpavel.base.models.power.ADX.AverageDirectionalMovementIndex;
 import org.rostovpavel.base.models.power.ATR.AverageTrueRange;
 import org.rostovpavel.base.models.move.BB.BollingerBands;
@@ -43,6 +44,7 @@ public class TickerDataService {
     private final ATRService atrService;
     private final ADXService adxService;
     private final AOService aoService;
+    private final STService stService;
 
     public Ticker getDataByTicker(@PathVariable String ticker) {
         StocksDTO stockDataByTicker = stockService.getStockDataByTicker(ticker);
@@ -74,6 +76,7 @@ public class TickerDataService {
         AverageTrueRange atr = atrService.getData(data); //first atr!!!
         AverageDirectionalMovementIndex adx = adxService.getData(data);
 
+        SuperTrend st = stService.getData(data);
         Ticker ticker = Ticker.builder()
                 .name(name)
                 .price(price)
@@ -83,6 +86,7 @@ public class TickerDataService {
                 .bollingerBands(bb)
                 .stochasticOscillator(so)
                 .awesomeOscillator(ao)
+                .superTrend(st)
                 .rsi(rsi)
                 .stochRSI(stochRSI)
                 .cci(cci)

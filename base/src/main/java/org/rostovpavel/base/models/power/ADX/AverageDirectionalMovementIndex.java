@@ -62,14 +62,14 @@ public class AverageDirectionalMovementIndex implements IndicatorPowerTrend {
         if (dlP.compareTo(dlM) > 0){
             BigDecimal procent = generateProcent(dlM, dlP);
             setProcent(procent);
-            if (procent.compareTo(BigDecimal.valueOf(55)) > 0) {
+            if (procent.compareTo(BigDecimal.valueOf(20)) > 0) {
                 sum += 25;
                 scoreLine += 25;
             }
         }else{
             BigDecimal procent = generateProcent(dlP, dlM);
             setProcent(procent);
-            if (procent.compareTo(BigDecimal.valueOf(55)) > 0) {
+            if (procent.compareTo(BigDecimal.valueOf(20)) > 0) {
                 sum -= 25;
                 scoreLine -= 25;
             }

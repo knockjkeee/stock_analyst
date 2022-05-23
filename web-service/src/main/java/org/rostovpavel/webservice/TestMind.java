@@ -28,5 +28,16 @@ public class TestMind {
         Instant minus = currentNow.minus(3, ChronoUnit.DAYS);
 
         System.out.printf("");
+
+        //Gson gson = new Gson();
+
+//        try (FileWriter writer = new FileWriter("stocks.json")) {
+//            gson.toJson(stocks, writer);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+//        Type listType = new TypeToken<ArrayList<Stock>>(){}.getType();
+//        List<Stock> dataStock = gson.fromJson(new FileReader("stocks.json"), listType);
     }
 }

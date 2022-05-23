@@ -46,12 +46,12 @@ public class MovingAverageConvergenceDivergence implements IndicatorMove {
             scoreKey -= 25;
         }
         if (Signal.BUYPLUS.getValue().equals(_key)) {
-            sum += 50;
-            scoreKey += 50;
+            sum += 100;
+            scoreKey += 100;
         }
         if (Signal.SELLMINUS.getValue().equals(_key)) {
-            sum -= 50;
-            scoreKey -= 50;
+            sum -= 100;
+            scoreKey -= 100;
         }
         setScoreToKeys(scoreKey);
         return sum;
@@ -81,8 +81,8 @@ public class MovingAverageConvergenceDivergence implements IndicatorMove {
                 sum += 25;
                 scoreSignal += 25;
             }
-            sum += 25;
-            scoreSignal += 25;
+//            sum += 25;
+//            scoreSignal += 25;
         }
         if (MACD.compareTo(signal) < 0) {
             BigDecimal procent = generateProcent(MACD, signal);
@@ -91,8 +91,8 @@ public class MovingAverageConvergenceDivergence implements IndicatorMove {
                 sum -= 25;
                 scoreSignal -= 25;
             }
-            sum -= 25;
-            scoreSignal -= 25;
+//            sum -= 25;
+//            scoreSignal -= 25;
         }
         setScoreToSignal(scoreSignal);
         return sum;

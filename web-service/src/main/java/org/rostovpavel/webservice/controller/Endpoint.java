@@ -64,15 +64,27 @@ public record Endpoint(TickerDataService tickerDataService) {
         TickerRequestBody tickerRequestBody = new TickerRequestBody();
         tickerRequestBody.setTickers(date);
         List<Ticker> collect = tickerDataService.getDataByTickers(tickerRequestBody).getStocks()
+//                .stream().filter(e ->
+//                                ((e.getScoreMove() > 150 || e.getScoreMove() < -150)
+//                                    && (e.getScorePowerTrend() > 50 || e.getScorePowerTrend() < -50))
+//                                || ((e.getScoreMove() > 150 || e.getScoreMove() < -150)
+//                                    && (e.getScorePowerTrend() > 25 || e.getScorePowerTrend() < -25)
+//                                    && (e.getScorePurchases() != 0))
+//                                || ((e.getScoreMove() > 120 || e.getScoreMove() < -120)
+//                                    && (e.getScorePowerTrend() > 20 || e.getScorePowerTrend() < -20)
+//                                    && (e.getScorePurchases() != 0))
+//                ).collect(Collectors.toList());
                 .stream().filter(e ->
-                                ((e.getScoreMove() > 150 || e.getScoreMove() < -150)
-                                    && (e.getScorePowerTrend() > 50 || e.getScorePowerTrend() < -50))
-                                || ((e.getScoreMove() > 150 || e.getScoreMove() < -150)
-                                    && (e.getScorePowerTrend() > 25 || e.getScorePowerTrend() < -25)
-                                    && (e.getScorePurchases() != 0))
-                                || ((e.getScoreMove() > 120 || e.getScoreMove() < -120)
-                                    && (e.getScorePowerTrend() > 20 || e.getScorePowerTrend() < -20)
-                                    && (e.getScorePurchases() != 0))
+                        ((e.getScoreMove() > 175 || e.getScoreMove() < -150))
+//                                && (e.getScorePowerTrend() > 50 || e.getScorePowerTrend() < -50))
+//                                || ((e.getScoreMove() > 150 || e.getScoreMove() < -125)
+//                                && (e.getScorePowerTrend() != 0)
+//                                && (e.getScorePurchases() != 0))
+//                                || ((e.getScoreMove() > 150 || e.getScoreMove() < -125))
+//                                || ((e.getScoreMove() > 120 || e.getScoreMove() < -100)
+//                                && (e.getScorePowerVal() !=0)
+//                                && (e.getScorePowerTrend() !=0)
+//                                && (e.getScorePurchases() != 0))
                 ).collect(Collectors.toList());
         return new TickersDTO(collect);
     }
