@@ -58,7 +58,7 @@ public class RSIService implements IndicatorService {
                 .build();
     }
 
-    private Signal compareRsiToBuySell(List<Double> data) {
+    private Signal compareRsiToBuySell(@NotNull List<Double> data) {
         if ((data.get(0) < DOWNLINE) && (data.get(1) >= DOWNLINE)) {
             return Signal.BUY;
         }
@@ -69,13 +69,13 @@ public class RSIService implements IndicatorService {
     }
 
     @NotNull
-    private List<Stock> getStocks(int index, StocksDTO data) {
+    private List<Stock> getStocks(int index, @NotNull StocksDTO data) {
         return IntStream.range(index, data.getStocks().size())
                 .mapToObj(i -> data.getStocks().get(i))
                 .collect(Collectors.toList());
     }
 
-    private double getU(List<Stock> stocks) {
+    private double getU(@NotNull List<Stock> stocks) {
         AtomicReference<Double> result = new AtomicReference<>(0.0);
         IntStream.range(1, stocks.size()).forEach(index -> {
             double cVal = stocks.get(index).getClose().doubleValue();
@@ -91,7 +91,7 @@ public class RSIService implements IndicatorService {
         return result.get();
     }
 
-    private double getD(List<Stock> stocks) {
+    private double getD(@NotNull List<Stock> stocks) {
         AtomicReference<Double> result = new AtomicReference<>(0.0);
         IntStream.range(1, stocks.size()).forEach(index -> {
             double cVal = stocks.get(index).getClose().doubleValue();

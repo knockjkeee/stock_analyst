@@ -2,6 +2,8 @@ package org.rostovpavel.webservice.services.indicators;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.rostovpavel.base.dto.StocksDTO;
 import org.rostovpavel.base.models.purchases.CCI.CommodityChannel;
 import org.rostovpavel.base.models.Signal;
@@ -24,7 +26,7 @@ public class CCIService implements IndicatorService {
     private static final int DOWNLINE = -100;
 
     @Override
-    public CommodityChannel getData(StocksDTO date) {
+    public CommodityChannel getData(@NotNull StocksDTO date) {
         List<Stock> stocks = date.getStocks();
         List<BigDecimal> cciArr = new ArrayList<>();
 
@@ -48,7 +50,7 @@ public class CCIService implements IndicatorService {
                 .build();
     }
 
-    private Signal compareCCIToBuySell(List<BigDecimal> cci) {
+    private Signal compareCCIToBuySell(@NotNull List<BigDecimal> cci) {
 
         if ((cci.get(0).compareTo(BigDecimal.valueOf(DOWNLINE)) < 0) && (cci.get(1).compareTo(BigDecimal.valueOf(DOWNLINE)) >= 0)) {
             return Signal.BUY;
@@ -59,18 +61,16 @@ public class CCIService implements IndicatorService {
         return Signal.NONE;
     }
 
-
-    private double getData(List<Double> tpData, double smaOfTP, double meanDeviation) {
+    @Contract(pure = true)
+    private double getData(@NotNull List<Double> tpData, double smaOfTP, double meanDeviation) {
         return (tpData.get(0) - smaOfTP) / (0.015 * meanDeviation);
     }
 
-    private double getMeanDeviation(List<Double> tpData, double smaOfTP) {
+    private double getMeanDeviation(@NotNull List<Double> tpData, double smaOfTP) {
         return tpData.stream().mapToDouble(e -> Math.abs(smaOfTP - e)).sum() / tpData.size();
     }
 
-    private double getSmaOfTP(List<Double> tpData) {
+    private double getSmaOfTP(@NotNull List<Double> tpData) {
         return tpData.stream().mapToDouble(i -> i).sum() / tpData.size();
     }
-
-
 }

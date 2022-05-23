@@ -30,7 +30,7 @@ public class STService implements IndicatorService {
 
     @SneakyThrows
     @Override
-    public SuperTrend getData(StocksDTO data) {
+    public SuperTrend getData(@NotNull StocksDTO data) {
         List<Stock> collect = data.getStocks();
         // generate
         List<String> superTrendSecond = getSuperTrend(collect, DEEP_DAY[0], FACTOR[0]);

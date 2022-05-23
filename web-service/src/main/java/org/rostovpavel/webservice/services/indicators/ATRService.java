@@ -53,15 +53,14 @@ public class ATRService implements IndicatorService {
     public List<BigDecimal> getATR(List<Stock> stocks, int firstLength) {
         List<BigDecimal> atArr = getTR(stocks);
         atArr.add(BigDecimal.valueOf(0));
-        List<BigDecimal> atr = IntStream.range(0, atArr.size() - firstLength).mapToObj(i -> {
-            List<BigDecimal> collect = IntStream.range(i, i + firstLength).mapToObj(index -> atArr.get(index)).collect(Collectors.toList());
+        return IntStream.range(0, atArr.size() - firstLength).mapToObj(i -> {
+            List<BigDecimal> collect = IntStream.range(i, i + firstLength).mapToObj(atArr::get).collect(Collectors.toList());
             return collect.stream()
                     .limit(firstLength)
                     .reduce(BigDecimal::add)
                     .orElseThrow(() -> new StockNotFoundException("Error MA"))
                     .divide(BigDecimal.valueOf(firstLength), 4, RoundingMode.HALF_UP);
         }).collect(Collectors.toList());
-        return atr;
     }
 
     private Signal compareATRToBuySell(@NotNull List<BigDecimal> atr) {
@@ -94,9 +93,8 @@ public class ATRService implements IndicatorService {
         List<BigDecimal> atArr = new ArrayList<>(data);
         Collections.reverse(atArr);
         AtomicReference<Double> result = new AtomicReference<>(0.0);
-        List<BigDecimal> collect = IntStream.range(0, atArr.size()).mapToObj(index -> {
-            BigDecimal cAT = atArr.get(index);
-            double v = (result.get() * secondLength + cAT.doubleValue()) / firstLength;
+        List<BigDecimal> collect = atArr.stream().map(bigDecimal -> {
+            double v = (result.get() * secondLength + bigDecimal.doubleValue()) / firstLength;
             result.set(v);
             return new BigDecimal(v).setScale(3, RoundingMode.HALF_UP);
         }).collect(Collectors.toList());

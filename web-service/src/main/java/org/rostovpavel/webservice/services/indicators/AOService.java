@@ -52,14 +52,6 @@ public class AOService implements IndicatorService {
 
 
     private Signal getTwinPeakScanner(@NotNull List<BigDecimal> hl, List<BigDecimal> color, List<BigDecimal> direction) {
-
-//        =ЕСЛИ(S100<>S99;
-//          ЕСЛИ(И(M100=1;S100<S99;K101=0);
-//              "BEARISH TWIN PEAK";
-//              ЕСЛИ(И(M100=0;S100>S99;K101=1);"BULLISH TWIN PEAK";""));
-//          "")
-
-
         if (hl.get(1).compareTo(hl.get(2)) != 0) {
             if ((direction.get(1).compareTo(BigDecimal.valueOf(1)) == 0)
                     && (hl.get(1).compareTo(hl.get(2)) < 0)
@@ -77,7 +69,7 @@ public class AOService implements IndicatorService {
     }
 
 
-    private List<BigDecimal> getDateHL(List<BigDecimal> ao, List<Integer> swingHL){
+    private List<BigDecimal> getDateHL(@NotNull List<BigDecimal> ao, @NotNull List<Integer> swingHL){
         List<BigDecimal> collectAO = ao.stream().limit(swingHL.size()).collect(Collectors.toList());
         List<Integer> collectHL = new ArrayList<>(swingHL);
         Collections.reverse(collectAO);
@@ -139,16 +131,7 @@ public class AOService implements IndicatorService {
         }).collect(Collectors.toList());
     }
 
-    private Signal getSaucerScanner(List<BigDecimal> color, List<BigDecimal> direction) {
-
-//        ЕСЛИ(M101=1;
-//              ЕСЛИ(И(K100=0;K99=0);
-//                  ЕСЛИ(K101=1;"BULLISH SAUCER";"")
-//                  ;"");
-//              ЕСЛИ(И(K100=1;K99=1);
-//                  ЕСЛИ(K101=0;"BEARISH SAUCER";"");
-//                  "")
-//             )
+    private Signal getSaucerScanner(List<BigDecimal> color, @NotNull List<BigDecimal> direction) {
 
         if (direction.get(0).compareTo(BigDecimal.valueOf(1)) == 0) {
             if ((color.get(1).compareTo(BigDecimal.valueOf(0)) == 0)

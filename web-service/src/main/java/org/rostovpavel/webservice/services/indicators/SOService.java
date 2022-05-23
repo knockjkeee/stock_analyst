@@ -2,6 +2,7 @@ package org.rostovpavel.webservice.services.indicators;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.NotNull;
 import org.rostovpavel.base.dto.StocksDTO;
 import org.rostovpavel.base.models.move.SO.StochasticOscillator;
 import org.rostovpavel.base.models.Signal;
@@ -50,7 +51,7 @@ public class SOService implements IndicatorService{
                 .build();
     }
 
-    private Signal compareSOToBuySell(List<BigDecimal> dataD, List<BigDecimal> dataK) {
+    private Signal compareSOToBuySell(@NotNull List<BigDecimal> dataD, List<BigDecimal> dataK) {
         if ((dataD.get(0).compareTo(BigDecimal.valueOf(DOWNLINE)) < 0) && (dataD.get(1).compareTo(BigDecimal.valueOf(DOWNLINE)) >= 0) && (dataD.get(0).compareTo(dataK.get(0)) < 0)) {
             return Signal.BUY;
         }
@@ -60,12 +61,12 @@ public class SOService implements IndicatorService{
         return Signal.NONE;
     }
 
-    private BigDecimal getKRes(int index, List<BigDecimal> data) {
+    private @NotNull BigDecimal getKRes(int index, @NotNull List<BigDecimal> data) {
         List<BigDecimal> collect = IntStream.range(index, 3 + index).mapToObj(data::get).collect(Collectors.toList());
         return collect.stream().reduce(BigDecimal.ZERO, BigDecimal::add).divide(BigDecimal.valueOf(collect.size()), 6, RoundingMode.UP);
     }
 
-    private BigDecimal getK(int i, StocksDTO data) {
+    private @NotNull BigDecimal getK(int i, @NotNull StocksDTO data) {
         List<Stock> collect = IntStream.range(i, DEEP_DAY + i).mapToObj(index -> data.getStocks().get(index)).collect(Collectors.toList());
 
         List<BigDecimal> low = collect.stream().map(Stock::getLow).collect(Collectors.toList());

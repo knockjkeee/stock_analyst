@@ -2,6 +2,7 @@ package org.rostovpavel.webservice.services.indicators;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.NotNull;
 import org.rostovpavel.base.dto.StocksDTO;
 import org.rostovpavel.base.models.move.BB.BollingerBands;
 import org.rostovpavel.base.models.Signal;
@@ -72,7 +73,7 @@ public class BBService implements IndicatorService{
     }
 
 
-    private Signal compareBBToBuySell(List<BigDecimal> close, List<BigDecimal> upData, List<BigDecimal> loData) {
+    private Signal compareBBToBuySell(@NotNull List<BigDecimal> close, List<BigDecimal> upData, @NotNull List<BigDecimal> loData) {
         if ((close.get(0).compareTo(loData.get(0)) < 0)
                 && (close.get(1).compareTo(loData.get(1)) >= 0)) {
             return Signal.BUY;

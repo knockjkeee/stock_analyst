@@ -2,6 +2,7 @@ package org.rostovpavel.webservice.services.indicators;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.NotNull;
 import org.rostovpavel.base.dto.StocksDTO;
 import org.rostovpavel.base.models.move.MACD.MovingAverageConvergenceDivergence;
 import org.rostovpavel.base.models.Signal;
@@ -26,7 +27,7 @@ public class MACDService implements IndicatorService {
     private static final int SIGNALCONST = 9;
 
     @Override
-    public MovingAverageConvergenceDivergence getData(StocksDTO data) {
+    public MovingAverageConvergenceDivergence getData(@NotNull StocksDTO data) {
         List<Stock> stocks = new ArrayList<>(data.getStocks());
         Collections.reverse(stocks);
 
@@ -46,7 +47,7 @@ public class MACDService implements IndicatorService {
     }
 
 
-    private Signal compareMACDToBuySell(List<BigDecimal> macd, List<BigDecimal> signal) {
+    private Signal compareMACDToBuySell(@NotNull List<BigDecimal> macd, @NotNull List<BigDecimal> signal) {
         if ((macd.get(macd.size() - 1).compareTo(signal.get(signal.size() - 1)) > 0)
                 && (macd.get(macd.size() - 2).compareTo(signal.get(signal.size() - 2)) <= 0)) {
             return Signal.BUY;
@@ -67,11 +68,11 @@ public class MACDService implements IndicatorService {
         return Signal.NONE;
     }
 
-    private List<BigDecimal> getDifferenceBetweenCollect(List<BigDecimal> whereData, List<BigDecimal> whatData) {
+    private List<BigDecimal> getDifferenceBetweenCollect(List<BigDecimal> whereData, @NotNull List<BigDecimal> whatData) {
         return IntStream.range(0, whatData.size()).mapToObj(index -> whereData.get(index).subtract(whatData.get(index))).collect(Collectors.toList());
     }
 
-    private List<BigDecimal> getSliceByDay(List<BigDecimal> stocks, int val) {
+    private List<BigDecimal> getSliceByDay(@NotNull List<BigDecimal> stocks, int val) {
         AtomicReference<Double> result = new AtomicReference<>(0.0);
         return IntStream.range(1, stocks.size()).mapToObj(index -> {
             double cVal = stocks.get(index).doubleValue();

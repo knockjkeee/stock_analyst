@@ -2,6 +2,7 @@ package org.rostovpavel.webservice.services.indicators;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.NotNull;
 import org.rostovpavel.base.dto.StocksDTO;
 import org.rostovpavel.base.models.purchases.RSI_SO.RelativeStrengthIndexStochastic;
 import org.rostovpavel.base.models.Signal;
@@ -46,7 +47,7 @@ public class RSIStochService implements IndicatorService {
     }
 
 
-    private Signal compareRSIStochToBuySell(List<BigDecimal> rsiStoch) {
+    private Signal compareRSIStochToBuySell(@NotNull List<BigDecimal> rsiStoch) {
 
         if ((rsiStoch.get(0).compareTo(BigDecimal.valueOf(DOWNLINE)) < 0) && (rsiStoch.get(1).compareTo(BigDecimal.valueOf(DOWNLINE)) >= 0)) {
             return Signal.BUY;

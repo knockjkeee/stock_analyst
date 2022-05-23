@@ -62,7 +62,7 @@ public class ADXService implements IndicatorService {
                 .build();
     }
 
-    private Signal compareADXToBuySell(BigDecimal adx) {
+    private Signal compareADXToBuySell(@NotNull BigDecimal adx) {
         if((adx.compareTo(BigDecimal.valueOf(30)) > 0) && (adx.compareTo(BigDecimal.valueOf(40)) < 0)){
             return Signal.VAlSMALL;
         }

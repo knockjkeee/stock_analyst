@@ -2,6 +2,7 @@ package org.rostovpavel.webservice.services.indicators;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.jetbrains.annotations.NotNull;
 import org.rostovpavel.base.dto.StocksDTO;
 import org.rostovpavel.base.exception.StockNotFoundException;
 import org.rostovpavel.base.models.move.MA.EMA;
@@ -24,7 +25,7 @@ public class MAService implements IndicatorService {
     private final static int[] LENGTH_MA = new int[]{20, 50, 100};
 
     @Override
-    public MovingAverage getData(StocksDTO date) {
+    public MovingAverage getData(@NotNull StocksDTO date) {
         List<SMA> smaData = Arrays.asList(SMA.builder().build(), SMA.builder().build());
         List<EMA> emaData = Arrays.asList(EMA.builder().build(), EMA.builder().build());
         List<Stock> stocks = date.getStocks();
@@ -94,7 +95,7 @@ public class MAService implements IndicatorService {
         });
     }
 
-    public Signal compareMAToBuySell(List<Stock> stocks, BigDecimal curMA, BigDecimal preMA) {
+    public Signal compareMAToBuySell(@NotNull List<Stock> stocks, BigDecimal curMA, BigDecimal preMA) {
         if ((stocks.get(0).getClose().compareTo(curMA) > 0) && (stocks.get(1).getClose().compareTo(preMA) <= 0)) {
             return Signal.BUY;
         }
@@ -104,8 +105,7 @@ public class MAService implements IndicatorService {
         return Signal.NONE;
     }
 
-
-    public BigDecimal getSMA(List<Stock> stocks, int length) {
+    public BigDecimal getSMA(@NotNull List<Stock> stocks, int length) {
         return stocks
                 .stream()
                 .limit(length)
@@ -115,11 +115,10 @@ public class MAService implements IndicatorService {
                 .divide(BigDecimal.valueOf(length), 2, RoundingMode.HALF_UP);
     }
 
-    private BigDecimal getEMA(List<Stock> stocks, BigDecimal sma, int length) {
+    private @NotNull BigDecimal getEMA(@NotNull List<Stock> stocks, @NotNull BigDecimal sma, int length) {
         BigDecimal key = new BigDecimal(2).divide(new BigDecimal(length)
                 .add(new BigDecimal(1)), 5, RoundingMode.HALF_UP);
         return (stocks.get(0).getClose().multiply(key))
                 .add((sma.multiply(new BigDecimal(1).subtract(key)))).setScale(2, RoundingMode.HALF_UP);
     }
-
 }
