@@ -1,8 +1,10 @@
 package org.rostovpavel.base.models;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.rostovpavel.base.models.move.AO.AwesomeOscillator;
 import org.rostovpavel.base.models.move.ST.SuperTrend;
 import org.rostovpavel.base.models.power.ADX.AverageDirectionalMovementIndex;
@@ -19,6 +21,8 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Builder
 public class Ticker {
@@ -29,6 +33,7 @@ public class Ticker {
     int scorePowerVal;
     int scorePowerTrend;
     int scorePurchases;
+    String time;
     MovingAverage movingAverage;
     MovingAverageConvergenceDivergence macd;
     BollingerBands bollingerBands;

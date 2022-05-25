@@ -1,12 +1,16 @@
 package org.rostovpavel.base.models.move.AO;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.rostovpavel.base.models.IndicatorMove;
 import org.rostovpavel.base.models.Signal;
 
 import java.math.BigDecimal;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Builder
 public class AwesomeOscillator implements IndicatorMove {

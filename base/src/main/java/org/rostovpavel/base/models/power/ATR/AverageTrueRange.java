@@ -1,12 +1,16 @@
 package org.rostovpavel.base.models.power.ATR;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.rostovpavel.base.models.IndicatorPowerVal;
 import org.rostovpavel.base.models.Signal;
 
 import java.math.BigDecimal;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Builder
 public class AverageTrueRange implements IndicatorPowerVal {

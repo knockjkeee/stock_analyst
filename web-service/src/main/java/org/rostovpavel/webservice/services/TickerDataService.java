@@ -26,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -92,6 +94,7 @@ public class TickerDataService {
                 .cci(cci)
                 .atr(atr)
                 .adx(adx)
+                .time(new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()))
                 .build();
         ticker.generateScoreIndicators();
         return ticker;

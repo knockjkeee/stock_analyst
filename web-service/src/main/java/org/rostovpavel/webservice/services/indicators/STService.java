@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 import org.rostovpavel.base.dto.StocksDTO;
+import org.rostovpavel.base.models.Signal;
 import org.rostovpavel.base.models.Stock;
 import org.rostovpavel.base.models.move.ST.SuperTrend;
 import org.springframework.stereotype.Service;
@@ -33,16 +34,23 @@ public class STService implements IndicatorService {
     public SuperTrend getData(@NotNull StocksDTO data) {
         List<Stock> collect = data.getStocks();
         // generate
-        List<String> superTrendSecond = getSuperTrend(collect, DEEP_DAY[0], FACTOR[0]);
-        List<String> superTrendMain = getSuperTrend(collect, DEEP_DAY[1], FACTOR[1]);
+        List<BigDecimal> superTrendSecond = getSuperTrend(collect, DEEP_DAY[0], FACTOR[0]);
+        List<BigDecimal> superTrendMain = getSuperTrend(collect, DEEP_DAY[1], FACTOR[1]);
 
         return SuperTrend.builder()
-                .secondTrend(superTrendSecond.get(0))
                 .mainTrend(superTrendMain.get(0))
+                ._keyMain(setKey(collect, superTrendMain.get(0)).getValue())
+                .secondTrend(superTrendSecond.get(0))
+                ._keySecond(setKey(collect, superTrendSecond.get(0)).getValue())
                 .build();
     }
 
-    private @NotNull @Unmodifiable List<String> getSuperTrend(List<Stock> collect, int deep, int multi) {
+    private Signal setKey(@NotNull List<Stock> data, BigDecimal trend) {
+        BigDecimal cClose = data.get(0).getClose();
+        return cClose.compareTo(trend) < 0 ? Signal.SELL : Signal.BUY;
+    }
+
+    private @NotNull @Unmodifiable List<BigDecimal> getSuperTrend(List<Stock> collect, int deep, int multi) {
         List<BigDecimal> atr = atrService.getATR(collect, deep);
         List<Stock> stocks = collect.stream().limit(atr.size()).collect(Collectors.toList());
 
@@ -64,7 +72,7 @@ public class STService implements IndicatorService {
         temp.set(finalUpperBand.get(0).doubleValue());
         List<BigDecimal> superTrend = generateSuperTrend(tempStocks, temp, finalUpperBand, finalLowerBand);
         Collections.reverse(superTrend);
-        return List.of(superTrend.get(0).toString());
+        return List.of(superTrend.get(0));
     }
 
     @NotNull

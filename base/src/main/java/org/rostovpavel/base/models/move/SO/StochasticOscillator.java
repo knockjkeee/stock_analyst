@@ -1,13 +1,17 @@
 package org.rostovpavel.base.models.move.SO;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.rostovpavel.base.models.IndicatorMove;
 import org.rostovpavel.base.models.Signal;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Builder
 public class StochasticOscillator implements IndicatorMove {

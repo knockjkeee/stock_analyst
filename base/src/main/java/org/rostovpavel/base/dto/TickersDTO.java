@@ -1,13 +1,15 @@
 package org.rostovpavel.base.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Value;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.rostovpavel.base.models.Ticker;
 
 import java.util.List;
 
+@NoArgsConstructor
 @AllArgsConstructor
-@Value
+@Data
 public class TickersDTO {
     List<Ticker> stocks;
 }

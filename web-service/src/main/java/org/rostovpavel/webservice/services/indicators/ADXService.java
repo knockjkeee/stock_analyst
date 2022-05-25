@@ -46,7 +46,12 @@ public class ADXService implements IndicatorService {
             BigDecimal dl14M = dmMinus14.divide(aT14,5, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100.0));
             BigDecimal dl14Diff = dl14P.subtract(dl14M).abs();
             BigDecimal dl14Sum = dl14P.add(dl14M).abs();
-            BigDecimal dx = dl14Diff.divide(dl14Sum,5, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100.0));
+            BigDecimal dx;
+            if (dl14Sum.compareTo(BigDecimal.valueOf(0)) == 0) {
+                dx = BigDecimal.ZERO;
+            } else {
+                dx = dl14Diff.divide(dl14Sum, 5, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100.0));
+            }
             dxArr.add(dx);
             dl14PArr.add(dl14P);
             dl14MArr.add(dl14M);

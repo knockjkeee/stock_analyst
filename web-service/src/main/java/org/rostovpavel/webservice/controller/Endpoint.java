@@ -5,9 +5,13 @@ import org.jetbrains.annotations.NotNull;
 import org.rostovpavel.base.dto.TickersDTO;
 import org.rostovpavel.base.models.Ticker;
 import org.rostovpavel.base.models.TickerRequestBody;
+import org.rostovpavel.webservice.TEMPO.GenerateFile;
 import org.rostovpavel.webservice.services.TickerDataService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +33,13 @@ public record Endpoint(TickerDataService tickerDataService) {
     @Contract(value = " -> new", pure = true)
     @NotNull
     private String @NotNull [] getNameTickers() {
-        return new String[]{"CLOV", "ENDP", "TAL", "SPCE", "ASTR", "SNAP", "CCL", "CNK", "RIG", "FTI", "LI", "WISH", "AAL", "CCXI", "VIR", "SAVA", "ZY", "DNLI", "F", "AA"};
+        return new String[]{"ASTR", "TAL", "WISH", "U", "RIOT", "LPL", "GPS", "ATVI", "SNAP", "TWTR", "MDLZ", "BAC", "JD", "KO", "INTC", "BABA", "F", "AA", "CCL", "COIN", "COTY", "ET", "ENPH", "EPAM", "EQT", "FSLR", "MSTR", "PCG", "RRC", "REGI", "SEDG", "SWN", "SPOT", "VEON", "VIPS", "ZS", "CNK", "CLOV", "ENDP", "MOMO", "PBF", "HOOD", "SPCE", "AAPL", "FB", "NVDA", "SAVE", "TSLA", "DDOG", "MOS", "UAA", "BYND", "PTON", "VALE", "RIG", "FTI", "LI", "AAL", "CCXI", "VIR", "SAVA", "ZY", "DNLI"};
+
+
+
+//        "ASTR", "TAL", "WISH", "U", "RIOT", "LPL", "GPS", "ATVI", "SNAP", "TWTR", "MDLZ", "BAC", "JD", "KO", "INTC", "BABA", "F", "AA", "CCL", "COIN", "COTY", "ET", "ENPH", "EPAM", "EQT", "FSLR", "MSTR", "PCG", "RRC", "REGI", "SEDG", "SWN", "SPOT", "VEON", "VIPS", "ZS", "CNK", "CLOV", "ENDP", "MOMO", "PBF", "HOOD", "SPCE", "AAPL", "FB", "NVDA", "SAVE", "TSLA", "DDOG", "MOS", "UAA", "BYND", "PTON", "VALE", "RIG", "FTI", "LI", "AAL", "CCXI", "VIR", "SAVA", "ZY", "DNLI"
+
+
     }
 
     @GetMapping("/all")
@@ -86,7 +96,23 @@ public record Endpoint(TickerDataService tickerDataService) {
 //                                && (e.getScorePowerTrend() !=0)
 //                                && (e.getScorePurchases() != 0))
                 ).collect(Collectors.toList());
+        GenerateFile.writeToJson(collect);
         return new TickersDTO(collect);
+    }
+
+    @Contract(" -> new")
+    @GetMapping("/csv")
+    public ResponseEntity<String> generateCSV() {
+        GenerateFile.generateCSV();
+        return new ResponseEntity<>("Success", HttpStatus.OK);
+    }
+
+
+    @GetMapping(value = "/foo.csv")
+    @ResponseBody
+    public String fooAsCSV(HttpServletResponse response) {
+        response.setContentType("text/plain; charset=utf-8");
+        return "a,b,c\n1,2,3\n3,4,5";
     }
 
     @Contract(" -> new")

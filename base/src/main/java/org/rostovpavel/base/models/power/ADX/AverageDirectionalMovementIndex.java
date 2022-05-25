@@ -1,14 +1,18 @@
 package org.rostovpavel.base.models.power.ADX;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.rostovpavel.base.models.IndicatorPowerTrend;
 import org.rostovpavel.base.models.Signal;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Builder
 public class AverageDirectionalMovementIndex implements IndicatorPowerTrend {
@@ -60,14 +64,27 @@ public class AverageDirectionalMovementIndex implements IndicatorPowerTrend {
     public int getScoreToLine(int sum, BigDecimal price) {
         int scoreLine = 0;
         if (dlP.compareTo(dlM) > 0){
-            BigDecimal procent = generateProcent(dlM, dlP);
+            BigDecimal procent;
+
+            try {
+                procent = generateProcent(dlM, dlP);
+            } catch (Exception e) {
+                procent = BigDecimal.ZERO;
+            }
+
             setProcent(procent);
             if (procent.compareTo(BigDecimal.valueOf(20)) > 0) {
                 sum += 25;
                 scoreLine += 25;
             }
         }else{
-            BigDecimal procent = generateProcent(dlP, dlM);
+            BigDecimal procent;
+            try {
+                procent = generateProcent(dlP, dlM);
+            } catch (Exception e) {
+                procent = BigDecimal.ZERO;
+            }
+
             setProcent(procent);
             if (procent.compareTo(BigDecimal.valueOf(20)) > 0) {
                 sum -= 25;
