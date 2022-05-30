@@ -79,7 +79,12 @@ public class MovingAverageConvergenceDivergence implements IndicatorMove {
     private int getScoreToSignal(int sum, BigDecimal price) {
         int scoreSignal = 0;
         if (MACD.compareTo(signal) > 0) {
-            BigDecimal procent = generateProcent(signal, MACD);
+            BigDecimal procent;
+            try {
+                procent = generateProcent(signal, MACD);
+            } catch (Exception e) {
+                procent = BigDecimal.ZERO;
+            }
             setProcent(procent);
             if (procent.compareTo(BigDecimal.valueOf(7)) > 0) {
                 sum += 25;
@@ -89,7 +94,12 @@ public class MovingAverageConvergenceDivergence implements IndicatorMove {
 //            scoreSignal += 25;
         }
         if (MACD.compareTo(signal) < 0) {
-            BigDecimal procent = generateProcent(MACD, signal);
+            BigDecimal procent;
+            try {
+                procent = generateProcent(MACD, signal);
+            } catch (Exception e) {
+                procent = BigDecimal.ZERO;
+            }
             setProcent(procent);
             if (procent.compareTo(BigDecimal.valueOf(7)) > 0) {
                 sum -= 25;

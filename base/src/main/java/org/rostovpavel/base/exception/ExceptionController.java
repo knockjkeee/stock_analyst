@@ -17,7 +17,7 @@ public class ExceptionController extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(StatusRuntimeException.class)
     public ResponseEntity<Error> handleNoContentByLimit(Exception ex){
-        return new ResponseEntity<>(new Error(ex.getLocalizedMessage()), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new Error(ex.getLocalizedMessage()), HttpStatus.NOT_ACCEPTABLE);
 //        return new ResponseEntity<>(new Error(ex.getLocalizedMessage()), HttpStatus.NO_CONTENT);
     }
 }

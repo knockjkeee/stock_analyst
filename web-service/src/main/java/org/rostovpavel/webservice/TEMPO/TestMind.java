@@ -10,7 +10,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -19,16 +22,33 @@ import java.util.concurrent.TimeUnit;
 
 public class TestMind {
     public static void main(String[] args) {
+        List<String> mmStart = Arrays.asList("14", "29", "45", "59");
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
+        MyTask testMytest = new MyTask("testMytest");
 
 //        ForkJoinPool executor = ForkJoinPool.commonPool();
         //ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
 //        test("test", executor);
+        while (true) {
+            String currentMM = new SimpleDateFormat("mm").format(Calendar.getInstance().getTime());
+            if (mmStart.contains(currentMM)) {
+                System.out.println("Start -> " + new SimpleDateFormat("HH.mm.ss").format(Calendar.getInstance().getTime()));
+                ScheduledFuture<?> schedule = executor.scheduleAtFixedRate(testMytest, 0, 900000, TimeUnit.MILLISECONDS);
+                break;
+            }
+            try {
+                System.out.println("Wait -> " + new SimpleDateFormat("HH.mm.ss").format(Calendar.getInstance().getTime()));
+                Thread.sleep(40000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+//       new SimpleDateFormat("MM").format(Calendar.getInstance().getTime());
 
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
-        MyTask testMytest = new MyTask("testMytest");
-        ScheduledFuture<?> schedule = executor.scheduleAtFixedRate(testMytest, 0, 900000, TimeUnit.MILLISECONDS);
 
-        System.out.println("TEst");
+
+//        return new SimpleDateFormat("dd.MM.yyyy").format(Calendar.getInstance().getTime());
+
 
 //        try {
 //            Thread.sleep(5000);

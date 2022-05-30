@@ -33,7 +33,7 @@ public record Endpoint(TickerDataService tickerDataService) {
     @Contract(value = " -> new", pure = true)
     @NotNull
     private String @NotNull [] getNameTickers() {
-        return new String[]{"ASTR", "TAL", "WISH", "U", "RIOT", "LPL", "GPS", "ATVI", "SNAP", "TWTR", "MDLZ", "BAC", "JD", "KO", "INTC", "BABA", "F", "AA", "CCL", "COIN", "COTY", "ET", "ENPH", "EPAM", "EQT", "FSLR", "MSTR", "PCG", "RRC", "REGI", "SEDG", "SWN", "SPOT", "VEON", "VIPS", "ZS", "CNK", "CLOV", "ENDP", "MOMO", "PBF", "HOOD", "SPCE", "AAPL", "FB", "NVDA", "SAVE", "TSLA", "DDOG", "MOS", "UAA", "BYND", "PTON", "VALE", "RIG", "FTI", "LI", "AAL", "CCXI", "VIR", "SAVA", "ZY", "DNLI"};
+        return new String[]{"ASTR", "TAL", "WISH", "U", "RIOT", "LPL", "GPS", "ATVI", "SNAP", "TWTR", "MDLZ", "BAC", "JD", "KO", "INTC", "BABA", "F", "AA", "CCL", "COIN", "COTY", "ET", "ENPH", "EQT", "FSLR", "MSTR", "PCG", "RRC", "REGI", "SWN", "SPOT", "VEON", "VIPS", "ZS", "CNK", "CLOV", "ENDP", "MOMO", "PBF", "HOOD", "SPCE", "AAPL", "FB", "NVDA", "SAVE", "DDOG", "MOS", "UAA", "BYND", "PTON", "VALE", "RIG", "FTI", "LI", "AAL", "CCXI", "VIR", "SAVA", "ZY", "DNLI"};
 
 
 
@@ -73,38 +73,30 @@ public record Endpoint(TickerDataService tickerDataService) {
         );
         TickerRequestBody tickerRequestBody = new TickerRequestBody();
         tickerRequestBody.setTickers(date);
-        List<Ticker> collect = tickerDataService.getDataByTickers(tickerRequestBody).getStocks()
-//                .stream().filter(e ->
-//                                ((e.getScoreMove() > 150 || e.getScoreMove() < -150)
-//                                    && (e.getScorePowerTrend() > 50 || e.getScorePowerTrend() < -50))
-//                                || ((e.getScoreMove() > 150 || e.getScoreMove() < -150)
-//                                    && (e.getScorePowerTrend() > 25 || e.getScorePowerTrend() < -25)
-//                                    && (e.getScorePurchases() != 0))
-//                                || ((e.getScoreMove() > 120 || e.getScoreMove() < -120)
-//                                    && (e.getScorePowerTrend() > 20 || e.getScorePowerTrend() < -20)
-//                                    && (e.getScorePurchases() != 0))
-//                ).collect(Collectors.toList());
-                .stream().filter(e ->
-                        ((e.getScoreMove() > 175 || e.getScoreMove() < -150))
-//                                && (e.getScorePowerTrend() > 50 || e.getScorePowerTrend() < -50))
-//                                || ((e.getScoreMove() > 150 || e.getScoreMove() < -125)
-//                                && (e.getScorePowerTrend() != 0)
-//                                && (e.getScorePurchases() != 0))
-//                                || ((e.getScoreMove() > 150 || e.getScoreMove() < -125))
-//                                || ((e.getScoreMove() > 120 || e.getScoreMove() < -100)
-//                                && (e.getScorePowerVal() !=0)
-//                                && (e.getScorePowerTrend() !=0)
-//                                && (e.getScorePurchases() != 0))
+        //all
+        List<Ticker> stocks = tickerDataService.getDataByTickers(tickerRequestBody).getStocks();
+        //write all
+        GenerateFile.writeToJson(stocks, "All_stocks");
+        //filter
+        List<Ticker> collect = stocks.stream().filter(e ->
+                        ((e.getScoreMove() > 300 && e.getScorePowerTrend() != 0 && e.getScorePowerVal() != 0)
+                                || (e.getScoreMove() > 300 && e.getScorePowerTrend() != 0)
+                                || (e.getScoreMove() > 175 && e.getScorePowerTrend() != 0 && e.getScorePowerVal() != 0)
+                                || (e.getScoreMove() > 175 && e.getScoreMove() < 300 && e.getScorePowerVal() != 0)
+                                || (e.getScoreMove() < -175 && e.getScorePowerTrend() != 0 && e.getScorePowerVal() != 0))
                 ).collect(Collectors.toList());
-        GenerateFile.writeToJson(collect);
+        //write filter
+        GenerateFile.writeToJson(collect, "filter");
+        // return filter
         return new TickersDTO(collect);
     }
 
     @Contract(" -> new")
     @GetMapping("/csv")
-    public ResponseEntity<String> generateCSV() {
-        GenerateFile.generateCSV();
-        return new ResponseEntity<>("Success", HttpStatus.OK);
+    public @NotNull ResponseEntity<String> generateCSV() {
+        GenerateFile.generateCSV("All_stocks");
+        GenerateFile.generateCSV("filter");
+        return new ResponseEntity<>("Success filter and All_stocks", HttpStatus.OK);
     }
 
 
