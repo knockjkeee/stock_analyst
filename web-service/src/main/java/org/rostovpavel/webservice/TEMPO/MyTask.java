@@ -1,6 +1,7 @@
 package org.rostovpavel.webservice.TEMPO;
 
 import lombok.Data;
+import org.jetbrains.annotations.Nullable;
 import org.rostovpavel.base.dto.TickersDTO;
 import org.rostovpavel.base.models.Ticker;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,7 @@ import java.util.Calendar;
 import java.util.List;
 
 @Data
-public class MyTask implements Runnable{
+public class MyTask implements Runnable {
     private String name;
     RestTemplate rest = new RestTemplate();
     String url = "http://localhost:8888/v1/api/up";
@@ -23,8 +24,7 @@ public class MyTask implements Runnable{
         this.name = name;
     }
 
-    public RestTemplate customRestTemplate()
-    {
+    public RestTemplate customRestTemplate() {
         var factory = new SimpleClientHttpRequestFactory();
         factory.setConnectTimeout(3000);
         return new RestTemplate(factory);
@@ -36,26 +36,48 @@ public class MyTask implements Runnable{
         //RestTemplate rest = customRestTemplate();
         //List<Ticker> stocks = rest.getForObject(url, TickersDTO.class).getStocks();
         //System.out.println(new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()) + " Stocks size: "+ stocks.size());
-        while (true){
+        while (true) {
 
             String time = new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
             try {
-                ResponseEntity<TickersDTO> entity = rest.getForEntity(url, TickersDTO.class);
-                HttpStatus statusCode = entity.getStatusCode();
-                if (statusCode.value() == 200) {
-                    stocks = entity.getBody().getStocks();
-                    System.out.println(time + " Stocks size: "+ stocks.size());
-                    return;
-                }
-                try {
-                    Thread.sleep(30000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                HttpStatus statusCode = getHttpStatus(time);
+                if (statusCode == null) break;
+                System.out.println(time + " status code: " + statusCode + "another attempt after wait 30 sec [try]");
+                sleep(30000);
             } catch (RestClientException e) {
                 System.out.println(time + " - RestClientException: " + e.getLocalizedMessage());
-                break;
+                sleep(3000);
+                HttpStatus statusCode = null;
+                try {
+                    statusCode = getHttpStatus(time);
+                    if (statusCode == null) break;
+                    System.out.println(time + " status code: " + statusCode + "another attempt after wait 30 sec [catch]");
+                    sleep(30000);
+                } catch (Exception ex) {
+                    break;
+                }
             }
+        }
+    }
+
+    @Nullable
+    private HttpStatus getHttpStatus(String time) {
+        List<Ticker> stocks;
+        ResponseEntity<TickersDTO> entity = rest.getForEntity(url, TickersDTO.class);
+        HttpStatus statusCode = entity.getStatusCode();
+        if (statusCode.value() == 200) {
+            stocks = entity.getBody().getStocks();
+            System.out.println(time + " Stocks size: " + stocks.size());
+            return null;
+        }
+        return statusCode;
+    }
+
+    private void sleep(long time) {
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }

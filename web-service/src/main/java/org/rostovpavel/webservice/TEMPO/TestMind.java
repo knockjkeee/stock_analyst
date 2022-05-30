@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 public class TestMind {
     public static void main(String[] args) {
-        List<String> mmStart = Arrays.asList("14", "29", "45", "59");
+        List<String> mmStart = Arrays.asList("14", "29", "44", "59");
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
         MyTask testMytest = new MyTask("testMytest");
 
