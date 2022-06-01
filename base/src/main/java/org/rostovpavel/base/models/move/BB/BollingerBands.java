@@ -57,7 +57,7 @@ public class BollingerBands implements IndicatorMove {
     @Override
     public int getScoreToLine(int sum, BigDecimal price) {
         int scoreLine = 0;
-        if (wbProcent.compareTo(BigDecimal.valueOf(5)) > 0) {
+        if (wbProcent.compareTo(BigDecimal.valueOf(2)) > 0) {
             if ((price.compareTo(upperBand) < 0) && (price.compareTo(middleBand) > 0)) {
                 sum += 25;
                 scoreLine += 25;
@@ -75,16 +75,16 @@ public class BollingerBands implements IndicatorMove {
         int scoreSignal = 0;
         if (getScoreToLine() > 0) {
             BigDecimal diffMiddle = generateDiffMiddle(upperBand, middleBand);
-            if ( ((price.compareTo(upperBand) <= 0) && (price.compareTo(diffMiddle) > 0))
-                    || ((price.compareTo(upperBand) >= 0) && (price.compareTo(diffMiddle) > 0)) ) {
+            if ( ((price.compareTo(upperBand) <= 0) && (price.compareTo(diffMiddle) >= 0))
+                    || ((price.compareTo(upperBand) >= 0) && (price.compareTo(diffMiddle) >= 0)) ) {
                 sum += 50;
                 scoreSignal += 50;
             }
         }
         if (getScoreToLine() < 0) {
             BigDecimal diffMiddle = generateDiffMiddle(middleBand, lowerBand);
-            if ( ((price.compareTo(lowerBand) >= 0) && (price.compareTo(diffMiddle) < 0))
-                    || ((price.compareTo(lowerBand) <= 0) && (price.compareTo(diffMiddle) < 0)) ) {
+            if ( ((price.compareTo(lowerBand) >= 0) && (price.compareTo(diffMiddle) <= 0))
+                    || ((price.compareTo(lowerBand) <= 0) && (price.compareTo(diffMiddle) <= 0)) ) {
                 sum -= 50;
                 scoreSignal -= 50;
             }

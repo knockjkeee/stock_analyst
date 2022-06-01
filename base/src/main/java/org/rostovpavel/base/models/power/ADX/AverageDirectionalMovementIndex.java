@@ -65,7 +65,6 @@ public class AverageDirectionalMovementIndex implements IndicatorPowerTrend {
         int scoreLine = 0;
         if (dlP.compareTo(dlM) > 0){
             BigDecimal procent;
-
             try {
                 procent = generateProcent(dlM, dlP);
             } catch (Exception e) {

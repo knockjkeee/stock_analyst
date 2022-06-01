@@ -32,8 +32,8 @@ public class MovingAverageConvergenceDivergence implements IndicatorMove {
     @Override
     public int prepareScore(BigDecimal price) {
         int sum = 0;
-        sum = getScoreToKey(sum, price);
         sum = getScoreToLine(sum, price);
+        sum = getScoreToKey(sum, price);
         sum = getScoreToSignal(sum, price);
         return sum;
     }
@@ -41,21 +41,23 @@ public class MovingAverageConvergenceDivergence implements IndicatorMove {
     @Override
     public int getScoreToKey(int sum, BigDecimal price) {
         int scoreKey = 0;
-        if (Signal.BUY.getValue().equals(_key)) {
-            sum += 25;
-            scoreKey += 25;
-        }
-        if (Signal.SELL.getValue().equals(_key)) {
-            sum -= 25;
-            scoreKey -= 25;
-        }
-        if (Signal.BUYPLUS.getValue().equals(_key)) {
-            sum += 100;
-            scoreKey += 100;
-        }
-        if (Signal.SELLMINUS.getValue().equals(_key)) {
-            sum -= 100;
-            scoreKey -= 100;
+        if (getScoreToLine() != 0) {
+            if (Signal.BUY.getValue().equals(_key)) {
+                sum += 25;
+                scoreKey += 25;
+            }
+            if (Signal.SELL.getValue().equals(_key)) {
+                sum -= 25;
+                scoreKey -= 25;
+            }
+            if (Signal.BUYPLUS.getValue().equals(_key)) {
+                sum += 100;
+                scoreKey += 100;
+            }
+            if (Signal.SELLMINUS.getValue().equals(_key)) {
+                sum -= 100;
+                scoreKey -= 100;
+            }
         }
         setScoreToKeys(scoreKey);
         return sum;
@@ -86,7 +88,7 @@ public class MovingAverageConvergenceDivergence implements IndicatorMove {
                 procent = BigDecimal.ZERO;
             }
             setProcent(procent);
-            if (procent.compareTo(BigDecimal.valueOf(7)) > 0) {
+            if (procent.compareTo(BigDecimal.valueOf(10)) > 0) {
                 sum += 25;
                 scoreSignal += 25;
             }
@@ -101,7 +103,7 @@ public class MovingAverageConvergenceDivergence implements IndicatorMove {
                 procent = BigDecimal.ZERO;
             }
             setProcent(procent);
-            if (procent.compareTo(BigDecimal.valueOf(7)) > 0) {
+            if (procent.compareTo(BigDecimal.valueOf(10)) > 0) {
                 sum -= 25;
                 scoreSignal -= 25;
             }
