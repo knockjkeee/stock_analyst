@@ -34,7 +34,8 @@ public class GenerateFile {
         }
 
         List<String[]> dataToLines = new ArrayList<>();
-        dataToLines.add(new String[]{"Name", "Price", "Move", "Val", "Trend", "Purchases", "Trend", "Time", "MA", "MACD", "AO", "BB", "SO"});
+        dataToLines.add(new String[]{"Name", "Price", "Move", "Val", "Trend", "Purchases", "Trend", "Time", "MA", "MACD", "AO", "BB"});
+//        dataToLines.add(new String[]{"Name", "Price", "Move", "Val", "Trend", "Purchases", "Trend", "Time", "MA", "MACD", "AO", "BB", "SO"});
         if (current != null) {
             current.forEach(e -> {
                 dataToLines.add(new String[]{
@@ -49,10 +50,8 @@ public class GenerateFile {
                         String.valueOf(e.getMovingAverage().getInnerScore()),
                         e.getMacd().get_key() + "/" + e.getMacd().getProcent() + "/" + e.getMacd().getScoreToKeys() + "/" + e.getMacd().getScoreToLine() + "/" + e.getMacd().getScoreToSignal(),
                         e.getAwesomeOscillator().get_key() + "/" + e.getAwesomeOscillator().getDirection() + "/" + e.getAwesomeOscillator().getScoreKey() + "/" + e.getAwesomeOscillator().getScoreLine() + "/" + e.getAwesomeOscillator().getScoreSignal(),
-                        e.getBollingerBands().get_key() + "/" + e.getBollingerBands().getWbProcent() + "/" + e.getBollingerBands().getScoreToKeys() + "/" + e.getBollingerBands().getScoreToLine() + "/" + e.getBollingerBands().getScoreToSignal(),
-                        e.getStochasticOscillator().get_key() + "/" + e.getStochasticOscillator().getProcent() + "/" + e.getStochasticOscillator().getScoreToKeys() + "/" + e.getStochasticOscillator().getScoreToLine() + "/" + e.getStochasticOscillator().getScoreToSignal(),
-
-
+                        e.getBollingerBands().get_key() + "/" + e.getBollingerBands().getWbProcent() + "/" + e.getBollingerBands().getScoreToKeys() + "/" + e.getBollingerBands().getScoreToLine() + "/" + e.getBollingerBands().getScoreToSignal()
+//                        e.getStochasticOscillator().get_key() + "/" + e.getStochasticOscillator().getProcent() + "/" + e.getStochasticOscillator().getScoreToKeys() + "/" + e.getStochasticOscillator().getScoreToLine() + "/" + e.getStochasticOscillator().getScoreToSignal(),
                 });
             });
         }

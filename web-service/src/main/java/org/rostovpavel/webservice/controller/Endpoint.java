@@ -3,6 +3,7 @@ package org.rostovpavel.webservice.controller;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.rostovpavel.base.dto.TickersDTO;
+import org.rostovpavel.base.models.Signal;
 import org.rostovpavel.base.models.Ticker;
 import org.rostovpavel.base.models.TickerRequestBody;
 import org.rostovpavel.webservice.TEMPO.GenerateFile;
@@ -87,8 +88,18 @@ public record Endpoint(TickerDataService tickerDataService) {
                 ).collect(Collectors.toList());
         //write filter
         GenerateFile.writeToJson(collect, "filter");
+
+
+        List<Ticker> newFilter = stocks.stream().filter(e ->
+                ((e.getAwesomeOscillator().get_key().equals(Signal.BUY.getValue()) && e.getScorePowerVal() >= 75 && e.getMovingAverage().getInnerScore() >=  75 && e.getScoreMove() >= 225)
+                        || (e.getMacd().get_key().equals(Signal.BUYPLUS.getValue()) && e.getScorePowerVal() >= 75 && e.getMovingAverage().getInnerScore() >=  75 && e.getScoreMove() >= 225)
+                        || (e.getBollingerBands().get_key().equals(Signal.SELL.getValue()) && e.getScorePurchases() <= -100 && e.getMovingAverage().getInnerScore() >=  75 && e.getScoreMove() >= 300)
+                        || (e.getScorePowerVal() != 0 && e.getMovingAverage().getInnerScore() >=  75 && e.getScoreMove() >= 350 && e.getScorePurchases() != 0))
+        ).collect(Collectors.toList());
+        GenerateFile.writeToJson(newFilter, "new");
+
         // return filter
-        return new TickersDTO(collect);
+        return new TickersDTO(newFilter);
     }
 
     @Contract(" -> new")
@@ -96,6 +107,8 @@ public record Endpoint(TickerDataService tickerDataService) {
     public @NotNull ResponseEntity<String> generateCSV() {
         GenerateFile.generateCSV("All_stocks");
         GenerateFile.generateCSV("filter");
+        GenerateFile.generateCSV("new");
+
         return new ResponseEntity<>("Success filter and All_stocks", HttpStatus.OK);
     }
 

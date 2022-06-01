@@ -6,19 +6,18 @@ import org.jetbrains.annotations.NotNull;
 import org.rostovpavel.base.dto.StocksDTO;
 import org.rostovpavel.base.dto.StocksDataDTO;
 import org.rostovpavel.base.dto.TickersDTO;
+import org.rostovpavel.base.models.Ticker;
+import org.rostovpavel.base.models.TickerRequestBody;
 import org.rostovpavel.base.models.move.AO.AwesomeOscillator;
+import org.rostovpavel.base.models.move.BB.BollingerBands;
+import org.rostovpavel.base.models.move.MA.MovingAverage;
+import org.rostovpavel.base.models.move.MACD.MovingAverageConvergenceDivergence;
 import org.rostovpavel.base.models.move.ST.SuperTrend;
 import org.rostovpavel.base.models.power.ADX.AverageDirectionalMovementIndex;
 import org.rostovpavel.base.models.power.ATR.AverageTrueRange;
-import org.rostovpavel.base.models.move.BB.BollingerBands;
 import org.rostovpavel.base.models.purchases.CCI.CommodityChannel;
-import org.rostovpavel.base.models.move.MA.MovingAverage;
-import org.rostovpavel.base.models.move.MACD.MovingAverageConvergenceDivergence;
 import org.rostovpavel.base.models.purchases.RSI.RelativeStrengthIndex;
 import org.rostovpavel.base.models.purchases.RSI_SO.RelativeStrengthIndexStochastic;
-import org.rostovpavel.base.models.move.SO.StochasticOscillator;
-import org.rostovpavel.base.models.Ticker;
-import org.rostovpavel.base.models.TickerRequestBody;
 import org.rostovpavel.webservice.services.indicators.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -69,7 +68,7 @@ public class TickerDataService {
         MovingAverage movingAverage = maService.getData(data);
         MovingAverageConvergenceDivergence macd = macdService.getData(data);
         BollingerBands bb = bbService.getData(data);
-        StochasticOscillator so = soService.getData(data);
+        //StochasticOscillator so = soService.getData(data);
         AwesomeOscillator ao = aoService.getData(data);
 
         RelativeStrengthIndex rsi = rsiService.getData(data);
@@ -86,7 +85,7 @@ public class TickerDataService {
                 .movingAverage(movingAverage)
                 .macd(macd)
                 .bollingerBands(bb)
-                .stochasticOscillator(so)
+                //.stochasticOscillator(so)
                 .awesomeOscillator(ao)
                 .superTrend(st)
                 .rsi(rsi)

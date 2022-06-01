@@ -6,16 +6,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.rostovpavel.base.models.move.AO.AwesomeOscillator;
+import org.rostovpavel.base.models.move.BB.BollingerBands;
+import org.rostovpavel.base.models.move.MA.MovingAverage;
+import org.rostovpavel.base.models.move.MACD.MovingAverageConvergenceDivergence;
 import org.rostovpavel.base.models.move.ST.SuperTrend;
 import org.rostovpavel.base.models.power.ADX.AverageDirectionalMovementIndex;
 import org.rostovpavel.base.models.power.ATR.AverageTrueRange;
-import org.rostovpavel.base.models.move.BB.BollingerBands;
 import org.rostovpavel.base.models.purchases.CCI.CommodityChannel;
-import org.rostovpavel.base.models.move.MA.MovingAverage;
-import org.rostovpavel.base.models.move.MACD.MovingAverageConvergenceDivergence;
 import org.rostovpavel.base.models.purchases.RSI.RelativeStrengthIndex;
 import org.rostovpavel.base.models.purchases.RSI_SO.RelativeStrengthIndexStochastic;
-import org.rostovpavel.base.models.move.SO.StochasticOscillator;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -37,7 +36,7 @@ public class Ticker {
     MovingAverage movingAverage;
     MovingAverageConvergenceDivergence macd;
     BollingerBands bollingerBands;
-    StochasticOscillator stochasticOscillator;
+    //StochasticOscillator stochasticOscillator;
     AwesomeOscillator awesomeOscillator;
     SuperTrend superTrend;
 
@@ -82,7 +81,8 @@ public class Ticker {
     }
 
     private List<IndicatorMove> getIndicatorsMove() {
-        return Arrays.asList(movingAverage, macd, bollingerBands, stochasticOscillator, awesomeOscillator, superTrend);
+        //return Arrays.asList(movingAverage, macd, bollingerBands, stochasticOscillator, awesomeOscillator, superTrend);
+        return Arrays.asList(movingAverage, macd, bollingerBands, awesomeOscillator, superTrend);
     }
 
     private List<IndicatorPowerVal> getIndicatorsPowerVal() {

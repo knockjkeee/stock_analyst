@@ -38,7 +38,7 @@ public class TestMind {
             }
             try {
                 System.out.println("Wait -> " + new SimpleDateFormat("HH.mm.ss").format(Calendar.getInstance().getTime()));
-                Thread.sleep(40000);
+                Thread.sleep(4000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
