@@ -39,15 +39,28 @@ public class STService implements IndicatorService {
 
         return SuperTrend.builder()
                 .mainTrend(superTrendMain.get(0))
-                ._keyMain(setKey(collect, superTrendMain.get(0)).getValue())
+                ._keyMain(setKey(collect, superTrendMain).getValue())
                 .secondTrend(superTrendSecond.get(0))
-                ._keySecond(setKey(collect, superTrendSecond.get(0)).getValue())
+                ._keySecond(setKey(collect, superTrendSecond).getValue())
                 .build();
     }
 
-    private Signal setKey(@NotNull List<Stock> data, BigDecimal trend) {
-        BigDecimal cClose = data.get(0).getClose();
-        return cClose.compareTo(trend) < 0 ? Signal.SELL : Signal.BUY;
+    private Signal setKey(@NotNull List<Stock> data, List<BigDecimal> trend) {
+        //BigDecimal cClose = data.get(0).getClose();
+        if (data.get(0).getClose().compareTo(trend.get(0)) < 0) {
+            if (data.get(1).getClose().compareTo(trend.get(1)) > 0) {
+                return Signal.SELLMINUS;
+            } else {
+                return Signal.SELL;
+            }
+        } else {
+            if (data.get(1).getClose().compareTo(trend.get(1)) < 0) {
+                return Signal.BUYPLUS;
+            } else {
+                return Signal.BUY;
+            }
+        }
+        //return cClose.compareTo(trend.get(0)) < 0 ? Signal.SELL : Signal.BUY;
     }
 
     private @NotNull @Unmodifiable List<BigDecimal> getSuperTrend(List<Stock> collect, int deep, int multi) {
@@ -72,7 +85,7 @@ public class STService implements IndicatorService {
         temp.set(finalUpperBand.get(0).doubleValue());
         List<BigDecimal> superTrend = generateSuperTrend(tempStocks, temp, finalUpperBand, finalLowerBand);
         Collections.reverse(superTrend);
-        return List.of(superTrend.get(0));
+        return superTrend;
     }
 
     @NotNull

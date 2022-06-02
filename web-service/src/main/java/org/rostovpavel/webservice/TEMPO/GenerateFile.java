@@ -34,7 +34,7 @@ public class GenerateFile {
         }
 
         List<String[]> dataToLines = new ArrayList<>();
-        dataToLines.add(new String[]{"Name", "Price", "Move", "Val", "Trend", "Purchases", "Trend", "Time", "MA", "MACD", "AO", "BB"});
+        dataToLines.add(new String[]{"Name", "Price", "Move", "Val", "Trend", "Pur", "Trend", "Time", "MA", "MACD", "AO", "BB"});
 //        dataToLines.add(new String[]{"Name", "Price", "Move", "Val", "Trend", "Purchases", "Trend", "Time", "MA", "MACD", "AO", "BB", "SO"});
         if (current != null) {
             current.forEach(e -> {

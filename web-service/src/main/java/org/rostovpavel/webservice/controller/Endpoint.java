@@ -91,10 +91,10 @@ public record Endpoint(TickerDataService tickerDataService) {
 
 
         List<Ticker> newFilter = stocks.stream().filter(e ->
-                ((e.getAwesomeOscillator().get_key().equals(Signal.BUY.getValue()) && e.getScorePowerVal() >= 75 && e.getMovingAverage().getInnerScore() >=  75 && e.getScoreMove() >= 225)
-                        || (e.getMacd().get_key().equals(Signal.BUYPLUS.getValue()) && e.getScorePowerVal() >= 75 && e.getMovingAverage().getInnerScore() >=  75 && e.getScoreMove() >= 225)
-                        || (e.getBollingerBands().get_key().equals(Signal.SELL.getValue()) && e.getScorePurchases() <= -100 && e.getMovingAverage().getInnerScore() >=  75 && e.getScoreMove() >= 300)
-                        || (e.getScorePowerVal() != 0 && e.getMovingAverage().getInnerScore() >=  75 && e.getScoreMove() >= 350 && e.getScorePurchases() != 0))
+                ((e.getSuperTrend().get_keyMain().equals(Signal.BUYPLUS.getValue()) || e.getSuperTrend().get_keyMain().equals(Signal.SELLMINUS.getValue()))
+                        || (e.getMacd().get_key().equals(Signal.BUYPLUS.getValue()) || e.getMacd().get_key().equals(Signal.SELLMINUS.getValue()))
+                        || (e.getAwesomeOscillator().get_key().equals(Signal.BUY.getValue()) || e.getAwesomeOscillator().get_key().equals(Signal.SELL.getValue()) )
+                        || (e.getBollingerBands().get_key().equals(Signal.BUY.getValue()) || e.getBollingerBands().get_key().equals(Signal.SELL.getValue())))
         ).collect(Collectors.toList());
         GenerateFile.writeToJson(newFilter, "new");
 
