@@ -98,8 +98,18 @@ public record Endpoint(TickerDataService tickerDataService) {
         ).collect(Collectors.toList());
         GenerateFile.writeToJson(newFilter, "new");
 
+        List<Ticker> lastFilter = stocks.stream().filter(e ->
+                ((((e.getSuperTrend().get_keyMain().equals(Signal.BUYPLUS.getValue()) || e.getSuperTrend().get_keyMain().equals(Signal.SELLMINUS.getValue()))
+                        || (e.getMacd().get_key().equals(Signal.BUYPLUS.getValue()) || e.getMacd().get_key().equals(Signal.SELLMINUS.getValue()))
+                        || (e.getAwesomeOscillator().get_key().equals(Signal.BUY.getValue()) || e.getAwesomeOscillator().get_key().equals(Signal.SELL.getValue()))) && (e.getScoreMove() > 175 || e.getScoreMove() < -175) && e.getScorePowerVal() != 0 && e.getMovingAverage().getInnerScore() != 0)
+                        || ((e.getSuperTrend().get_keyMain().equals(Signal.BUYPLUS.getValue()) && e.getSuperTrend().get_keySecond().equals(Signal.BUYPLUS.getValue()))
+                        || (e.getSuperTrend().get_keyMain().equals(Signal.SELLMINUS.getValue()) && e.getSuperTrend().get_keySecond().equals(Signal.SELLMINUS.getValue())))
+                        || (e.getScoreMove() >= 375 || e.getScoreMove() <= -375))
+        ).collect(Collectors.toList());
+        GenerateFile.writeToJson(lastFilter, "last");
+
         // return filter
-        return new TickersDTO(newFilter);
+        return new TickersDTO(lastFilter);
     }
 
     @Contract(" -> new")
@@ -108,6 +118,7 @@ public record Endpoint(TickerDataService tickerDataService) {
         GenerateFile.generateCSV("All_stocks");
         GenerateFile.generateCSV("filter");
         GenerateFile.generateCSV("new");
+        GenerateFile.generateCSV("last");
 
         return new ResponseEntity<>("Success filter and All_stocks", HttpStatus.OK);
     }

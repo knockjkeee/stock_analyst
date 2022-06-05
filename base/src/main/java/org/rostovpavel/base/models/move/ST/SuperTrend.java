@@ -37,26 +37,57 @@ public class SuperTrend implements IndicatorMove {
     @Override
     public int getScoreToKey(int sum, BigDecimal price) {
         int key = 0;
-        if ((_keyMain.equals(Signal.BUY.getValue()) || _keyMain.equals(Signal.BUYPLUS.getValue()))
-                && (_keySecond.equals(Signal.BUY.getValue()) || _keySecond.equals(Signal.BUYPLUS.getValue()))) {
+//        if ((_keyMain.equals(Signal.BUY.getValue()) || _keyMain.equals(Signal.BUYPLUS.getValue()))
+//                && (_keySecond.equals(Signal.BUY.getValue()) || _keySecond.equals(Signal.BUYPLUS.getValue()))) {
+//            key += 50;
+//            sum += 50;
+//        }
+//        if ((_keyMain.equals(Signal.SELL.getValue()) || _keyMain.equals(Signal.SELLMINUS.getValue()))
+//                && (_keySecond.equals(Signal.SELL.getValue()) || _keySecond.equals(Signal.SELLMINUS.getValue()))) {
+//            key -= 50;
+//            sum -= 50;
+//        }
+//        if ((_keyMain.equals(Signal.BUY.getValue()) || _keyMain.equals(Signal.BUYPLUS.getValue()))
+//                && (_keySecond.equals(Signal.SELL.getValue()) || _keySecond.equals(Signal.SELLMINUS.getValue()))) {
+//            key += 25;
+//            sum += 25;
+//        }
+//        if ((_keyMain.equals(Signal.SELL.getValue()) || _keyMain.equals(Signal.SELLMINUS.getValue()))
+//                && (_keySecond.equals(Signal.BUY.getValue()) || _keySecond.equals(Signal.BUYPLUS.getValue()))) {
+//            key -= 25;
+//            sum -= 25;
+//        }
+//////////////////
+        if ((_keyMain.equals(Signal.BUY.getValue()) && _keySecond.equals(Signal.BUY.getValue()))
+                || (_keyMain.equals(Signal.BUYPLUS.getValue()) && _keySecond.equals(Signal.BUYPLUS.getValue()))) {
             key += 50;
             sum += 50;
         }
-        if ((_keyMain.equals(Signal.SELL.getValue()) || _keyMain.equals(Signal.SELLMINUS.getValue()))
-                && (_keySecond.equals(Signal.SELL.getValue()) || _keySecond.equals(Signal.SELLMINUS.getValue()))) {
+        if ((_keyMain.equals(Signal.SELL.getValue()) && _keySecond.equals(Signal.SELL.getValue()))
+                || (_keyMain.equals(Signal.SELLMINUS.getValue()) && _keySecond.equals(Signal.SELLMINUS.getValue()))) {
             key -= 50;
             sum -= 50;
         }
-        if ((_keyMain.equals(Signal.BUY.getValue()) || _keyMain.equals(Signal.BUYPLUS.getValue()))
-                && (_keySecond.equals(Signal.SELL.getValue()) || _keySecond.equals(Signal.SELLMINUS.getValue()))) {
-            key += 25;
-            sum += 25;
-        }
-        if ((_keyMain.equals(Signal.SELL.getValue()) || _keyMain.equals(Signal.SELLMINUS.getValue()))
-                && (_keySecond.equals(Signal.BUY.getValue()) || _keySecond.equals(Signal.BUYPLUS.getValue()))) {
+
+        if ((_keyMain.equals(Signal.SELL.getValue()) && _keySecond.equals(Signal.SELLMINUS.getValue()))
+                || (_keyMain.equals(Signal.SELL.getValue()) && _keySecond.equals(Signal.BUY.getValue()))
+                || (_keyMain.equals(Signal.SELL.getValue()) && _keySecond.equals(Signal.BUYPLUS.getValue()))
+                || (_keyMain.equals(Signal.SELLMINUS.getValue()) && _keySecond.equals(Signal.SELL.getValue()))
+                || (_keyMain.equals(Signal.SELLMINUS.getValue()) && _keySecond.equals(Signal.BUY.getValue()))
+                || (_keyMain.equals(Signal.SELLMINUS.getValue()) && _keySecond.equals(Signal.BUYPLUS.getValue()))) {
             key -= 25;
             sum -= 25;
         }
+        if ((_keyMain.equals(Signal.BUY.getValue()) && _keySecond.equals(Signal.BUYPLUS.getValue()))
+                || (_keyMain.equals(Signal.BUY.getValue()) && _keySecond.equals(Signal.SELL.getValue()))
+                || (_keyMain.equals(Signal.BUY.getValue()) && _keySecond.equals(Signal.SELLMINUS.getValue()))
+                || (_keyMain.equals(Signal.BUYPLUS.getValue()) && _keySecond.equals(Signal.BUY.getValue()))
+                || (_keyMain.equals(Signal.BUYPLUS.getValue()) && _keySecond.equals(Signal.SELL.getValue()))
+                || (_keyMain.equals(Signal.BUYPLUS.getValue()) && _keySecond.equals(Signal.SELLMINUS.getValue()))) {
+            key += 25;
+            sum += 25;
+        }
+
         setScoreKey(key);
         return sum;
     }

@@ -41,20 +41,20 @@ public class AverageDirectionalMovementIndex implements IndicatorPowerTrend {
     public int getScoreToKey(int sum, BigDecimal price) {
         int temp = 0;
         if (Signal.VAlSMALL.getValue().equals(_key)) {
-            sum += 12;
-            temp += 12;
-        }
-        if (Signal.VAlLOW.getValue().equals(_key)) {
             sum += 25;
             temp += 25;
         }
-        if (Signal.VAlMEDIUM.getValue().equals(_key)) {
+        if (Signal.VAlLOW.getValue().equals(_key)) {
             sum += 50;
             temp += 50;
         }
-        if (Signal.VAlHIGH.getValue().equals(_key)) {
+        if (Signal.VAlMEDIUM.getValue().equals(_key)) {
             sum += 75;
             temp += 75;
+        }
+        if (Signal.VAlHIGH.getValue().equals(_key)) {
+            sum += 100;
+            temp += 100;
         }
         setScoreKey(temp);
         return sum;
@@ -73,7 +73,7 @@ public class AverageDirectionalMovementIndex implements IndicatorPowerTrend {
 
             setProcent(procent);
             if (procent.compareTo(BigDecimal.valueOf(20)) > 0) {
-                sum += 25;
+                //sum += 25;
                 scoreLine += 25;
             }
         }else{
@@ -86,7 +86,7 @@ public class AverageDirectionalMovementIndex implements IndicatorPowerTrend {
 
             setProcent(procent);
             if (procent.compareTo(BigDecimal.valueOf(20)) > 0) {
-                sum -= 25;
+                //sum -= 25;
                 scoreLine -= 25;
             }
         }

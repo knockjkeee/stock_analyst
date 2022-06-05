@@ -46,7 +46,7 @@ public class MyTask implements Runnable {
                 sleep(10000);
             } catch (RestClientException e) {
                 System.out.println(time + " - RestClientException: " + e.getLocalizedMessage());
-                sleep(3000);
+                sleep(30000);
                 HttpStatus statusCode = null;
                 try {
                     statusCode = getHttpStatus(time);
