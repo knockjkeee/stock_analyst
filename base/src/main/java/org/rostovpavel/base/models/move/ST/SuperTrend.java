@@ -23,7 +23,7 @@ import java.math.BigDecimal;
 public class SuperTrend implements IndicatorMove {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     BigDecimal mainTrend;
     String _keyMain;

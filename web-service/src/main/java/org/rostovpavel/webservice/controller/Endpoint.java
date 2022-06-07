@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/v1/api")
-public class Endpoint {
+public record Endpoint(TickerDataService tickerDataService) {
 
-    private final TickerDataService tickerDataService;
+    //private final TickerDataService tickerDataService;
 
     public Endpoint(TickerDataService tickerDataService) {
         this.tickerDataService = tickerDataService;

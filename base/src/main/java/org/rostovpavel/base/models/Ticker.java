@@ -30,7 +30,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Ticker {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String name;
     BigDecimal price;

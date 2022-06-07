@@ -22,7 +22,7 @@ import java.math.BigDecimal;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AverageTrueRange implements IndicatorPowerVal {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     BigDecimal atr;
     BigDecimal stopLoseLong;

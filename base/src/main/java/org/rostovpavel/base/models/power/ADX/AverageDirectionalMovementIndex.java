@@ -25,7 +25,7 @@ import java.math.RoundingMode;
 public class AverageDirectionalMovementIndex implements IndicatorPowerTrend {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     BigDecimal adx;
     BigDecimal dlP;

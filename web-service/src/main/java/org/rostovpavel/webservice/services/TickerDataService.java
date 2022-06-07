@@ -67,6 +67,18 @@ public class TickerDataService {
 
     @NotNull
     private Ticker generateTicker(String name, StocksDTO data, BigDecimal price, boolean isSingle) {
+        Ticker ticker = prepareTicker(name, data, price);
+
+//        List<Ticker> tickersByRepo = repo.findByNameOrderByIdDesc("CLOV");
+//        List<Ticker> cFilter = tickersByRepo.stream().limit(3).collect(Collectors.toList());
+//        System.out.println(cFilter.size());
+
+        if (!isSingle) repo.save(ticker);
+        return ticker;
+    }
+
+    @NotNull
+    private Ticker prepareTicker(String name, StocksDTO data, BigDecimal price) {
         MovingAverage movingAverage = maService.getData(data);
         MovingAverageConvergenceDivergence macd = macdService.getData(data);
         BollingerBands bb = bbService.getData(data);
@@ -98,13 +110,6 @@ public class TickerDataService {
                 .time(new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()))
                 .build();
         ticker.generateScoreIndicators();
-
-        if (!isSingle) {
-            repo.save(ticker);
-        }
-        List<Ticker> tickers = repo.findByName("CLOV");
-        System.out.println(tickers.size());
-
         return ticker;
     }
 }

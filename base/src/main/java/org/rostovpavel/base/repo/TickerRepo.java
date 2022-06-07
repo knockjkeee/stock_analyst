@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface TickerRepo extends JpaRepository<Ticker, Long> {
-    List<Ticker> findByName(String name);
+    List<Ticker> findByNameOrderByIdDesc(String name);
 }

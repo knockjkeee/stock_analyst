@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MovingAverage implements IndicatorMove {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)

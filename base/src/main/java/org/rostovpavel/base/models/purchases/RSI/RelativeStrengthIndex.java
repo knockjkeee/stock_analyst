@@ -23,7 +23,7 @@ import java.math.BigDecimal;
 public class RelativeStrengthIndex implements IndicatorPurchases {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     int upLine;
     BigDecimal currentRSI;

@@ -34,7 +34,10 @@ public class RSIStochService implements IndicatorService {
 
             double min = collect.stream().mapToDouble(Double::doubleValue).min().getAsDouble();
             double max = collect.stream().mapToDouble(Double::doubleValue).max().getAsDouble();
-            double stochRSI = (collect.get(0) - min) / (max - min);
+            double stochRSI = 0.0;
+            if ((max - min) != 0) {
+                stochRSI = (collect.get(0) - min) / (max - min);
+            }
             rsiStochArr.add(BigDecimal.valueOf(stochRSI));
         });
 

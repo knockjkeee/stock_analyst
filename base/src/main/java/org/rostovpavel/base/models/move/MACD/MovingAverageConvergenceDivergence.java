@@ -23,7 +23,7 @@ import java.math.RoundingMode;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MovingAverageConvergenceDivergence implements IndicatorMove {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     BigDecimal MACD;
     BigDecimal signal;
