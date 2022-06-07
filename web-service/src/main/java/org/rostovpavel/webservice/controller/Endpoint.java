@@ -19,7 +19,13 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/v1/api")
-public record Endpoint(TickerDataService tickerDataService) {
+public class Endpoint {
+
+    private final TickerDataService tickerDataService;
+
+    public Endpoint(TickerDataService tickerDataService) {
+        this.tickerDataService = tickerDataService;
+    }
 
     @GetMapping("{ticker}")
     public Ticker getDataByTicker(@PathVariable String ticker) {
@@ -104,7 +110,11 @@ public record Endpoint(TickerDataService tickerDataService) {
                         || (e.getAwesomeOscillator().get_key().equals(Signal.BUY.getValue()) || e.getAwesomeOscillator().get_key().equals(Signal.SELL.getValue()))) && (e.getScoreMove() > 175 || e.getScoreMove() < -175) && e.getScorePowerVal() != 0 && e.getMovingAverage().getInnerScore() != 0)
                         || ((e.getSuperTrend().get_keyMain().equals(Signal.BUYPLUS.getValue()) && e.getSuperTrend().get_keySecond().equals(Signal.BUYPLUS.getValue()))
                         || (e.getSuperTrend().get_keyMain().equals(Signal.SELLMINUS.getValue()) && e.getSuperTrend().get_keySecond().equals(Signal.SELLMINUS.getValue())))
-                        || (e.getScoreMove() >= 375 || e.getScoreMove() <= -375))
+                        || (e.getScoreMove() >= 375 || e.getScoreMove() <= -375)
+                        || (e.getAwesomeOscillator().getSaucerScanner().equals(Signal.BUYPLUS.getValue())
+                        || e.getAwesomeOscillator().getSaucerScanner().equals(Signal.SELLMINUS.getValue())
+                        || e.getAwesomeOscillator().getTwinPeakScanner().equals(Signal.BUYPLUS.getValue())
+                        || e.getAwesomeOscillator().getTwinPeakScanner().equals(Signal.SELLMINUS.getValue())))
         ).collect(Collectors.toList());
         GenerateFile.writeToJson(lastFilter, "last");
 

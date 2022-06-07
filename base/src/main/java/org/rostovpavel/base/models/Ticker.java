@@ -1,6 +1,7 @@
 package org.rostovpavel.base.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,6 +17,7 @@ import org.rostovpavel.base.models.purchases.CCI.CommodityChannel;
 import org.rostovpavel.base.models.purchases.RSI.RelativeStrengthIndex;
 import org.rostovpavel.base.models.purchases.RSI_SO.RelativeStrengthIndexStochastic;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +26,12 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Builder
+@Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Ticker {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    Long id;
     String name;
     BigDecimal price;
     int candle;
@@ -33,18 +40,46 @@ public class Ticker {
     int scorePowerTrend;
     int scorePurchases;
     String time;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinColumn(name = "movingAverage_id" )
     MovingAverage movingAverage;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinColumn(name = "macd_id" )
     MovingAverageConvergenceDivergence macd;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinColumn(name = "bollingerBands_id")
     BollingerBands bollingerBands;
     //StochasticOscillator stochasticOscillator;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinColumn(name = "awesomeOscillator_id" )
     AwesomeOscillator awesomeOscillator;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinColumn(name = "superTrend_id" )
     SuperTrend superTrend;
 
+    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinColumn(name = "rsi_id" )
     RelativeStrengthIndex rsi;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinColumn(name = "stochRSI_id" )
     RelativeStrengthIndexStochastic stochRSI;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinColumn(name = "cci_id" )
     CommodityChannel cci;
 
+    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinColumn(name = "atr_id" )
     AverageTrueRange atr;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinColumn(name = "adx_id" )
     AverageDirectionalMovementIndex adx;
 
 

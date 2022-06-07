@@ -1,5 +1,6 @@
 package org.rostovpavel.base.models.move.MACD;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,6 +8,10 @@ import lombok.NoArgsConstructor;
 import org.rostovpavel.base.models.IndicatorMove;
 import org.rostovpavel.base.models.Signal;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -14,7 +19,12 @@ import java.math.RoundingMode;
 @AllArgsConstructor
 @Data
 @Builder
+@Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MovingAverageConvergenceDivergence implements IndicatorMove {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    Long id;
     BigDecimal MACD;
     BigDecimal signal;
     BigDecimal histogram;

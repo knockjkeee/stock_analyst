@@ -1,5 +1,6 @@
 package org.rostovpavel.base.models.move.MA;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -7,14 +8,26 @@ import lombok.NoArgsConstructor;
 import org.rostovpavel.base.models.IndicatorMove;
 import org.rostovpavel.base.models.Signal;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
+@Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MovingAverage implements IndicatorMove {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    Long id;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinColumn(name = "sma_id")
     SMA sma;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinColumn(name = "ema_id")
     EMA ema;
     int innerScore;
 
@@ -75,28 +88,33 @@ public class MovingAverage implements IndicatorMove {
 
     private int getLineScoreToBUY(int sum, BigDecimal price) {
         if ((price.compareTo(getSma().sma20) > 0)
-                        && (getSma().sma20.compareTo(getSma().sma50) > 0)) {
-            sum += 25;
-        }
-        if ((price.compareTo(getSma().sma20) > 0)
                 && (getSma().sma20.compareTo(getSma().sma50) > 0)
                 && (getSma().sma50.compareTo(getSma().sma100) > 0)){
+            sum += 75;
+        }
+        else if ((price.compareTo(getSma().sma20) > 0)
+                        && (getSma().sma20.compareTo(getSma().sma50) > 0)) {
             sum += 50;
+        }
+        else if (price.compareTo(getSma().sma20) > 0) {
+            sum += 25;
         }
         return sum;
     }
 
     private int getLineScoreToSELL(int sum, BigDecimal price) {
         if ((price.compareTo(getSma().sma20) < 0)
-                && (getSma().sma20.compareTo(getSma().sma50) < 0)) {
-            sum += 25;
-        }
-        if ((price.compareTo(getSma().sma20) < 0)
                 && (getSma().sma20.compareTo(getSma().sma50) < 0)
                 && (getSma().sma50.compareTo(getSma().sma100) < 0)){
-            sum += 50;
+            sum -= 75;
+        }
+        else if ((price.compareTo(getSma().sma20) < 0)
+                && (getSma().sma20.compareTo(getSma().sma50) < 0)) {
+            sum -= 50;
+        }
+        else if (price.compareTo(getSma().sma20) < 0) {
+            sum -= 25;
         }
         return sum;
     }
-
 }

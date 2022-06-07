@@ -17,6 +17,11 @@
             <version>1.43.2</version>
             <scope>compile</scope>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.data</groupId>-->
+<!--            <artifactId>spring-data-jpa</artifactId>-->
+<!--        </dependency>-->
+
     </dependencies>
     <artifactId>base</artifactId>
 

@@ -2,8 +2,8 @@ package org.rostovpavel.webservice.utils;
 
 
 import com.google.protobuf.Timestamp;
+import com.sun.istack.NotNull;
 import lombok.extern.log4j.Log4j2;
-import org.jetbrains.annotations.NotNull;
 import ru.tinkoff.piapi.contract.v1.HistoricCandle;
 
 import java.time.DayOfWeek;

@@ -1,6 +1,7 @@
 package org.rostovpavel.base.models.power.ADX;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,6 +9,10 @@ import lombok.NoArgsConstructor;
 import org.rostovpavel.base.models.IndicatorPowerTrend;
 import org.rostovpavel.base.models.Signal;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -15,7 +20,13 @@ import java.math.RoundingMode;
 @AllArgsConstructor
 @Data
 @Builder
+@Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class AverageDirectionalMovementIndex implements IndicatorPowerTrend {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    Long id;
     BigDecimal adx;
     BigDecimal dlP;
     BigDecimal dlM;
