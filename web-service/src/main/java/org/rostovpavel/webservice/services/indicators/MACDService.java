@@ -37,12 +37,14 @@ public class MACDService implements IndicatorService {
         List<BigDecimal> MACD = getDifferenceBetweenCollect(EMA12, EMA26);
         List<BigDecimal> signal = getSliceByDay(MACD, SIGNALCONST);
         BigDecimal histogram = MACD.get(MACD.size() - 1).subtract(signal.get(signal.size() - 1));
+        BigDecimal widthLine = MACD.get(MACD.size() - 1).subtract(signal.get(signal.size() - 1));
 
         return MovingAverageConvergenceDivergence.builder()
                 .histogram(histogram.setScale(4, RoundingMode.HALF_UP))
                 .signal(signal.get(signal.size() - 1).setScale(4, RoundingMode.HALF_UP))
                 .MACD(MACD.get(MACD.size() - 1).setScale(4, RoundingMode.HALF_UP))
                 ._key(compareMACDToBuySell(MACD, signal).getValue())
+                .widthLine(widthLine.setScale(4, RoundingMode.HALF_UP))
                 .build();
     }
 

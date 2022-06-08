@@ -40,7 +40,7 @@ public class MyTask implements Runnable {
 
             String time = new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
             try {
-                HttpStatus statusCode = getHttpStatus(time);
+                HttpStatus statusCode = getHttpStatus();
                 if (statusCode == null) break;
                 System.out.println(time + " status code: " + statusCode + "another attempt after wait 30 sec [try]");
                 sleep(10000);
@@ -49,7 +49,7 @@ public class MyTask implements Runnable {
                 sleep(30000);
                 HttpStatus statusCode = null;
                 try {
-                    statusCode = getHttpStatus(time);
+                    statusCode = getHttpStatus();
                     if (statusCode == null) break;
                     System.out.println(time + " status code: " + statusCode + "another attempt after wait 30 sec [catch]");
                     sleep(10000);
@@ -61,12 +61,13 @@ public class MyTask implements Runnable {
     }
 
     @Nullable
-    private HttpStatus getHttpStatus(String time) {
+    private HttpStatus getHttpStatus() {
         List<Ticker> stocks;
         ResponseEntity<TickersDTO> entity = rest.getForEntity(url, TickersDTO.class);
         HttpStatus statusCode = entity.getStatusCode();
         if (statusCode.value() == 200) {
             stocks = entity.getBody().getStocks();
+            String time = new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime());
             System.out.println(time + " Stocks size: " + stocks.size());
             return null;
         }

@@ -5,13 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 import org.rostovpavel.base.models.IndicatorPowerVal;
 import org.rostovpavel.base.models.Signal;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
 
 @NoArgsConstructor
@@ -24,8 +22,14 @@ public class AverageTrueRange implements IndicatorPowerVal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
+    @Column(precision = 19, scale = 4)
+    @Type(type = "big_decimal")
     BigDecimal atr;
+    @Column(precision = 19, scale = 4)
+    @Type(type = "big_decimal")
     BigDecimal stopLoseLong;
+    @Column(precision = 19, scale = 4)
+    @Type(type = "big_decimal")
     BigDecimal stopLoseShort;
     String _key;
     int scoreVolatility;

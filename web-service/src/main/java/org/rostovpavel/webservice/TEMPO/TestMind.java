@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 public class TestMind {
     public static void main(String[] args) {
         List<String> mmStart = Arrays.asList("14", "29", "44", "59");
+        List<String> ssStart = Arrays.asList("50", "51",  "52",  "53",  "54", "55",  "56", "57", "58", "59");
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
         MyTask testMytest = new MyTask("testMytest");
 
@@ -31,14 +32,15 @@ public class TestMind {
 //        test("test", executor);
         while (true) {
             String currentMM = new SimpleDateFormat("mm").format(Calendar.getInstance().getTime());
-            if (mmStart.contains(currentMM)) {
+            String currentSS = new SimpleDateFormat("ss").format(Calendar.getInstance().getTime());
+            if (mmStart.contains(currentMM) && ssStart.contains(currentSS)) {
                 System.out.println("Start -> " + new SimpleDateFormat("HH.mm.ss").format(Calendar.getInstance().getTime()));
                 ScheduledFuture<?> schedule = executor.scheduleAtFixedRate(testMytest, 0, 900000, TimeUnit.MILLISECONDS);
                 break;
             }
             try {
                 System.out.println("Wait -> " + new SimpleDateFormat("HH.mm.ss").format(Calendar.getInstance().getTime()));
-                Thread.sleep(4000);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

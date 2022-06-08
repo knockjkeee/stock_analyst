@@ -34,7 +34,9 @@ public class GenerateFile {
         }
 
         List<String[]> dataToLines = new ArrayList<>();
-        dataToLines.add(new String[]{"Name", "Price", "Move", "Val", "Trend", "Pur", "Trend", "Time", "MA", "MACD", "AO", "AO_S_T", "BB"});
+        dataToLines.add(new String[]{"Name", "Price", "Move", "Val", "Trend", "Pur", "Trend", "Time",
+                "hPrice", "hMACD", "hAO", "hBB",
+                "MA", "MACD", "AO", "AO_S_T", "BB"});
 //        dataToLines.add(new String[]{"Name", "Price", "Move", "Val", "Trend", "Purchases", "Trend", "Time", "MA", "MACD", "AO", "BB", "SO"});
         if (current != null) {
             current.forEach(e -> {
@@ -47,6 +49,10 @@ public class GenerateFile {
                         String.valueOf(e.getScorePurchases()),
                         e.getSuperTrend().get_keyMain() + "/" + e.getSuperTrend().get_keySecond(),
                         e.getTime(),
+                        String.valueOf(e.getHPrice()),
+                        String.valueOf(e.getHMACD()),
+                        String.valueOf(e.getHAO()),
+                        String.valueOf(e.getHBB()),
                         String.valueOf(e.getMovingAverage().getInnerScore()),
                         e.getMacd().get_key() + "/" + e.getMacd().getProcent() + "/" + e.getMacd().getScoreToKeys() + "/" + e.getMacd().getScoreToLine() + "/" + e.getMacd().getScoreToSignal(),
                         e.getAwesomeOscillator().get_key() + "/" + e.getAwesomeOscillator().getDirection() + "/" + e.getAwesomeOscillator().getScoreKey() + "/" + e.getAwesomeOscillator().getScoreLine() + "/" + e.getAwesomeOscillator().getScoreSignal(),

@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 import org.rostovpavel.base.models.move.AO.AwesomeOscillator;
 import org.rostovpavel.base.models.move.BB.BollingerBands;
 import org.rostovpavel.base.models.move.MA.MovingAverage;
@@ -33,7 +34,13 @@ public class Ticker {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     String name;
+    @Column(precision = 19, scale = 2)
+    @Type(type = "big_decimal")
     BigDecimal price;
+    int hPrice;
+    int hMACD;
+    int hAO;
+    int hBB;
     int candle;
     int scoreMove;
     int scorePowerVal;

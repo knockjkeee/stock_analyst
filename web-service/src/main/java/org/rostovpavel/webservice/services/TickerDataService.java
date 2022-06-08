@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -69,9 +70,10 @@ public class TickerDataService {
     private Ticker generateTicker(String name, StocksDTO data, BigDecimal price, boolean isSingle) {
         Ticker ticker = prepareTicker(name, data, price);
 
-//        List<Ticker> tickersByRepo = repo.findByNameOrderByIdDesc("CLOV");
-//        List<Ticker> cFilter = tickersByRepo.stream().limit(3).collect(Collectors.toList());
-//        System.out.println(cFilter.size());
+        List<Ticker> tickersByRepo = repo.findByNameOrderByIdDesc(name);
+        if (tickersByRepo.size() >= 3) {
+            prepareHistoryPoint(price, ticker, tickersByRepo);
+        }
 
         if (!isSingle) repo.save(ticker);
         return ticker;
@@ -111,5 +113,39 @@ public class TickerDataService {
                 .build();
         ticker.generateScoreIndicators();
         return ticker;
+    }
+
+    private void prepareHistoryPoint(BigDecimal price, Ticker ticker, List<Ticker> tickersByRepo) {
+        List<BigDecimal> hPrice = tickersByRepo.stream().limit(3).map(Ticker::getPrice).collect(Collectors.toList());
+        List<Integer> hPriceDiff = getHistoryDiffFromCorrectData(hPrice, price);
+        int hPriceDiffSum = hPriceDiff.stream().mapToInt(i -> i).sum();
+        ticker.setHPrice(hPriceDiffSum);
+
+        List<BigDecimal> hMACDWidth = tickersByRepo.stream().limit(3).map(e -> e.getMacd().getWidthLine()).collect(Collectors.toList());
+        List<Integer> hMACDWidthDiff = getHistoryDiffFromCorrectData(hMACDWidth, price);
+        int hMACDWidthDiffSum = hMACDWidthDiff .stream().mapToInt(i -> i).sum();
+        ticker.setHMACD(hMACDWidthDiffSum);
+
+        List<BigDecimal> hBBWidth = tickersByRepo.stream().limit(3).map(e -> e.getBollingerBands().getWidthBand()).collect(Collectors.toList());
+        List<Integer> hBBWidthDiff = getHistoryDiffFromCorrectData(hBBWidth, price);
+        int hBBWidthSum = hBBWidthDiff .stream().mapToInt(i -> i).sum();
+        ticker.setHBB(hBBWidthSum);
+
+        List<BigDecimal> hAO = tickersByRepo.stream().limit(3).map(e -> e.getAwesomeOscillator().getAo()).collect(Collectors.toList());
+        List<Integer> hAODiff = getHistoryDiffFromCorrectData(hAO, price);
+        int hAODiffSum = hAODiff .stream().mapToInt(i -> i).sum();
+        ticker.setHAO(hAODiffSum);
+    }
+
+    private List<Integer> getHistoryDiffFromCorrectData(List<BigDecimal> data, BigDecimal price) {
+        List<Integer> res = new ArrayList<>();
+        res.add(getPint(data.get(0), price));
+        res.add(getPint(data.get(1), data.get(0)));
+        res.add(getPint(data.get(2), data.get(1)));
+        return res;
+    }
+
+    private int getPint(BigDecimal B, BigDecimal A) {
+        return Integer.compare(A.compareTo(B), 0);
     }
 }
