@@ -116,36 +116,94 @@ public class TickerDataService {
     }
 
     private void prepareHistoryPoint(BigDecimal price, Ticker ticker, List<Ticker> tickersByRepo) {
+
+        //TODO Price
         List<BigDecimal> hPrice = tickersByRepo.stream().limit(3).map(Ticker::getPrice).collect(Collectors.toList());
         List<Integer> hPriceDiff = getHistoryDiffFromCorrectData(hPrice, price);
         int hPriceDiffSum = hPriceDiff.stream().mapToInt(i -> i).sum();
         ticker.setHPrice(hPriceDiffSum);
 
+        //TODO MACD
         List<BigDecimal> hMACDWidth = tickersByRepo.stream().limit(3).map(e -> e.getMacd().getWidthLine()).collect(Collectors.toList());
-        List<Integer> hMACDWidthDiff = getHistoryDiffFromCorrectData(hMACDWidth, price);
+        List<Integer> hMACDWidthDiff = getHistoryDiffFromCorrectData(hMACDWidth, ticker.getMacd().getWidthLine());
         int hMACDWidthDiffSum = hMACDWidthDiff .stream().mapToInt(i -> i).sum();
         ticker.setHMACD(hMACDWidthDiffSum);
 
-        List<BigDecimal> hBBWidth = tickersByRepo.stream().limit(3).map(e -> e.getBollingerBands().getWidthBand()).collect(Collectors.toList());
-        List<Integer> hBBWidthDiff = getHistoryDiffFromCorrectData(hBBWidth, price);
-        int hBBWidthSum = hBBWidthDiff .stream().mapToInt(i -> i).sum();
-        ticker.setHBB(hBBWidthSum);
+        List<BigDecimal> hMACDHistogram = tickersByRepo.stream().limit(3).map(e -> e.getMacd().getHistogram()).collect(Collectors.toList());
+        List<Integer> hMACDHistogramDiff = getHistoryDiffFromCorrectDataUpLine(hMACDHistogram, ticker.getMacd().getHistogram());
+        int hMACDHistogramDiffSum = hMACDHistogramDiff .stream().mapToInt(i -> i).sum();
+        ticker.setHMACDHistogram(hMACDHistogramDiffSum);
 
+//        List<BigDecimal> hMACDProcent = tickersByRepo.stream().limit(3).map(e -> e.getMacd().getProcent()).collect(Collectors.toList());
+//        List<Integer> hMACDProcentDiff = getHistoryDiffFromCorrectData(hMACDProcent, ticker.getMacd().getProcent());
+//        int hMACDProcentDiffSum = hMACDProcentDiff .stream().mapToInt(i -> i).sum();
+//        ticker.setHMACDProcent(hMACDProcentDiffSum);
+
+        List<BigDecimal> hMACDProcent = tickersByRepo.stream().limit(3).map(e -> e.getMacd().getProcent()).collect(Collectors.toList());
+        ticker.setHMACDProcent(
+                hMACDProcent.get(1).setScale(2, RoundingMode.HALF_UP) + "/"
+                        + hMACDProcent.get(0).setScale(2, RoundingMode.HALF_UP) + "/"
+                        + ticker.getMacd().getProcent().setScale(2, RoundingMode.HALF_UP));
+
+
+        //TODO AO
         List<BigDecimal> hAO = tickersByRepo.stream().limit(3).map(e -> e.getAwesomeOscillator().getAo()).collect(Collectors.toList());
-        List<Integer> hAODiff = getHistoryDiffFromCorrectData(hAO, price);
+        List<Integer> hAODiff = getHistoryDiffFromCorrectData(hAO, ticker.getAwesomeOscillator().getAo());
         int hAODiffSum = hAODiff .stream().mapToInt(i -> i).sum();
         ticker.setHAO(hAODiffSum);
+
+        List<String> hAODirection = tickersByRepo.stream().limit(3).map(e -> e.getAwesomeOscillator().getDirection()).collect(Collectors.toList());
+        List<Integer> hAODirectionDiff = getHistoryDiffFromCorrectData(hAODirection, ticker.getAwesomeOscillator().getDirection(), "Up");
+        int hAODirectionDiffSum = hAODirectionDiff .stream().mapToInt(i -> i).sum();
+        ticker.setHAODirection(hAODirectionDiffSum);
+
+        List<String> hAOColor = tickersByRepo.stream().limit(3).map(e -> e.getAwesomeOscillator().getColor()).collect(Collectors.toList());
+        List<Integer> hAOColorDiff = getHistoryDiffFromCorrectData(hAOColor, ticker.getAwesomeOscillator().getColor(), "Green");
+        int hAOColorDiffSum = hAOColorDiff .stream().mapToInt(i -> i).sum();
+        ticker.setHAOColor(hAOColorDiffSum);
+
+        //TODO BB
+        List<BigDecimal> hBBWidth = tickersByRepo.stream().limit(3).map(e -> e.getBollingerBands().getWidthBand()).collect(Collectors.toList());
+        List<Integer> hBBWidthDiff = getHistoryDiffFromCorrectData(hBBWidth, ticker.getBollingerBands().getWidthBand());
+        int hBBWidthSum = hBBWidthDiff .stream().mapToInt(i -> i).sum();
+        ticker.setHBB(hBBWidthSum);
     }
 
-    private List<Integer> getHistoryDiffFromCorrectData(List<BigDecimal> data, BigDecimal price) {
+    private List<Integer> getHistoryDiffFromCorrectData(List<BigDecimal> data, BigDecimal item) {
         List<Integer> res = new ArrayList<>();
-        res.add(getPint(data.get(0), price));
-        res.add(getPint(data.get(1), data.get(0)));
-        res.add(getPint(data.get(2), data.get(1)));
+        res.add(getPoint(item, data.get(0)));
+        res.add(getPoint(data.get(0), data.get(1)));
+        res.add(getPoint(data.get(1), data.get(2)));
         return res;
     }
 
-    private int getPint(BigDecimal B, BigDecimal A) {
+    private List<Integer> getHistoryDiffFromCorrectData(List<String> data, String item, String target) {
+        List<Integer> res = new ArrayList<>();
+        res.add(getPoint(item, target));
+        res.add(getPoint(data.get(0), target));
+        res.add(getPoint(data.get(1), target));
+        return res;
+    }
+
+
+    private List<Integer> getHistoryDiffFromCorrectDataUpLine(List<BigDecimal> data, BigDecimal item) {
+        List<Integer> res = new ArrayList<>();
+        res.add(getPointUp(item, data.get(0)));
+        res.add(getPointUp(data.get(0), data.get(1)));
+        res.add(getPointUp(data.get(1), data.get(2)));
+        return res;
+    }
+
+    private int getPoint(BigDecimal A, BigDecimal B) {
         return Integer.compare(A.compareTo(B), 0);
+    }
+    private int getPoint(String A, String target) {
+        return A.equals(target) ? 1 : -1;
+    }
+    private int getPointUp(BigDecimal A, BigDecimal B) {
+        if (A.compareTo(BigDecimal.valueOf(0)) > 0) {
+            return A.compareTo(B) > 0 ? 1 : 0;
+        }
+        return A.compareTo(B) < 0 ? -1 : 0;
     }
 }

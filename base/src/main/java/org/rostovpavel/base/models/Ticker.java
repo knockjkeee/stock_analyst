@@ -39,7 +39,11 @@ public class Ticker {
     BigDecimal price;
     int hPrice;
     int hMACD;
+    int hMACDHistogram;
+    String hMACDProcent;
     int hAO;
+    int hAODirection;
+    int HAOColor;
     int hBB;
     int candle;
     int scoreMove;
