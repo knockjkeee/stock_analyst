@@ -11,7 +11,8 @@ import org.rostovpavel.base.models.Signal;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
+
+import static org.rostovpavel.base.utils.Math.calculateGrowthAsPercentage;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -102,38 +103,30 @@ public class MovingAverageConvergenceDivergence implements IndicatorMove {
         if (MACD.compareTo(signal) > 0) {
             BigDecimal procent;
             try {
-                procent = generateProcent(signal, MACD);
+                procent = calculateGrowthAsPercentage(signal, MACD);
             } catch (Exception e) {
                 procent = BigDecimal.ZERO;
             }
             setProcent(procent);
-            if (procent.compareTo(BigDecimal.valueOf(10)) > 0) {
+            if (procent.compareTo(BigDecimal.valueOf(10)) > 0 || procent.compareTo(BigDecimal.valueOf(-10)) < 0) {
                 sum += 25;
                 scoreSignal += 25;
             }
-//            sum += 25;
-//            scoreSignal += 25;
         }
         if (MACD.compareTo(signal) < 0) {
             BigDecimal procent;
             try {
-                procent = generateProcent(MACD, signal);
+                procent = calculateGrowthAsPercentage(MACD, signal);
             } catch (Exception e) {
                 procent = BigDecimal.ZERO;
             }
             setProcent(procent);
-            if (procent.compareTo(BigDecimal.valueOf(10)) > 0) {
+            if (procent.compareTo(BigDecimal.valueOf(10)) > 0 || procent.compareTo(BigDecimal.valueOf(-10)) < 0) {
                 sum -= 25;
                 scoreSignal -= 25;
             }
-//            sum -= 25;
-//            scoreSignal -= 25;
         }
         setScoreToSignal(scoreSignal);
         return sum;
-    }
-
-    private BigDecimal generateProcent(BigDecimal one, BigDecimal two) {
-        return one.divide(two, 5, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)).subtract(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP).abs();
     }
 }

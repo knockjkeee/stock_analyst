@@ -8,7 +8,8 @@ import org.rostovpavel.base.models.IndicatorMove;
 import org.rostovpavel.base.models.Signal;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
+
+import static org.rostovpavel.base.utils.Math.calculateGrowthAsPercentage;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -76,7 +77,7 @@ public class StochasticOscillator implements IndicatorMove {
     private int getScoreToSignal(int sum, BigDecimal price) {
         int scoreSignal = 0;
         if (currentD.compareTo(currentK) < 0) {
-            BigDecimal procent = generateProcent(currentD, currentK);
+            BigDecimal procent = calculateGrowthAsPercentage(currentD, currentK);
             setProcent(procent);
             if (procent.compareTo(BigDecimal.valueOf(6)) > 0) {
                 sum += 25;
@@ -84,7 +85,7 @@ public class StochasticOscillator implements IndicatorMove {
             }
         }
         if (currentD.compareTo(currentK) > 0) {
-            BigDecimal procent = generateProcent(currentK, currentD);
+            BigDecimal procent = calculateGrowthAsPercentage(currentK, currentD);
             setProcent(procent);
             if (procent.compareTo(BigDecimal.valueOf(6)) > 0) {
                 sum -= 25;
@@ -93,9 +94,5 @@ public class StochasticOscillator implements IndicatorMove {
         }
         setScoreToSignal(scoreSignal);
         return sum;
-    }
-
-    private BigDecimal generateProcent(BigDecimal one, BigDecimal two) {
-        return one.divide(two, 5, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)).subtract(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP).abs();
     }
 }

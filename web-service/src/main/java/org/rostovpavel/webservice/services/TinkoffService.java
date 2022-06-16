@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.rostovpavel.base.exception.StockNotFoundException;
 import org.rostovpavel.base.models.Stock;
-import org.rostovpavel.webservice.utils.DateFormatter;
+import org.rostovpavel.base.utils.DateFormatter;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import ru.tinkoff.piapi.contract.v1.CandleInterval;
@@ -32,6 +32,9 @@ public class TinkoffService {
 
     public List<Stock> getListStockHistoricCandlesByFigi(String figi) {
         List<CompletableFuture<List<HistoricCandle>>> dataHistoryCandleByDate = getDataHistoryCandleByDate(figi);
+        //TODO log getTradingStatusResponse
+//        GetTradingStatusResponse getTradingStatusResponse = api.getMarketDataService().getTradingStatus(figi).join();
+//        log.info("TradingStatus: " + getTradingStatusResponse.getTradingStatus().getNumber() + " " + getTradingStatusResponse.getTradingStatus().name());
         return dataHistoryCandleByDate
                 .stream()
                 .map(CompletableFuture::join)

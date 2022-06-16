@@ -41,6 +41,7 @@ public class Ticker {
     int hMACD;
     int hMACDHistogram;
     String hMACDProcent;
+    String hMACDProcentRES;
     int hAO;
     int hAODirection;
     int HAOColor;
@@ -52,49 +53,49 @@ public class Ticker {
     int scorePurchases;
     String time;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinColumn(name = "movingAverage_id" )
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "movingAverage_id")
     MovingAverage movingAverage;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinColumn(name = "macd_id" )
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "macd_id")
     MovingAverageConvergenceDivergence macd;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "bollingerBands_id")
     BollingerBands bollingerBands;
     //StochasticOscillator stochasticOscillator;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinColumn(name = "awesomeOscillator_id" )
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "awesomeOscillator_id")
     AwesomeOscillator awesomeOscillator;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinColumn(name = "superTrend_id" )
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "superTrend_id")
     SuperTrend superTrend;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinColumn(name = "rsi_id" )
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "rsi_id")
     RelativeStrengthIndex rsi;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinColumn(name = "stochRSI_id" )
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "stochRSI_id")
     RelativeStrengthIndexStochastic stochRSI;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinColumn(name = "cci_id" )
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "cci_id")
     CommodityChannel cci;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinColumn(name = "atr_id" )
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "atr_id")
     AverageTrueRange atr;
 
-    @OneToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinColumn(name = "adx_id" )
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "adx_id")
     AverageDirectionalMovementIndex adx;
 
 
-    public void generateScoreIndicators(){
+    public void generateScoreIndicators() {
         getScoreIndicatorsPowerVal();
         getScoreIndicatorsPowerTrend();
         getScoreIndicatorsPurchases();
@@ -103,7 +104,7 @@ public class Ticker {
 
     private void getScoreIndicatorsMove() {
         List<IndicatorMove> indicators = getIndicatorsMove();
-                                                                //power purchases + adx.getScoreLine()
+        //power purchases + adx.getScoreLine()
         int sum = indicators.stream().mapToInt(ind -> ind.getScore(price)).sum() + adx.getScoreLine();
         setScoreMove(sum);
     }

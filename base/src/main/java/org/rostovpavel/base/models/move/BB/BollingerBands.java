@@ -92,17 +92,17 @@ public class BollingerBands implements IndicatorMove {
     private int getScoreToSignal(int sum, BigDecimal price) {
         int scoreSignal = 0;
         if (getScoreToLine() > 0) {
-            BigDecimal diffMiddle = generateDiffMiddle(upperBand, middleBand);
-            if ( ((price.compareTo(upperBand) <= 0) && (price.compareTo(diffMiddle) >= 0))
-                    || ((price.compareTo(upperBand) >= 0) && (price.compareTo(diffMiddle) >= 0)) ) {
+            BigDecimal diffMiddle = generateDiffMiddle(upperBand, middleBand, "UP");
+            if (((price.compareTo(upperBand) <= 0) && (price.compareTo(diffMiddle) >= 0))
+                    || ((price.compareTo(upperBand) >= 0) && (price.compareTo(diffMiddle) >= 0))) {
                 sum += 50;
                 scoreSignal += 50;
             }
         }
         if (getScoreToLine() < 0) {
-            BigDecimal diffMiddle = generateDiffMiddle(middleBand, lowerBand);
-            if ( ((price.compareTo(lowerBand) >= 0) && (price.compareTo(diffMiddle) <= 0))
-                    || ((price.compareTo(lowerBand) <= 0) && (price.compareTo(diffMiddle) <= 0)) ) {
+            BigDecimal diffMiddle = generateDiffMiddle(middleBand, lowerBand, "DOWN");
+            if (((price.compareTo(lowerBand) >= 0) && (price.compareTo(diffMiddle) <= 0))
+                    || ((price.compareTo(lowerBand) <= 0) && (price.compareTo(diffMiddle) <= 0))) {
                 sum -= 50;
                 scoreSignal -= 50;
             }
@@ -111,8 +111,12 @@ public class BollingerBands implements IndicatorMove {
         return sum;
     }
 
-    private BigDecimal generateDiffMiddle(BigDecimal one, BigDecimal two) {
-        return middleBand.add((one.subtract(two)).divide(BigDecimal.valueOf(2) , 5, RoundingMode.HALF_UP));
+    private BigDecimal generateDiffMiddle(BigDecimal one, BigDecimal two, String direction) {
+        BigDecimal diff = (one.subtract(two)).divide(BigDecimal.valueOf(2), 5, RoundingMode.HALF_UP);
+        if (direction.equals("UP")) {
+            return middleBand.add(diff);
+        } else {
+            return middleBand.subtract(diff);
+        }
     }
-
 }

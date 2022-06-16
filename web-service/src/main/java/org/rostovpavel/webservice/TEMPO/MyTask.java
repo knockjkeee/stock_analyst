@@ -42,17 +42,17 @@ public class MyTask implements Runnable {
             try {
                 HttpStatus statusCode = getHttpStatus();
                 if (statusCode == null) break;
-                System.out.println(time + " status code: " + statusCode + "another attempt after wait 30 sec [try]");
-                sleep(10000);
+                System.out.println(time + " status code: " + statusCode + "another attempt after wait 4 sec [try]");
+                sleep(4000);
             } catch (RestClientException e) {
                 System.out.println(time + " - RestClientException: " + e.getLocalizedMessage());
-                sleep(30000);
+                sleep(4000);
                 HttpStatus statusCode = null;
                 try {
                     statusCode = getHttpStatus();
                     if (statusCode == null) break;
-                    System.out.println(time + " status code: " + statusCode + "another attempt after wait 30 sec [catch]");
-                    sleep(10000);
+                    System.out.println(time + " status code: " + statusCode + "another attempt after wait 4 sec [catch]");
+                    sleep(4000);
                 } catch (Exception ex) {
                     break;
                 }

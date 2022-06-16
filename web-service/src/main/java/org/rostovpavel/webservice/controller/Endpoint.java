@@ -40,7 +40,7 @@ public record Endpoint(TickerDataService tickerDataService) {
     @Contract(value = " -> new", pure = true)
     @NotNull
     private String @NotNull [] getNameTickers() {
-        return new String[]{"ASTR", "TAL", "WISH", "U", "RIOT", "LPL", "GPS", "ATVI", "SNAP", "TWTR", "MDLZ", "BAC", "JD", "KO", "INTC", "BABA", "F", "AA", "CCL", "COIN", "COTY", "ET", "ENPH", "EQT", "FSLR", "MSTR", "PCG", "RRC", "REGI", "SWN", "SPOT", "VEON", "VIPS", "ZS", "CNK", "CLOV", "ENDP", "MOMO", "PBF", "HOOD", "SPCE", "AAPL", "FB", "NVDA", "SAVE", "DDOG", "MOS", "UAA", "BYND", "PTON", "VALE", "RIG", "FTI", "LI", "AAL", "CCXI", "VIR", "SAVA", "ZY", "DNLI", "IOVA", "GTHX"};
+        return new String[]{"ASTR", "TAL", "WISH", "U", "RIOT", "LPL", "GPS", "ATVI", "SNAP", "TWTR", "MDLZ", "BAC", "JD", "KO", "INTC", "BABA", "F", "AA", "CCL", "COIN", "COTY", "ET", "ENPH", "EQT", "FSLR", "MSTR", "PCG", "RRC", "SWN", "SPOT", "VIPS", "ZS", "CNK", "CLOV", "ENDP", "MOMO", "PBF", "HOOD", "SPCE", "AAPL", "META", "NVDA", "SAVE", "DDOG", "MOS", "UAA", "BYND", "PTON", "VALE", "RIG", "FTI", "LI", "AAL", "CCXI", "VIR", "SAVA", "ZY", "IOVA", "GTHX", "RKLB", "DKNG", "PLUG", "BBBY", "RIDE", "NOK", "RIVN", "TSLA", "BLUE"};
 
 //        "ASTR", "TAL", "WISH", "U", "RIOT", "LPL", "GPS", "ATVI", "SNAP", "TWTR", "MDLZ", "BAC", "JD", "KO", "INTC", "BABA", "F", "AA", "CCL", "COIN", "COTY", "ET", "ENPH", "EPAM", "EQT", "FSLR", "MSTR", "PCG", "RRC", "REGI", "SEDG", "SWN", "SPOT", "VEON", "VIPS", "ZS", "CNK", "CLOV", "ENDP", "MOMO", "PBF", "HOOD", "SPCE", "AAPL", "FB", "NVDA", "SAVE", "TSLA", "DDOG", "MOS", "UAA", "BYND", "PTON", "VALE", "RIG", "FTI", "LI", "AAL", "CCXI", "VIR", "SAVA", "ZY", "DNLI"
 
@@ -84,12 +84,12 @@ public record Endpoint(TickerDataService tickerDataService) {
         GenerateFile.writeToJson(stocks, "All_stocks");
         //filter
         List<Ticker> collect = stocks.stream().filter(e ->
-                        ((e.getScoreMove() > 300 && e.getScorePowerTrend() != 0 && e.getScorePowerVal() != 0)
-                                || (e.getScoreMove() > 300 && e.getScorePowerTrend() != 0)
-                                || (e.getScoreMove() > 175 && e.getScorePowerTrend() != 0 && e.getScorePowerVal() != 0)
-                                || (e.getScoreMove() > 175 && e.getScoreMove() < 300 && e.getScorePowerVal() != 0)
-                                || (e.getScoreMove() < -175 && e.getScorePowerTrend() != 0 && e.getScorePowerVal() != 0))
-                ).collect(Collectors.toList());
+                ((e.getScoreMove() > 300 && e.getScorePowerTrend() != 0 && e.getScorePowerVal() != 0)
+                        || (e.getScoreMove() > 300 && e.getScorePowerTrend() != 0)
+                        || (e.getScoreMove() > 175 && e.getScorePowerTrend() != 0 && e.getScorePowerVal() != 0)
+                        || (e.getScoreMove() > 175 && e.getScoreMove() < 300 && e.getScorePowerVal() != 0)
+                        || (e.getScoreMove() < -175 && e.getScorePowerTrend() != 0 && e.getScorePowerVal() != 0))
+        ).collect(Collectors.toList());
         //write filter
         GenerateFile.writeToJson(collect, "filter");
 
@@ -97,7 +97,7 @@ public record Endpoint(TickerDataService tickerDataService) {
         List<Ticker> newFilter = stocks.stream().filter(e ->
                 ((e.getSuperTrend().get_keyMain().equals(Signal.BUYPLUS.getValue()) || e.getSuperTrend().get_keyMain().equals(Signal.SELLMINUS.getValue()))
                         || (e.getMacd().get_key().equals(Signal.BUYPLUS.getValue()) || e.getMacd().get_key().equals(Signal.SELLMINUS.getValue()))
-                        || (e.getAwesomeOscillator().get_key().equals(Signal.BUY.getValue()) || e.getAwesomeOscillator().get_key().equals(Signal.SELL.getValue()) )
+                        || (e.getAwesomeOscillator().get_key().equals(Signal.BUY.getValue()) || e.getAwesomeOscillator().get_key().equals(Signal.SELL.getValue()))
                         || (e.getBollingerBands().get_key().equals(Signal.BUY.getValue()) || e.getBollingerBands().get_key().equals(Signal.SELL.getValue())))
         ).collect(Collectors.toList());
         GenerateFile.writeToJson(newFilter, "new");
@@ -116,8 +116,16 @@ public record Endpoint(TickerDataService tickerDataService) {
         ).collect(Collectors.toList());
         GenerateFile.writeToJson(lastFilter, "last");
 
+
+        List<Ticker> history = stocks.stream().filter(e ->
+                ((e.getHMACD() == 3 && e.getHMACDHistogram() == 3)
+                        || (e.getHMACD() == -3 && e.getHMACDHistogram() == -3 && e.getHPrice() == -3))
+        ).collect(Collectors.toList());
+        GenerateFile.writeToJson(history, "history");
+
+
         // return filter
-        return new TickersDTO(lastFilter);
+        return new TickersDTO(history);
     }
 
     @Contract(" -> new")
@@ -127,6 +135,7 @@ public record Endpoint(TickerDataService tickerDataService) {
         GenerateFile.generateCSV("filter");
         GenerateFile.generateCSV("new");
         GenerateFile.generateCSV("last");
+        GenerateFile.generateCSV("history");
 
         return new ResponseEntity<>("Success filter and All_stocks", HttpStatus.OK);
     }

@@ -12,7 +12,8 @@ import org.rostovpavel.base.models.Signal;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
+
+import static org.rostovpavel.base.utils.Math.calculateGrowthAsPercentage;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -83,36 +84,31 @@ public class AverageDirectionalMovementIndex implements IndicatorPowerTrend {
         if (dlP.compareTo(dlM) > 0){
             BigDecimal procent;
             try {
-                procent = generateProcent(dlM, dlP);
+                procent = calculateGrowthAsPercentage(dlM, dlP);
             } catch (Exception e) {
                 procent = BigDecimal.ZERO;
             }
 
             setProcent(procent);
-            if (procent.compareTo(BigDecimal.valueOf(20)) > 0) {
+            if (procent.compareTo(BigDecimal.valueOf(20)) > 0 || procent.compareTo(BigDecimal.valueOf(-20)) < 0) {
                 //sum += 25;
                 scoreLine += 25;
             }
         }else{
             BigDecimal procent;
             try {
-                procent = generateProcent(dlP, dlM);
+                procent = calculateGrowthAsPercentage(dlP, dlM);
             } catch (Exception e) {
                 procent = BigDecimal.ZERO;
             }
 
             setProcent(procent);
-            if (procent.compareTo(BigDecimal.valueOf(20)) > 0) {
+            if (procent.compareTo(BigDecimal.valueOf(20)) > 0 || procent.compareTo(BigDecimal.valueOf(-20)) < 0) {
                 //sum -= 25;
                 scoreLine -= 25;
             }
         }
         setScoreLine(scoreLine);
         return sum;
-    }
-
-
-    private BigDecimal generateProcent(BigDecimal one, BigDecimal two){
-        return one.divide(two, 5, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100)).subtract(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP).abs();
     }
 }

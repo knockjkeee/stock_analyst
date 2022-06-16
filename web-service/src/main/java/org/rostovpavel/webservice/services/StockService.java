@@ -26,17 +26,20 @@ public class StockService {
         return new StocksDTO(currentHistoricCandle);
     }
 
-    public StocksDataDTO getStockDataByTikers(TickerRequestBody data){
+    public StocksDataDTO getStockDataByTikers(TickerRequestBody data) {
         List<StockData> date = data.getTickers().stream()
-                .map(ticker -> {
-                    log.info("ticker = " + ticker);
-                    String figi = tinkoffService.getCurrentFigi(ticker, "SPBXM");
-                    List<Stock> candle = tinkoffService.getListStockHistoricCandlesByFigi(figi);
-                    return StockData.builder()
-                            .name(ticker)
-                            .candle(new StocksDTO(candle))
-                            .build();
-                }).collect(Collectors.toList());
+                .map(ticker ->
+                    {
+                        log.info("ticker = " + ticker);
+                        String figi = tinkoffService.getCurrentFigi(ticker, "SPBXM");
+                        List<Stock> candle = tinkoffService.getListStockHistoricCandlesByFigi(figi);
+                        return StockData.builder()
+                                .name(ticker)
+                                .candle(new StocksDTO(candle))
+                                .build();
+                    })
+                .filter(e -> e.getCandle().getStocks().size() > 0)
+                .collect(Collectors.toList());
         return new StocksDataDTO(date);
     }
 }

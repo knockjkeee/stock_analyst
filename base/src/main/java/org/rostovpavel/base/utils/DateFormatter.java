@@ -1,4 +1,4 @@
-package org.rostovpavel.webservice.utils;
+package org.rostovpavel.base.utils;
 
 
 import com.google.protobuf.Timestamp;
@@ -21,7 +21,6 @@ public class DateFormatter {
 
     public static int[] getCurrentDateConfig() {
         DayOfWeek currentDayOfWeek = Instant.now().atZone(ZoneId.systemDefault()).getDayOfWeek();
-        //System.out.println("currentDayOfWeek = " + currentDayOfWeek);
         int[] values;
         switch (currentDayOfWeek) {
             case MONDAY -> values = DateTimeConfig.MONDAY.getValue();
@@ -36,11 +35,10 @@ public class DateFormatter {
         return values;
     }
 
-    public static String getTimeToString(String date){
+    public static String getTimeToString(String date) {
         ZonedDateTime zonedDateTime = ZonedDateTime.parse(date);
         return zonedDateTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm:ss"));
     }
-
 
     public static Instant getCurrentInstantAtTimeZone() {
         int totalSecondsInstantNow = Instant.now().atZone(ZoneId.systemDefault()).getOffset().getTotalSeconds();

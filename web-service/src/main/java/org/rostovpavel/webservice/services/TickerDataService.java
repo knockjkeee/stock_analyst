@@ -27,10 +27,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.rostovpavel.base.utils.ArraysFormat.generateHistorySum;
+import static org.rostovpavel.base.utils.Math.calculateGrowthAsPercentage;
 
 @Log4j2
 @Service
@@ -55,13 +57,17 @@ public class TickerDataService {
         return generatedDataToTicker(ticker, stockDataByTicker, true);
     }
 
-    public TickersDTO getDataByTickers(@RequestBody TickerRequestBody data){
+    public TickersDTO getDataByTickers(@RequestBody TickerRequestBody data) {
         StocksDataDTO stockDataByTikers = stockService.getStockDataByTikers(data);
-        List<Ticker> collect = stockDataByTikers.getStocks().stream().map(stockData -> generatedDataToTicker(stockData.getName(), stockData.getCandle(), false)).collect(Collectors.toList());
+        List<Ticker> collect = stockDataByTikers.getStocks()
+                .stream()
+                .filter(e -> e.getCandle().getStocks().size() > 0)
+                .map(stockData -> generatedDataToTicker(stockData.getName(), stockData.getCandle(), false))
+                .collect(Collectors.toList());
         return new TickersDTO(collect);
     }
 
-    private Ticker generatedDataToTicker(String name, StocksDTO data,boolean isSingle) {
+    private Ticker generatedDataToTicker(String name, StocksDTO data, boolean isSingle) {
         BigDecimal price = data.getStocks().get(0).getClose().setScale(2, RoundingMode.HALF_UP);
         return generateTicker(name, data, price, isSingle);
     }
@@ -69,12 +75,8 @@ public class TickerDataService {
     @NotNull
     private Ticker generateTicker(String name, StocksDTO data, BigDecimal price, boolean isSingle) {
         Ticker ticker = prepareTicker(name, data, price);
-
         List<Ticker> tickersByRepo = repo.findByNameOrderByIdDesc(name);
-        if (tickersByRepo.size() >= 3) {
-            prepareHistoryPoint(price, ticker, tickersByRepo);
-        }
-
+        if (tickersByRepo.size() >= 3) prepareHistoryPoint(price, ticker, tickersByRepo);
         if (!isSingle) repo.save(ticker);
         return ticker;
     }
@@ -116,94 +118,108 @@ public class TickerDataService {
     }
 
     private void prepareHistoryPoint(BigDecimal price, Ticker ticker, List<Ticker> tickersByRepo) {
+        prepareHistoryPointPrice(price, ticker, tickersByRepo);
+        prepareHistoryPointPriceMAD(ticker, tickersByRepo);
+        prepareHistoryPointPriceAO(ticker, tickersByRepo);
+        prepareHistoryPointPriceBB(ticker, tickersByRepo);
+    }
 
+    private void prepareHistoryPointPrice(BigDecimal price, Ticker ticker, List<Ticker> tickersByRepo) {
         //TODO Price
         List<BigDecimal> hPrice = tickersByRepo.stream().limit(3).map(Ticker::getPrice).collect(Collectors.toList());
-        List<Integer> hPriceDiff = getHistoryDiffFromCorrectData(hPrice, price);
-        int hPriceDiffSum = hPriceDiff.stream().mapToInt(i -> i).sum();
+        int hPriceDiffSum = generateHistorySum(hPrice, price);
         ticker.setHPrice(hPriceDiffSum);
+    }
 
+    private void prepareHistoryPointPriceMAD(Ticker ticker, List<Ticker> tickersByRepo) {
         //TODO MACD
-        List<BigDecimal> hMACDWidth = tickersByRepo.stream().limit(3).map(e -> e.getMacd().getWidthLine()).collect(Collectors.toList());
-        List<Integer> hMACDWidthDiff = getHistoryDiffFromCorrectData(hMACDWidth, ticker.getMacd().getWidthLine());
-        int hMACDWidthDiffSum = hMACDWidthDiff .stream().mapToInt(i -> i).sum();
+        List<BigDecimal> hMACDWidth = tickersByRepo.stream()
+                .limit(3)
+                .map(e -> e.getMacd().getWidthLine())
+                .collect(Collectors.toList());
+        int hMACDWidthDiffSum = generateHistorySum(hMACDWidth, ticker.getMacd().getWidthLine());
         ticker.setHMACD(hMACDWidthDiffSum);
 
-        List<BigDecimal> hMACDHistogram = tickersByRepo.stream().limit(3).map(e -> e.getMacd().getHistogram()).collect(Collectors.toList());
-        List<Integer> hMACDHistogramDiff = getHistoryDiffFromCorrectDataUpLine(hMACDHistogram, ticker.getMacd().getHistogram());
-        int hMACDHistogramDiffSum = hMACDHistogramDiff .stream().mapToInt(i -> i).sum();
+        List<BigDecimal> hMACDHistogram = tickersByRepo.stream()
+                .limit(3)
+                .map(e -> e.getMacd().getHistogram())
+                .collect(Collectors.toList());
+        int hMACDHistogramDiffSum = generateHistorySum(hMACDHistogram, ticker.getMacd()
+                .getHistogram(), true);
         ticker.setHMACDHistogram(hMACDHistogramDiffSum);
 
-//        List<BigDecimal> hMACDProcent = tickersByRepo.stream().limit(3).map(e -> e.getMacd().getProcent()).collect(Collectors.toList());
-//        List<Integer> hMACDProcentDiff = getHistoryDiffFromCorrectData(hMACDProcent, ticker.getMacd().getProcent());
-//        int hMACDProcentDiffSum = hMACDProcentDiff .stream().mapToInt(i -> i).sum();
-//        ticker.setHMACDProcent(hMACDProcentDiffSum);
+        List<BigDecimal> hMACDProcent = tickersByRepo.stream()
+                .limit(3)
+                .map(e -> e.getMacd().getProcent())
+                .collect(Collectors.toList());
+        try {
+            ticker.setHMACDProcent(
+                    hMACDProcent.get(1).setScale(2, RoundingMode.HALF_UP) + "/"
+                            + hMACDProcent.get(0).setScale(2, RoundingMode.HALF_UP) + "/"
+                            + ticker.getMacd().getProcent().setScale(2, RoundingMode.HALF_UP));
+        } catch (Exception e) {
+            log.error(ticker.getName() + ":: exception:\n" + e.getLocalizedMessage());
+        }
 
-        List<BigDecimal> hMACDProcent = tickersByRepo.stream().limit(3).map(e -> e.getMacd().getProcent()).collect(Collectors.toList());
-        ticker.setHMACDProcent(
-                hMACDProcent.get(1).setScale(2, RoundingMode.HALF_UP) + "/"
-                        + hMACDProcent.get(0).setScale(2, RoundingMode.HALF_UP) + "/"
-                        + ticker.getMacd().getProcent().setScale(2, RoundingMode.HALF_UP));
+        try {
+            BigDecimal hMACDProcentResult02 = calculateGrowthAsPercentage(hMACDProcent.get(1), ticker.getMacd()
+                    .getProcent());
+            BigDecimal hMACDProcentResult12 = calculateGrowthAsPercentage(hMACDProcent.get(0), ticker.getMacd()
+                    .getProcent());
+            if (ticker.getMacd().getProcent().compareTo(BigDecimal.valueOf(0)) < 0 && hMACDProcent.get(1)
+                    .compareTo(BigDecimal.valueOf(0)) > 0) {
+                ticker.setHMACDProcentRES(
+                        hMACDProcentResult02.multiply(BigDecimal.valueOf(-1)).setScale(2, RoundingMode.HALF_UP) +
+                                "::" + hMACDProcentResult12.multiply(BigDecimal.valueOf(-1))
+                                .setScale(2, RoundingMode.HALF_UP));
+            } else if (ticker.getMacd().getProcent().compareTo(BigDecimal.valueOf(0)) > 0 && hMACDProcent.get(1)
+                    .compareTo(BigDecimal.valueOf(0)) < 0) {
+                ticker.setHMACDProcentRES(hMACDProcentResult02.setScale(2, RoundingMode.HALF_UP).abs() +
+                                                  "::" + hMACDProcentResult12.setScale(2, RoundingMode.HALF_UP).abs());
+            } else {
+                ticker.setHMACDProcentRES(hMACDProcentResult02.setScale(2, RoundingMode.HALF_UP) +
+                                                  "::" + hMACDProcentResult12.setScale(2, RoundingMode.HALF_UP));
+            }
+//             % = (B-A)/A*100
 
+        } catch (Exception e) {
+            log.error(ticker.getName() + ":: exception:\n" + e.getLocalizedMessage());
+        }
+    }
 
+    private void prepareHistoryPointPriceAO(Ticker ticker, List<Ticker> tickersByRepo) {
         //TODO AO
-        List<BigDecimal> hAO = tickersByRepo.stream().limit(3).map(e -> e.getAwesomeOscillator().getAo()).collect(Collectors.toList());
-        List<Integer> hAODiff = getHistoryDiffFromCorrectData(hAO, ticker.getAwesomeOscillator().getAo());
-        int hAODiffSum = hAODiff .stream().mapToInt(i -> i).sum();
+        List<BigDecimal> hAO = tickersByRepo.stream()
+                .limit(3)
+                .map(e -> e.getAwesomeOscillator().getAo())
+                .collect(Collectors.toList());
+        int hAODiffSum = generateHistorySum(hAO, ticker.getAwesomeOscillator().getAo());
         ticker.setHAO(hAODiffSum);
 
-        List<String> hAODirection = tickersByRepo.stream().limit(3).map(e -> e.getAwesomeOscillator().getDirection()).collect(Collectors.toList());
-        List<Integer> hAODirectionDiff = getHistoryDiffFromCorrectData(hAODirection, ticker.getAwesomeOscillator().getDirection(), "Up");
-        int hAODirectionDiffSum = hAODirectionDiff .stream().mapToInt(i -> i).sum();
+        List<String> hAODirection = tickersByRepo.stream()
+                .limit(3)
+                .map(e -> e.getAwesomeOscillator().getDirection())
+                .collect(Collectors.toList());
+        int hAODirectionDiffSum = generateHistorySum(hAODirection, ticker.getAwesomeOscillator()
+                .getDirection(), "Up");
         ticker.setHAODirection(hAODirectionDiffSum);
 
-        List<String> hAOColor = tickersByRepo.stream().limit(3).map(e -> e.getAwesomeOscillator().getColor()).collect(Collectors.toList());
-        List<Integer> hAOColorDiff = getHistoryDiffFromCorrectData(hAOColor, ticker.getAwesomeOscillator().getColor(), "Green");
-        int hAOColorDiffSum = hAOColorDiff .stream().mapToInt(i -> i).sum();
+        List<String> hAOColor = tickersByRepo.stream()
+                .limit(3)
+                .map(e -> e.getAwesomeOscillator().getColor())
+                .collect(Collectors.toList());
+        int hAOColorDiffSum = generateHistorySum(hAOColor, ticker.getAwesomeOscillator()
+                .getColor(), "Green");
         ticker.setHAOColor(hAOColorDiffSum);
+    }
 
+    private void prepareHistoryPointPriceBB(Ticker ticker, List<Ticker> tickersByRepo) {
         //TODO BB
-        List<BigDecimal> hBBWidth = tickersByRepo.stream().limit(3).map(e -> e.getBollingerBands().getWidthBand()).collect(Collectors.toList());
-        List<Integer> hBBWidthDiff = getHistoryDiffFromCorrectData(hBBWidth, ticker.getBollingerBands().getWidthBand());
-        int hBBWidthSum = hBBWidthDiff .stream().mapToInt(i -> i).sum();
+        List<BigDecimal> hBBWidth = tickersByRepo.stream()
+                .limit(3)
+                .map(e -> e.getBollingerBands().getWidthBand())
+                .collect(Collectors.toList());
+        int hBBWidthSum = generateHistorySum(hBBWidth, ticker.getBollingerBands().getWidthBand());
         ticker.setHBB(hBBWidthSum);
-    }
-
-    private List<Integer> getHistoryDiffFromCorrectData(List<BigDecimal> data, BigDecimal item) {
-        List<Integer> res = new ArrayList<>();
-        res.add(getPoint(item, data.get(0)));
-        res.add(getPoint(data.get(0), data.get(1)));
-        res.add(getPoint(data.get(1), data.get(2)));
-        return res;
-    }
-
-    private List<Integer> getHistoryDiffFromCorrectData(List<String> data, String item, String target) {
-        List<Integer> res = new ArrayList<>();
-        res.add(getPoint(item, target));
-        res.add(getPoint(data.get(0), target));
-        res.add(getPoint(data.get(1), target));
-        return res;
-    }
-
-
-    private List<Integer> getHistoryDiffFromCorrectDataUpLine(List<BigDecimal> data, BigDecimal item) {
-        List<Integer> res = new ArrayList<>();
-        res.add(getPointUp(item, data.get(0)));
-        res.add(getPointUp(data.get(0), data.get(1)));
-        res.add(getPointUp(data.get(1), data.get(2)));
-        return res;
-    }
-
-    private int getPoint(BigDecimal A, BigDecimal B) {
-        return Integer.compare(A.compareTo(B), 0);
-    }
-    private int getPoint(String A, String target) {
-        return A.equals(target) ? 1 : -1;
-    }
-    private int getPointUp(BigDecimal A, BigDecimal B) {
-        if (A.compareTo(BigDecimal.valueOf(0)) > 0) {
-            return A.compareTo(B) > 0 ? 1 : 0;
-        }
-        return A.compareTo(B) < 0 ? -1 : 0;
     }
 }
