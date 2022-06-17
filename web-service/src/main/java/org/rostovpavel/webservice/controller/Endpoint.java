@@ -49,9 +49,7 @@ public record Endpoint(TickerDataService tickerDataService) {
 
     @GetMapping("/all")
     public TickersDTO getTest() {
-        List<String> date = Arrays.asList(
-                getNameTickers()
-        );
+        List<String> date = Arrays.asList(getNameTickers());
         TickerRequestBody tickerRequestBody = new TickerRequestBody();
         tickerRequestBody.setTickers(date);
         return tickerDataService.getDataByTickers(tickerRequestBody);
@@ -60,22 +58,21 @@ public record Endpoint(TickerDataService tickerDataService) {
     @Contract(" -> new")
     @GetMapping("/move")
     public @NotNull TickersDTO gatFilterMove() {
-        List<String> date = Arrays.asList(
-                getNameTickers()
-        );
+        List<String> date = Arrays.asList(getNameTickers());
         TickerRequestBody tickerRequestBody = new TickerRequestBody();
         tickerRequestBody.setTickers(date);
-        List<Ticker> collect = tickerDataService.getDataByTickers(tickerRequestBody).getStocks()
-                .stream().filter(e -> e.getScoreMove() > 120 || e.getScoreMove() < -120).collect(Collectors.toList());
+        List<Ticker> collect = tickerDataService.getDataByTickers(tickerRequestBody)
+                .getStocks()
+                .stream()
+                .filter(e -> e.getScoreMove() > 120 || e.getScoreMove() < -120)
+                .collect(Collectors.toList());
         return new TickersDTO(collect);
     }
 
     @Contract(" -> new")
     @GetMapping("/up")
     public @NotNull TickersDTO gatFilterUp() {
-        List<String> date = Arrays.asList(
-                getNameTickers()
-        );
+        List<String> date = Arrays.asList(getNameTickers());
         TickerRequestBody tickerRequestBody = new TickerRequestBody();
         tickerRequestBody.setTickers(date);
         //all
@@ -83,44 +80,60 @@ public record Endpoint(TickerDataService tickerDataService) {
         //write all
         GenerateFile.writeToJson(stocks, "All_stocks");
         //filter
-        List<Ticker> collect = stocks.stream().filter(e ->
-                ((e.getScoreMove() > 300 && e.getScorePowerTrend() != 0 && e.getScorePowerVal() != 0)
+        List<Ticker> collect = stocks.stream()
+                .filter(e -> ((e.getScoreMove() > 300 && e.getScorePowerTrend() != 0 && e.getScorePowerVal() != 0)
                         || (e.getScoreMove() > 300 && e.getScorePowerTrend() != 0)
                         || (e.getScoreMove() > 175 && e.getScorePowerTrend() != 0 && e.getScorePowerVal() != 0)
                         || (e.getScoreMove() > 175 && e.getScoreMove() < 300 && e.getScorePowerVal() != 0)
-                        || (e.getScoreMove() < -175 && e.getScorePowerTrend() != 0 && e.getScorePowerVal() != 0))
-        ).collect(Collectors.toList());
+                        || (e.getScoreMove() < -175 && e.getScorePowerTrend() != 0 && e.getScorePowerVal() != 0)
+                ))
+                .collect(Collectors.toList());
         //write filter
         GenerateFile.writeToJson(collect, "filter");
 
-
-        List<Ticker> newFilter = stocks.stream().filter(e ->
-                ((e.getSuperTrend().get_keyMain().equals(Signal.BUYPLUS.getValue()) || e.getSuperTrend().get_keyMain().equals(Signal.SELLMINUS.getValue()))
-                        || (e.getMacd().get_key().equals(Signal.BUYPLUS.getValue()) || e.getMacd().get_key().equals(Signal.SELLMINUS.getValue()))
-                        || (e.getAwesomeOscillator().get_key().equals(Signal.BUY.getValue()) || e.getAwesomeOscillator().get_key().equals(Signal.SELL.getValue()))
-                        || (e.getBollingerBands().get_key().equals(Signal.BUY.getValue()) || e.getBollingerBands().get_key().equals(Signal.SELL.getValue())))
-        ).collect(Collectors.toList());
-        GenerateFile.writeToJson(newFilter, "new");
-
-        List<Ticker> lastFilter = stocks.stream().filter(e ->
-                ((((e.getSuperTrend().get_keyMain().equals(Signal.BUYPLUS.getValue()) || e.getSuperTrend().get_keyMain().equals(Signal.SELLMINUS.getValue()))
-                        || (e.getMacd().get_key().equals(Signal.BUYPLUS.getValue()) || e.getMacd().get_key().equals(Signal.SELLMINUS.getValue()))
-                        || (e.getAwesomeOscillator().get_key().equals(Signal.BUY.getValue()) || e.getAwesomeOscillator().get_key().equals(Signal.SELL.getValue()))) && (e.getScoreMove() > 175 || e.getScoreMove() < -175) && e.getScorePowerVal() != 0 && e.getMovingAverage().getInnerScore() != 0)
-                        || ((e.getSuperTrend().get_keyMain().equals(Signal.BUYPLUS.getValue()) && e.getSuperTrend().get_keySecond().equals(Signal.BUYPLUS.getValue()))
-                        || (e.getSuperTrend().get_keyMain().equals(Signal.SELLMINUS.getValue()) && e.getSuperTrend().get_keySecond().equals(Signal.SELLMINUS.getValue())))
-                        || (e.getScoreMove() >= 375 || e.getScoreMove() <= -375)
-                        || (e.getAwesomeOscillator().getSaucerScanner().equals(Signal.BUYPLUS.getValue())
-                        || e.getAwesomeOscillator().getSaucerScanner().equals(Signal.SELLMINUS.getValue())
-                        || e.getAwesomeOscillator().getTwinPeakScanner().equals(Signal.BUYPLUS.getValue())
-                        || e.getAwesomeOscillator().getTwinPeakScanner().equals(Signal.SELLMINUS.getValue())))
-        ).collect(Collectors.toList());
+        List<Ticker> lastFilter = stocks.stream()
+                .filter(e -> ((((e.getSuperTrend().get_keyMain().equals(Signal.BUYPLUS.getValue()) || e.getSuperTrend()
+                        .get_keyMain()
+                        .equals(Signal.SELLMINUS.getValue())
+                ) || (e.getMacd().get_key().equals(Signal.BUYPLUS.getValue()) || e.getMacd()
+                        .get_key()
+                        .equals(Signal.SELLMINUS.getValue())
+                ) || (e.getAwesomeOscillator().get_key().equals(Signal.BUY.getValue()) || e.getAwesomeOscillator()
+                        .get_key()
+                        .equals(Signal.SELL.getValue())
+                )
+                )
+                        && (e.getScoreMove() > 175 || e.getScoreMove() < -175)
+                        && e.getScorePowerVal() != 0
+                        && e.getMovingAverage().getInnerScore() != 0
+                ) || ((e.getSuperTrend().get_keyMain().equals(Signal.BUYPLUS.getValue()) && e.getSuperTrend()
+                        .get_keySecond()
+                        .equals(Signal.BUYPLUS.getValue())
+                ) || (e.getSuperTrend().get_keyMain().equals(Signal.SELLMINUS.getValue()) && e.getSuperTrend()
+                        .get_keySecond()
+                        .equals(Signal.SELLMINUS.getValue())
+                )
+                ) || (e.getScoreMove() >= 375 || e.getScoreMove() <= -375) || (e.getAwesomeOscillator()
+                        .getSaucerScanner()
+                        .equals(Signal.BUYPLUS.getValue()) || e.getAwesomeOscillator()
+                        .getSaucerScanner()
+                        .equals(Signal.SELLMINUS.getValue()) || e.getAwesomeOscillator()
+                        .getTwinPeakScanner()
+                        .equals(Signal.BUYPLUS.getValue()) || e.getAwesomeOscillator()
+                        .getTwinPeakScanner()
+                        .equals(Signal.SELLMINUS.getValue())
+                )
+                ))
+                .collect(Collectors.toList());
         GenerateFile.writeToJson(lastFilter, "last");
 
-
-        List<Ticker> history = stocks.stream().filter(e ->
-                ((e.getHMACD() == 3 && e.getHMACDHistogram() == 3)
-                        || (e.getHMACD() == -3 && e.getHMACDHistogram() == -3 && e.getHPrice() == -3))
-        ).collect(Collectors.toList());
+//        where h_price>=1 and hMACD='3' and HMACDHISTOGRAM>1 and HAO=3 Order by name
+        List<Ticker> history = stocks.stream()
+                .filter(e -> ((e.getHMACD() == 3 && e.getHMACDHistogram() == 3 && e.getHPrice() == 3) || (e.getHMACD()
+                        == -3 && e.getHMACDHistogram() == -3 && e.getHPrice() == -3
+                ) || (e.getHPrice() >= 1 && e.getHMACD() == 3 && e.getHMACDHistogram() > 1 && e.getHAO() == 3)
+                ))
+                .collect(Collectors.toList());
         GenerateFile.writeToJson(history, "history");
 
 
@@ -133,7 +146,6 @@ public record Endpoint(TickerDataService tickerDataService) {
     public @NotNull ResponseEntity<String> generateCSV() {
         GenerateFile.generateCSV("All_stocks");
         GenerateFile.generateCSV("filter");
-        GenerateFile.generateCSV("new");
         GenerateFile.generateCSV("last");
         GenerateFile.generateCSV("history");
 
@@ -151,38 +163,39 @@ public record Endpoint(TickerDataService tickerDataService) {
     @Contract(" -> new")
     @GetMapping("/val")
     public @NotNull TickersDTO getFilterVal() {
-        List<String> date = Arrays.asList(
-                getNameTickers()
-        );
+        List<String> date = Arrays.asList(getNameTickers());
         TickerRequestBody tickerRequestBody = new TickerRequestBody();
         tickerRequestBody.setTickers(date);
-        List<Ticker> collect = tickerDataService.getDataByTickers(tickerRequestBody).getStocks()
-                .stream().filter(e -> e.getScorePowerVal() != 0).collect(Collectors.toList());
+        List<Ticker> collect = tickerDataService.getDataByTickers(tickerRequestBody)
+                .getStocks()
+                .stream()
+                .filter(e -> e.getScorePowerVal() != 0)
+                .collect(Collectors.toList());
         return new TickersDTO(collect);
     }
 
     @Contract(" -> new")
     @GetMapping("/trend")
     public @NotNull TickersDTO getFilterTrend() {
-        List<String> date = Arrays.asList(
-                getNameTickers()
-        );
+        List<String> date = Arrays.asList(getNameTickers());
         TickerRequestBody tickerRequestBody = new TickerRequestBody();
         tickerRequestBody.setTickers(date);
-        List<Ticker> collect = tickerDataService.getDataByTickers(tickerRequestBody).getStocks()
-                .stream().filter(e -> e.getScorePowerTrend() > 0).collect(Collectors.toList());
+        List<Ticker> collect = tickerDataService.getDataByTickers(tickerRequestBody)
+                .getStocks()
+                .stream()
+                .filter(e -> e.getScorePowerTrend() > 0)
+                .collect(Collectors.toList());
         return new TickersDTO(collect);
     }
 
     @Contract(" -> new")
     @GetMapping("/pur")
     public @NotNull TickersDTO getFilterPurchases() {
-        List<String> date = Arrays.asList(
-                getNameTickers()
-        );
+        List<String> date = Arrays.asList(getNameTickers());
         TickerRequestBody tickerRequestBody = new TickerRequestBody();
         tickerRequestBody.setTickers(date);
-        List<Ticker> collect = tickerDataService.getDataByTickers(tickerRequestBody).getStocks()
+        List<Ticker> collect = tickerDataService.getDataByTickers(tickerRequestBody)
+                .getStocks()
                 .stream()
                 .filter(e -> e.getScorePurchases() < -50 || e.getScorePurchases() > 50)
                 .collect(Collectors.toList());

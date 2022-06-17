@@ -35,7 +35,7 @@ public class GenerateFile {
 
         List<String[]> dataToLines = new ArrayList<>();
         dataToLines.add(new String[]{"Name", "Price", "Move", "Val", "Trend", "Pur", "Trend", "Time",
-                "hPrice", "hMACD", "hMACDHis", "hMACDProc", "hMACDProcRES", "hAO", "hAODirect", "hAOColor", "hBB",
+                "hPrice", "hMACD", "hMACDHis", "hMACDPc", "hMACDPcH", "hMACDPcRes", "hAO", "hAODirect", "hAOColor", "hBB",
                 "MA", "MACD", "AO", "AO_S_T", "BB"});
 //        dataToLines.add(new String[]{"Name", "Price", "Move", "Val", "Trend", "Purchases", "Trend", "Time", "MA", "MACD", "AO", "BB", "SO"});
         if (current != null) {
@@ -53,7 +53,8 @@ public class GenerateFile {
                         String.valueOf(e.getHMACD()),
                         String.valueOf(e.getHMACDHistogram()),
                         String.valueOf(e.getHMACDProcent()),
-                        String.valueOf(e.getHMACDProcentRES()),
+                        String.valueOf(e.getHMACDProcentHis()),
+                        String.valueOf(e.getHMACDProcentResult()),
                         String.valueOf(e.getHAO()),
                         String.valueOf(e.getHAODirection()),
                         String.valueOf(e.getHAOColor()),

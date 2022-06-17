@@ -41,7 +41,8 @@ public class Ticker {
     int hMACD;
     int hMACDHistogram;
     String hMACDProcent;
-    String hMACDProcentRES;
+    String hMACDProcentHis;
+    BigDecimal hMACDProcentResult;
     int hAO;
     int hAODirection;
     int HAOColor;

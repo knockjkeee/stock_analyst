@@ -7,9 +7,10 @@ import java.math.RoundingMode;
 
 public class Math {
     //    Calculate growth as a percentage
+    //    % = (B-A)/A*100
     public static @NotNull BigDecimal calculateGrowthAsPercentage(BigDecimal A, @NotNull BigDecimal B) {
         BigDecimal subtract = B.subtract(A);
-        BigDecimal multiply = A.multiply(BigDecimal.valueOf(100));
-        return subtract.divide(multiply, 3, RoundingMode.HALF_UP);
+        BigDecimal divide = subtract.divide(A, 6, RoundingMode.HALF_UP);
+        return divide.multiply(BigDecimal.valueOf(100));
     }
 }
