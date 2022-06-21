@@ -129,9 +129,9 @@ public record Endpoint(TickerDataService tickerDataService) {
 
 //        where h_price>=1 and hMACD='3' and HMACDHISTOGRAM>1 and HAO=3 Order by name
         List<Ticker> history = stocks.stream()
-                .filter(e -> ((e.getHMACD() == 3 && e.getHMACDHistogram() == 3 && e.getHPrice() == 3) || (e.getHMACD()
-                        == -3 && e.getHMACDHistogram() == -3 && e.getHPrice() == -3
-                ) || (e.getHPrice() >= 1 && e.getHMACD() == 3 && e.getHMACDHistogram() > 1 && e.getHAO() == 3)
+                .filter(e -> ((e.getHMACD() == 3 && e.getHMACDHistogram() == 3 && e.getHPrice() == 3 &&  e.getHAO() >= 2 && e.getHAODirection() > 1)
+                        || (e.getHMACD() == -3 && e.getHMACDHistogram() == -3 && e.getHPrice() == -3 &&  e.getHAO() <= -2 && e.getHAODirection() < 1)
+                        || (e.getHPrice() >= 1 && e.getHMACD() == 3 && e.getHMACDHistogram() > 1 && e.getHAO() == 3 && e.getHAODirection() > 1)
                 ))
                 .collect(Collectors.toList());
         GenerateFile.writeToJson(history, "history");

@@ -30,8 +30,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.rostovpavel.base.utils.ArraysFormat.generateHistorySum;
+import static org.rostovpavel.base.utils.ArraysFormat.getPoint;
 import static org.rostovpavel.base.utils.Math.calculateGrowthAsPercentage;
 
 @Log4j2
@@ -147,41 +149,59 @@ public class TickerDataService {
         int hMACDHistogramDiffSum = generateHistorySum(hMACDHistogram, ticker.getMacd().getHistogram(), true);
         ticker.setHMACDHistogram(hMACDHistogramDiffSum);
 
-        List<BigDecimal> hMACDProcent = tickersByRepo.stream()
-                .limit(3)
-                .map(e -> e.getMacd().getProcent())
-                .collect(Collectors.toList());
+        //prepare percent
         try {
-            ticker.setHMACDProcent(hMACDProcent.get(1).setScale(2, RoundingMode.HALF_UP) + "/" + hMACDProcent.get(0)
-                    .setScale(2, RoundingMode.HALF_UP) + "/" + ticker.getMacd()
-                    .getProcent()
-                    .setScale(2, RoundingMode.HALF_UP));
+            ticker.setHMACDProcent(hMACDWidth.get(1).setScale(6, RoundingMode.HALF_UP) + "/" + hMACDWidth.get(0)
+                    .setScale(6, RoundingMode.HALF_UP) + "/" + ticker.getMacd()
+                    .getWidthLine()
+                    .setScale(6, RoundingMode.HALF_UP));
         } catch (Exception e) {
             log.error(ticker.getName() + ":: exception MACD Proc: " + e.getLocalizedMessage());
         }
 
         try {
-            BigDecimal hMACDProcentResult02 = calculateGrowthAsPercentage(hMACDProcent.get(1), hMACDProcent.get(0));
-            BigDecimal hMACDProcentResult12 = calculateGrowthAsPercentage(hMACDProcent.get(0), ticker.getMacd()
-                    .getProcent());
-            if (ticker.getMacd().getProcent().compareTo(BigDecimal.valueOf(0)) < 0
-                    && hMACDProcent.get(1).compareTo(BigDecimal.valueOf(0)) > 0) {
-                ticker.setHMACDProcentHis(hMACDProcentResult02.multiply(BigDecimal.valueOf(-1))
-                        .setScale(2, RoundingMode.HALF_UP)
-                        + "::"
+            BigDecimal hMACDProcentResult02 = calculateGrowthAsPercentage(hMACDWidth.get(1), hMACDWidth.get(0));
+            BigDecimal hMACDProcentResult12 = calculateGrowthAsPercentage(hMACDWidth.get(0), ticker.getMacd().getWidthLine());
+
+            int sumArr = Stream.of(getPoint(hMACDWidth.get(0), hMACDWidth.get(1)), getPoint(ticker.getMacd()
+                    .getWidthLine(), hMACDWidth.get(0))).mapToInt(Integer::intValue).sum();
+            var direction = sumArr == 0 ? "NoN" : sumArr > 0 ? "Up" : "Dwn";
+            var power = Stream.of(hMACDWidth.get(1), hMACDWidth.get(0), ticker.getMacd().getWidthLine())
+                    .map(e -> e.compareTo(BigDecimal.valueOf(0)) > 0 ? 1 : -1)
+                    .collect(Collectors.toList())
+                    .stream()
+                    .mapToInt(Integer::intValue)
+                    .sum() > 0 ? "+" : "-";
+
+            if (ticker.getMacd().getWidthLine().compareTo(BigDecimal.valueOf(0)) < 0
+                    && hMACDWidth.get(1).compareTo(BigDecimal.valueOf(0)) > 0) {
+                ticker.setHMACDProcentHis(power
+                        + direction
+                        + "-> "
+                        + hMACDProcentResult02.multiply(BigDecimal.valueOf(-1)).setScale(2, RoundingMode.HALF_UP)
+                        + ":"
                         + hMACDProcentResult12.multiply(BigDecimal.valueOf(-1)).setScale(2, RoundingMode.HALF_UP));
-            } else if (ticker.getMacd().getProcent().compareTo(BigDecimal.valueOf(0)) > 0
-                    && hMACDProcent.get(1).compareTo(BigDecimal.valueOf(0)) < 0) {
-                ticker.setHMACDProcentHis(hMACDProcentResult02.setScale(2, RoundingMode.HALF_UP).abs()
-                        + "::"
+            } else if (ticker.getMacd().getWidthLine().compareTo(BigDecimal.valueOf(0)) > 0
+                    && hMACDWidth.get(1).compareTo(BigDecimal.valueOf(0)) < 0) {
+                ticker.setHMACDProcentHis(power
+                        + direction
+                        + "-> "
+                        + hMACDProcentResult02.setScale(2, RoundingMode.HALF_UP).abs()
+                        + ":"
                         + hMACDProcentResult12.setScale(2, RoundingMode.HALF_UP).abs());
             } else {
-                ticker.setHMACDProcentHis(hMACDProcentResult02.setScale(2, RoundingMode.HALF_UP)
-                        + "::"
+                ticker.setHMACDProcentHis(power
+                        + direction
+                        + "-> "
+                        + hMACDProcentResult02.setScale(2, RoundingMode.HALF_UP)
+                        + ":"
                         + hMACDProcentResult12.setScale(2, RoundingMode.HALF_UP));
             }
 //             % = (B-A)/A*100
-            ticker.setHMACDProcentResult(hMACDProcentResult12.subtract(hMACDProcentResult02));
+
+            ticker.setHMACDProcentResult(hMACDProcentResult12.abs()
+                    .subtract(hMACDProcentResult02.abs())
+                    .setScale(2, RoundingMode.HALF_UP));
 
         } catch (Exception e) {
             log.error(ticker.getName() + ":: exception MACD ProcRes: " + e.getLocalizedMessage());

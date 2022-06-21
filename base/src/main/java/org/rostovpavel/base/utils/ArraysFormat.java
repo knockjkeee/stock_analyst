@@ -45,7 +45,7 @@ public class ArraysFormat {
         return res;
     }
 
-    private static int getPoint(BigDecimal A, BigDecimal B) {
+    public static int getPoint(BigDecimal A, BigDecimal B) {
         return Integer.compare(A.compareTo(B), 0);
     }
 
