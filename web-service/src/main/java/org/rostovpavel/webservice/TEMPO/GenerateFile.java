@@ -34,9 +34,9 @@ public class GenerateFile {
         }
 
         List<String[]> dataToLines = new ArrayList<>();
-        dataToLines.add(new String[]{"Name", "Price", "Move", "Val", "Trend", "Pur", "Trend", "Time",
+        dataToLines.add(new String[]{"Name", "Price", "Move", "Val", "Trend", "Pur", "MA", "Trend", "Time",
                 "hPrice", "hMACD", "hMACDHis", "hMACDPc", "hMACDPcH", "hMACDPcRes", "hAO", "hAODirect", "hAOColor", "hBB",
-                "MA", "MACD", "AO", "AO_S_T", "BB"});
+                 "MACD", "AO", "AO_S_T", "BB"});
 //        dataToLines.add(new String[]{"Name", "Price", "Move", "Val", "Trend", "Purchases", "Trend", "Time", "MA", "MACD", "AO", "BB", "SO"});
         if (current != null) {
             current.forEach(e -> {
@@ -47,6 +47,7 @@ public class GenerateFile {
                         String.valueOf(e.getScorePowerVal()),
                         String.valueOf(e.getScorePowerTrend()),
                         String.valueOf(e.getScorePurchases()),
+                        String.valueOf(e.getMovingAverage().getInnerScore()),
                         e.getSuperTrend().get_keyMain() + "/" + e.getSuperTrend().get_keySecond(),
                         e.getTime(),
                         String.valueOf(e.getHPrice()),
@@ -59,7 +60,6 @@ public class GenerateFile {
                         String.valueOf(e.getHAODirection()),
                         String.valueOf(e.getHAOColor()),
                         String.valueOf(e.getHBB()),
-                        String.valueOf(e.getMovingAverage().getInnerScore()),
                         e.getMacd().get_key() + "/" + e.getMacd().getProcent() + "/" + e.getMacd().getScoreToKeys() + "/" + e.getMacd().getScoreToLine() + "/" + e.getMacd().getScoreToSignal(),
                         e.getAwesomeOscillator().get_key() + "/" + e.getAwesomeOscillator().getDirection() + "/" + e.getAwesomeOscillator().getScoreKey() + "/" + e.getAwesomeOscillator().getScoreLine() + "/" + e.getAwesomeOscillator().getScoreSignal(),
                         e.getAwesomeOscillator().getSaucerScanner() + "/" + e.getAwesomeOscillator().getTwinPeakScanner(),

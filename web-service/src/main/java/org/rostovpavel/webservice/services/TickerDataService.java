@@ -151,10 +151,10 @@ public class TickerDataService {
 
         //prepare percent
         try {
-            ticker.setHMACDProcent(hMACDWidth.get(1).setScale(6, RoundingMode.HALF_UP) + "/" + hMACDWidth.get(0)
-                    .setScale(6, RoundingMode.HALF_UP) + "/" + ticker.getMacd()
+            ticker.setHMACDProcent(hMACDWidth.get(1).setScale(4, RoundingMode.HALF_UP) + "/" + hMACDWidth.get(0)
+                    .setScale(4, RoundingMode.HALF_UP) + "/" + ticker.getMacd()
                     .getWidthLine()
-                    .setScale(6, RoundingMode.HALF_UP));
+                    .setScale(4, RoundingMode.HALF_UP));
         } catch (Exception e) {
             log.error(ticker.getName() + ":: exception MACD Proc: " + e.getLocalizedMessage());
         }
@@ -165,13 +165,13 @@ public class TickerDataService {
 
             int sumArr = Stream.of(getPoint(hMACDWidth.get(0), hMACDWidth.get(1)), getPoint(ticker.getMacd()
                     .getWidthLine(), hMACDWidth.get(0))).mapToInt(Integer::intValue).sum();
-            var direction = sumArr == 0 ? "NoN" : sumArr > 0 ? "Up" : "Dwn";
             var power = Stream.of(hMACDWidth.get(1), hMACDWidth.get(0), ticker.getMacd().getWidthLine())
                     .map(e -> e.compareTo(BigDecimal.valueOf(0)) > 0 ? 1 : -1)
                     .collect(Collectors.toList())
                     .stream()
                     .mapToInt(Integer::intValue)
                     .sum() > 0 ? "+" : "-";
+            var direction = sumArr == 0 ? "NoN" : sumArr > 0 ? "Up" : power.equals("-") ? "Up" : "Dnw";
 
             if (ticker.getMacd().getWidthLine().compareTo(BigDecimal.valueOf(0)) < 0
                     && hMACDWidth.get(1).compareTo(BigDecimal.valueOf(0)) > 0) {

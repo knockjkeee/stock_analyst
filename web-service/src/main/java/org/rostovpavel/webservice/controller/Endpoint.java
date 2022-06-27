@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -132,7 +133,7 @@ public record Endpoint(TickerDataService tickerDataService) {
                 .filter(e -> ((e.getHMACD() == 3 && e.getHMACDHistogram() == 3 && e.getHPrice() == 3 &&  e.getHAO() >= 2 && e.getHAODirection() > 1)
                         || (e.getHMACD() == -3 && e.getHMACDHistogram() == -3 && e.getHPrice() == -3 &&  e.getHAO() <= -2 && e.getHAODirection() < 1)
                         || (e.getHPrice() >= 1 && e.getHMACD() == 3 && e.getHMACDHistogram() > 1 && e.getHAO() == 3 && e.getHAODirection() > 1)
-                ))
+                ) && e.getHMACDProcentResult().compareTo(BigDecimal.valueOf(0)) > 0)
                 .collect(Collectors.toList());
         GenerateFile.writeToJson(history, "history");
 
