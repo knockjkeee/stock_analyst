@@ -19,7 +19,8 @@ spring:
     console:
       enabled: true
 
-
+telegram:
+  idChat: 167381172
 
 
 

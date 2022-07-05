@@ -1,5 +1,6 @@
 package org.rostovpavel.webservice.controller;
 
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.rostovpavel.base.dto.TickersDTO;
@@ -8,9 +9,13 @@ import org.rostovpavel.base.models.Ticker;
 import org.rostovpavel.base.models.TickerRequestBody;
 import org.rostovpavel.webservice.TEMPO.GenerateFile;
 import org.rostovpavel.webservice.services.TickerDataService;
+import org.rostovpavel.webservice.telegram.Bot;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
@@ -20,17 +25,30 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/v1/api")
-public record Endpoint(TickerDataService tickerDataService) {
+public class Endpoint {
 
-    //private final TickerDataService tickerDataService;
+    private final TickerDataService tickerDataService;
+    private final Bot bot;
 
-    public Endpoint(TickerDataService tickerDataService) {
+    @Value("${telegram.idChat}")
+    private String idChat;
+
+
+    public Endpoint(TickerDataService tickerDataService, Bot bot) {
         this.tickerDataService = tickerDataService;
+        this.bot = bot;
     }
 
+    @SneakyThrows
     @GetMapping("{ticker}")
     public Ticker getDataByTicker(@PathVariable String ticker) {
-        return tickerDataService.getDataByTicker(ticker);
+        Ticker ticket = tickerDataService.getDataByTicker(ticker);
+        bot.execute(SendMessage.builder()
+                .chatId(idChat)
+                .text(getNamedByTicket(ticket))
+//                .parseMode(ParseMode.MARKDOWNV2)
+                .build());
+        return ticket;
     }
 
     @PostMapping("/data")
@@ -41,7 +59,7 @@ public record Endpoint(TickerDataService tickerDataService) {
     @Contract(value = " -> new", pure = true)
     @NotNull
     private String @NotNull [] getNameTickers() {
-        return new String[]{"ASTR", "TAL", "WISH", "U", "RIOT", "LPL", "GPS", "ATVI", "SNAP", "TWTR", "MDLZ", "BAC", "JD", "KO", "INTC", "BABA", "F", "AA", "CCL", "COIN", "COTY", "ET", "ENPH", "EQT", "FSLR", "MSTR", "PCG", "RRC", "SWN", "SPOT", "VIPS", "ZS", "CNK", "CLOV", "ENDP", "MOMO", "PBF", "HOOD", "SPCE", "AAPL", "META", "NVDA", "SAVE", "DDOG", "MOS", "UAA", "BYND", "PTON", "VALE", "RIG", "FTI", "LI", "AAL", "CCXI", "VIR", "SAVA", "ZY", "IOVA", "GTHX", "RKLB", "DKNG", "PLUG", "BBBY", "RIDE", "NOK", "RIVN", "TSLA", "BLUE"};
+        return new String[]{"ASTR", "TAL", "WISH", "U", "RIOT", "LPL", "GPS", "ATVI", "SNAP", "TWTR", "MDLZ", "BAC", "JD", "KO", "INTC", "BABA", "F", "AA", "CCL", "COIN", "COTY", "ET", "ENPH", "EQT", "FSLR", "MSTR", "PCG", "RRC", "SWN", "SPOT", "VIPS", "ZS", "CNK", "CLOV", "ENDP", "MOMO", "PBF", "HOOD", "SPCE", "AAPL", "META", "NVDA", "SAVE", "DDOG", "MOS", "UAA", "BYND", "PTON", "VALE", "RIG", "FTI", "LI", "AAL", "CCXI", "VIR", "SAVA", "ZY", "IOVA", "GTHX", "RKLB", "DKNG", "PLUG", "BBBY", "RIDE", "NOK", "RIVN", "TSLA", "BLUE", "SQ", "EAR", "AWH"};
 
 //        "ASTR", "TAL", "WISH", "U", "RIOT", "LPL", "GPS", "ATVI", "SNAP", "TWTR", "MDLZ", "BAC", "JD", "KO", "INTC", "BABA", "F", "AA", "CCL", "COIN", "COTY", "ET", "ENPH", "EPAM", "EQT", "FSLR", "MSTR", "PCG", "RRC", "REGI", "SEDG", "SWN", "SPOT", "VEON", "VIPS", "ZS", "CNK", "CLOV", "ENDP", "MOMO", "PBF", "HOOD", "SPCE", "AAPL", "FB", "NVDA", "SAVE", "TSLA", "DDOG", "MOS", "UAA", "BYND", "PTON", "VALE", "RIG", "FTI", "LI", "AAL", "CCXI", "VIR", "SAVA", "ZY", "DNLI"
 
@@ -137,6 +155,17 @@ public record Endpoint(TickerDataService tickerDataService) {
                 .collect(Collectors.toList());
         GenerateFile.writeToJson(history, "history");
 
+        history.forEach(e ->  {
+            try {
+                bot.execute(SendMessage.builder()
+                        .chatId(idChat)
+                        .text(getNamedByTicket(e))
+    //                .parseMode(ParseMode.MARKDOWNV2)
+                        .build());
+            } catch (TelegramApiException ex) {
+                ex.printStackTrace();
+            }
+        });
 
         // return filter
         return new TickersDTO(history);
@@ -201,5 +230,36 @@ public record Endpoint(TickerDataService tickerDataService) {
                 .filter(e -> e.getScorePurchases() < -50 || e.getScorePurchases() > 50)
                 .collect(Collectors.toList());
         return new TickersDTO(collect);
+    }
+
+    public String getNamedByTicket(Ticker ticker) {
+        String res = "\t*" + ticker.getName() + "* \t\t " + ticker.getPrice() + " \t\t " + ticker.getSuperTrend().get_keyMain() + "/" + ticker.getSuperTrend().get_keySecond() + " \t\t " + ticker.getTime()
+                + "\n*Mov/Val/Tre/Pur/MA*" + " \t\t " +  ticker.getScoreMove() +"/" +ticker.getScorePowerVal() +"/" + ticker.getScorePowerTrend() + "/" + ticker.getScorePurchases()+"/"+ ticker.getMovingAverage().getInnerScore()
+                + "\n hPrice/hMACD/hMACDHis" + " \t\t " + ticker.getHPrice() +"/" + ticker.getHMACD() +"/" + ticker.getHMACDHistogram()
+                + "\n" + ticker.getHMACDProcent()
+                + "\n" + ticker.getHMACDProcentHis()
+                + "\n" + ticker.getHMACDProcentResult()
+                + "\nhAO/hAODir/hAOCol/hBB" + " \t\t " + ticker.getHAO() +"/" + ticker.getHAODirection() +"/" + ticker.getHAOColor() +"/" + ticker.getHBB();
+
+//
+//         SString.valueOf(e.getHAO()),
+//                        String.valueOf(e.getHAODirection()),
+//                        String.valueOf(e.getHAOColor()),
+//                        String.valueOf(e.getHBB()),
+        return res;
+//        return replaceAllBindCharacter(res);
+    }
+
+
+
+    private String replaceAllBindCharacter(String text) {
+        return text.replaceAll("\\.", ",");
+//                .replaceAll("]", "/")
+//                .replace('[', '/')
+//                .replaceAll("-", "/")
+//                .replaceAll("\\.", "")
+//                .replaceAll(">", "/")
+//                .replace("(", "/")
+//                .replace(")", "/");
     }
 }
