@@ -69,5 +69,4 @@ public class DateFormatter {
                         "торгов в лотах: {}, время свечи: {}",
                 open, close, low, high, volume, time);
     }
-
 }

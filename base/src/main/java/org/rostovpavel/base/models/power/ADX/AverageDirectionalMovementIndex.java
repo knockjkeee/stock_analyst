@@ -82,29 +82,25 @@ public class AverageDirectionalMovementIndex implements IndicatorPowerTrend {
     public int getScoreToLine(int sum, BigDecimal price) {
         int scoreLine = 0;
         if (dlP.compareTo(dlM) > 0){
-            BigDecimal procent;
+            BigDecimal percent;
             try {
-                procent = calculateGrowthAsPercentage(dlM, dlP);
+                percent = calculateGrowthAsPercentage(dlM, dlP);
             } catch (Exception e) {
-                procent = BigDecimal.ZERO;
+                percent = BigDecimal.ZERO;
             }
-
-            setProcent(procent);
-            if (procent.compareTo(BigDecimal.valueOf(20)) > 0 || procent.compareTo(BigDecimal.valueOf(-20)) < 0) {
-                //sum += 25;
+            setProcent(percent);
+            if (percent.compareTo(BigDecimal.valueOf(20)) > 0 || percent.compareTo(BigDecimal.valueOf(-20)) < 0) {
                 scoreLine += 25;
             }
         }else{
-            BigDecimal procent;
+            BigDecimal percent;
             try {
-                procent = calculateGrowthAsPercentage(dlP, dlM);
+                percent = calculateGrowthAsPercentage(dlP, dlM);
             } catch (Exception e) {
-                procent = BigDecimal.ZERO;
+                percent = BigDecimal.ZERO;
             }
-
-            setProcent(procent);
-            if (procent.compareTo(BigDecimal.valueOf(20)) > 0 || procent.compareTo(BigDecimal.valueOf(-20)) < 0) {
-                //sum -= 25;
+            setProcent(percent);
+            if (percent.compareTo(BigDecimal.valueOf(20)) > 0 || percent.compareTo(BigDecimal.valueOf(-20)) < 0) {
                 scoreLine -= 25;
             }
         }

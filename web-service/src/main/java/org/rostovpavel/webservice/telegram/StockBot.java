@@ -7,11 +7,11 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import java.util.List;
 
 @Component
-public class Bot extends TelegramLongPollingBot{
+public class StockBot extends TelegramLongPollingBot{
 
     @Override
     public String getBotUsername() {
-        return "TestBotApi";
+        return "TestBotApiTink";
     }
 
     @Override
@@ -26,6 +26,7 @@ public class Bot extends TelegramLongPollingBot{
 
     @Override
     public void onUpdateReceived(Update update) {
+        System.out.println("SAd");
         //notificationSubscribers(update);
     }
 
