@@ -1,4 +1,4 @@
-package org.rostovpavel.base.exception;
+package org.rostovpavel.webservice.exception;
 
 
 import lombok.AllArgsConstructor;

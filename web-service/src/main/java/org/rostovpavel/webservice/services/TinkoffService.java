@@ -2,7 +2,7 @@ package org.rostovpavel.webservice.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.rostovpavel.base.exception.StockNotFoundException;
+import org.rostovpavel.webservice.exception.StockNotFoundException;
 import org.rostovpavel.base.models.Stock;
 import org.rostovpavel.base.utils.DateFormatter;
 import org.springframework.scheduling.annotation.Async;

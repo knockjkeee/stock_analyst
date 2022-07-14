@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
 import org.rostovpavel.base.dto.StocksDTO;
-import org.rostovpavel.base.exception.StockNotFoundException;
+import org.rostovpavel.webservice.exception.StockNotFoundException;
 import org.rostovpavel.base.models.power.ATR.AverageTrueRange;
 import org.rostovpavel.base.models.Signal;
 import org.rostovpavel.base.models.Stock;

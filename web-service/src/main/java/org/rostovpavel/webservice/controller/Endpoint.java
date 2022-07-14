@@ -6,8 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.rostovpavel.base.dto.TickersDTO;
 import org.rostovpavel.base.models.Ticker;
 import org.rostovpavel.base.models.TickerRequestBody;
-import org.rostovpavel.base.models.state.DirectionState;
-import org.rostovpavel.base.models.state.PowerState;
 import org.rostovpavel.webservice.TEMPO.GenerateFile;
 import org.rostovpavel.webservice.services.TickerDataService;
 import org.rostovpavel.webservice.telegram.StockBot;
@@ -17,14 +15,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.rostovpavel.base.utils.Stock.getNameTickers;
+import static org.rostovpavel.base.utils.TickerUtils.getHistory;
+import static org.rostovpavel.webservice.telegram.utils.Messages.*;
 
 @RestController
 @RequestMapping("/v1/api")
@@ -129,37 +127,16 @@ public class Endpoint {
         //all
         List<Ticker> stocks = tickerDataService.getDataByTickers(tickerRequestBody)
                 .getStocks();
-        //write all
         GenerateFile.writeToJson(stocks, "All_stocks");
 
-        List<Ticker> history = stocks.stream()
-                .filter(e ->
-                        ( ((e.getSuperTrend().get_keyMain().equals("BUY++") || e.getSuperTrend().get_keyMain().equals("SELL--"))
-                            && (e.getHMACDProcentHis().contains("+Up") || e.getHMACDProcentHis().contains("-Up"))
-                            && e.getScorePowerVal() > 0)
-                            || ((e.getHMACD() == 3 && e.getHMACDHistogram() == 3 && e.getHPrice() == 3 && e.getHAO() >= 2 &&
-                                e.getHAODirection() > 1)
-                                || (e.getHMACD() == -3 && e.getHMACDHistogram() == -3 && e.getHPrice() == -3 && e.getHAO() <= -2 && e.getHAODirection() < 1)
-                                ||
-                                (e.getHPrice() >= 1 && e.getHMACD() == 3 && e.getHMACDHistogram() > 1 &&
-                                        e.getHAO() == 3 && e.getHAODirection() > 1)))
-                        && e.getHMACDProcentResult().compareTo(BigDecimal.valueOf(0)) > 0)
-                .collect(Collectors.toList());
+        List<Ticker> superTrend = getSuperTrend(stocks);
+        GenerateFile.writeToJson(superTrend, "superTrend");
 
+        List<Ticker> history = getHistory(stocks);
         GenerateFile.writeToJson(history, "history");
 
-        history.forEach(e -> {
-            try {
-                stockBot.execute(SendMessage.builder()
-                        .chatId(idChat)
-                        .text(getNamedByTicket(e))
-                        .parseMode(ParseMode.HTML)
-                        .disableWebPagePreview(true)
-                        .build());
-            } catch (TelegramApiException ex) {
-                ex.printStackTrace();
-            }
-        });
+        history.addAll(superTrend);
+        sendDataToBot(history, stockBot, idChat);
         return new TickersDTO(history);
     }
 
@@ -175,45 +152,4 @@ public class Endpoint {
                 .build());
         return ticket;
     }
-
-
-    public String getNamedByTicket(Ticker ticker) {
-        String hrefName =
-                "<a href=\"www.tinkoff.ru/invest/stocks/" + ticker.getName() + "\">" + ticker.getName() + "</a>";
-
-        String result = hrefName + "\t\t" + ticker.getPrice() + "(<b>" + ticker.getHPrice() + "</b>)" + "\t\t" +
-                DirectionState.getState(ticker.getHPrice() > 0)
-                        .getLabel() + "\t\t" + ticker.getSuperTrend()
-                .get_keyMain() + "/" + ticker.getSuperTrend()
-                .get_keySecond() +
-//                "\n<pre>(350)" + " 350 / 350 / 350 / 350</pre>";
-                "\n<pre>(" + ticker.getMovingAverage()
-                .getInnerScore() + ") " + ticker.getScoreMove() + " / " + ticker.getScorePowerVal() + " / " +
-                ticker.getScorePowerTrend() + " / " + ticker.getScorePurchases() + "</pre>" + "\n(" +
-                ticker.getHMACD() + "/" + ticker.getHMACDHistogram() + ") " + "\t\t\t" + ticker.getHMACDProcent()  +
-                "\n<pre>(" + ticker.getHMACDProcentResult() + ") " + ticker.getHMACDProcentHis() + "</pre>" +
-                "\n" + "(" + ticker.getHBB() + ") " + "\t\t\t\t" + ticker.getHAO() + " / " + ticker.getHAODirection() +
-                " / " + ticker.getHAOColor() + "\t\t" + PowerState.getState(ticker.getHMACDProcentResult()
-                        .abs()
-                        .intValue() > 5)
-                .getLabel();
-
-        return result;
-    }
-
-
-//    public String getNamedByTicket(Ticker ticker) {
-//        String res = "\t*" + ticker.getName() + "* \t\t " + ticker.getPrice() + " \t\t " + ticker.getSuperTrend()
-//              ~ .get_keyMain() + "/" + ticker.getSuperTrend()
-//              ~  .get_keySecond() + " \t\t " + ticker.getTime() + "\n*Mov/Val/Tre/Pur/MA*" + " \t\t " +
-//              ~  ticker.getScoreMove() + "/" + ticker.getScorePowerVal() + "/" + ticker.getScorePowerTrend() + "/" +
-//              ~  ticker.getScorePurchases() + "/" + ticker.getMovingAverage()
-//              ~  .getInnerScore() + "\n hPrice/hMACD/hMACDHis" + " \t\t " + ticker.getHPrice() + "/" +
-//                ticker.getHMACD() + "/" + ticker.getHMACDHistogram() + "\n" + ticker.getHMACDProcent() + "\n" +
-//                ticker.getHMACDProcentHis() + "\n" + ticker.getHMACDProcentResult() + "\nhAO/hAODir/hAOCol/hBB" +
-//                " \t\t " + ticker.getHAO() + "/" + ticker.getHAODirection() + "/" + ticker.getHAOColor() + "/" +
-//                ticker.getHBB();
-//
-//        return res;
-//    }
 }

@@ -53,6 +53,7 @@ public class Ticker {
     int scorePowerTrend;
     int scorePurchases;
     String time;
+    int groupId;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "movingAverage_id")
