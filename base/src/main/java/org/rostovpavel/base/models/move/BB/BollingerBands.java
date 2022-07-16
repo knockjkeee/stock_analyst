@@ -120,7 +120,7 @@ public class BollingerBands implements IndicatorMove {
     }
 
     public String graphicItem(BigDecimal price) {
-        StringBuilder stringBuilder = new StringBuilder("\n");
+        StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("(");
         stringBuilder.append(getWbProcent().setScale(1, RoundingMode.UP));
         stringBuilder.append(" %");

@@ -131,7 +131,7 @@ public class MovingAverageConvergenceDivergence implements IndicatorMove {
     }
 
     public String graphicItem() {
-        StringBuilder stringBuilder = new StringBuilder("\n");
+        StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("(");
         stringBuilder.append(getProcent().setScale(1, RoundingMode.UP));
         stringBuilder.append(" %)");

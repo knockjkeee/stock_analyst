@@ -33,7 +33,7 @@ public class SMA {
     String _keySma100;
 
     public String graphicItem(BigDecimal price) {
-        StringBuilder stringBuilder = new StringBuilder("\n");
+        StringBuilder stringBuilder = new StringBuilder();
         List<SMAData> SMAData = intiData(price);
         List<SMAData> sorted = SMAData.stream()
                 .sorted((a,b) -> b.item.compareTo(a.item))

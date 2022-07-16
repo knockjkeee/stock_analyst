@@ -120,7 +120,7 @@ public class SuperTrend implements IndicatorMove {
     }
 
     public String graphicItem() {
-        StringBuilder stringBuilder = new StringBuilder("\n");
+        StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Main(30,5): ");
         stringBuilder.append(getMainTrend()).append("\t\t");
         stringBuilder.append(get_keyMain());

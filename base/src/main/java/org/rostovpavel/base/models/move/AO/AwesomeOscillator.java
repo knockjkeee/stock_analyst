@@ -122,7 +122,7 @@ public class AwesomeOscillator implements IndicatorMove {
     }
 
     public String graphicItem() {
-        StringBuilder stringBuilder = new StringBuilder("\n");
+        StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("(");
         stringBuilder.append(getAo());
         stringBuilder.append(")");

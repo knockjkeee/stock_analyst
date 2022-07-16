@@ -41,29 +41,31 @@ public class Messages {
 
     public static String getIndicatorByTicket(String text, Ticker ticker) {
         return text + "\n\n<pre>Moving Average (" + ticker.getMovingAverage()
-                .getInnerScore() + ")</pre>" + ticker.getMovingAverage()
+                .getInnerScore() + ")</pre>\n" + ticker.getMovingAverage()
                 .getSma()
                 .graphicItem(ticker.getPrice())
+
+
                 + "\n<pre>BollingerBands (" + (ticker.getBollingerBands()
                 .getScoreToLine() + ticker.getBollingerBands()
                 .getScoreToKeys() + ticker.getBollingerBands()
-                .getScoreToSignal()) + ")</pre>" + ticker.getBollingerBands().graphicItem(ticker.getPrice())
+                .getScoreToSignal()) + ")</pre>\n" + ticker.getBollingerBands().graphicItem(ticker.getPrice())
 
 //                BollingerBands
 
                 +"\n<pre>MACD (" + (ticker.getMacd()
                 .getScoreToLine() + ticker.getMacd()
                 .getScoreToKeys() + ticker.getMacd()
-                .getScoreToSignal()) + ")</pre>" + ticker.getMacd()
+                .getScoreToSignal()) + ")</pre>\n" + ticker.getMacd()
                 .graphicItem()
 
                 +"\n<pre>AwesomeOscillator (" + (ticker.getAwesomeOscillator()
                 .getScoreLine() + ticker.getAwesomeOscillator()
                 .getScoreKey() + ticker.getAwesomeOscillator()
-                .getScoreSignal()) + ")</pre>" + ticker.getAwesomeOscillator()
+                .getScoreSignal()) + ")</pre>\n" + ticker.getAwesomeOscillator()
                 .graphicItem()
 
-                +"\n<pre>SuperTrend (" + ticker.getSuperTrend().getScoreKey() + ")</pre>" + ticker.getSuperTrend()
+                +"\n<pre>SuperTrend (" + ticker.getSuperTrend().getScoreKey() + ")</pre>\n" + ticker.getSuperTrend()
                 .graphicItem();
     }
 
