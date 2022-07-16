@@ -20,7 +20,7 @@ spring:
       enabled: true
 
 telegram:
-  idChat: -759426700
+  idChat: -670433391
 
 
 

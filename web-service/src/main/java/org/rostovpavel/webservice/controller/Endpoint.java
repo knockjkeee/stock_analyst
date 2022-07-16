@@ -136,17 +136,27 @@ public class Endpoint {
         GenerateFile.writeToJson(history, "history");
 
         history.addAll(superTrend);
-        sendDataToBot(history, stockBot, idChat);
-        return new TickersDTO(history);
+        List<Ticker> collect = history.stream()
+                .filter(e -> !superTrend.contains(e))
+                .collect(Collectors.toList());
+        collect.addAll(superTrend);
+
+        if (collect.size() > 0) {
+            sendDataToBot(collect, stockBot, idChat);
+        }
+        return new TickersDTO(collect);
     }
 
     @SneakyThrows
     @GetMapping("{ticker}")
     public Ticker getDataByTicker(@PathVariable String ticker) {
         Ticker ticket = tickerDataService.getDataByTicker(ticker);
+        String text = getNamedByTicket(ticket);
+        String indicatorByTicket = getIndicatorByTicket(text, ticket);
+
         stockBot.execute(SendMessage.builder()
                 .chatId(idChat)
-                .text(getNamedByTicket(ticket))
+                .text(indicatorByTicket)
                 .parseMode(ParseMode.HTML)
                 .disableWebPagePreview(true)
                 .build());
