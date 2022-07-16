@@ -40,35 +40,38 @@ public class Messages {
     }
 
     public static String getIndicatorByTicket(String text, Ticker ticker) {
-        return text + "\n\n<pre>Moving Average (" + ticker.getMovingAverage()
+        return text +
+                //sma
+                "\n\n<pre>Moving Average (" + ticker.getMovingAverage()
                 .getInnerScore() + ")</pre>\n" + ticker.getMovingAverage()
                 .getSma()
                 .graphicItem(ticker.getPrice())
-
-
+                //bb
                 + "\n<pre>BollingerBands (" + (ticker.getBollingerBands()
                 .getScoreToLine() + ticker.getBollingerBands()
                 .getScoreToKeys() + ticker.getBollingerBands()
                 .getScoreToSignal()) + ")</pre>\n" + ticker.getBollingerBands().graphicItem(ticker.getPrice())
-
-//                BollingerBands
-
+                //macd
                 +"\n<pre>MACD (" + (ticker.getMacd()
                 .getScoreToLine() + ticker.getMacd()
                 .getScoreToKeys() + ticker.getMacd()
                 .getScoreToSignal()) + ")</pre>\n" + ticker.getMacd()
                 .graphicItem()
-
+                //ao
                 +"\n<pre>AwesomeOscillator (" + (ticker.getAwesomeOscillator()
                 .getScoreLine() + ticker.getAwesomeOscillator()
                 .getScoreKey() + ticker.getAwesomeOscillator()
                 .getScoreSignal()) + ")</pre>\n" + ticker.getAwesomeOscillator()
                 .graphicItem()
-
+                //st
                 +"\n<pre>SuperTrend (" + ticker.getSuperTrend().getScoreKey() + ")</pre>\n" + ticker.getSuperTrend()
                 .graphicItem();
     }
 
+    public static String getFullInformationByTicker(Ticker ticker) {
+        String firstStep = getNamedByTicket(ticker);
+        return getIndicatorByTicket(firstStep, ticker);
+    }
 
     @NotNull
     public static List<Ticker> getSuperTrend(List<Ticker> stocks) {
@@ -113,7 +116,8 @@ public class Messages {
             try {
                 stockBot.execute(SendMessage.builder()
                         .chatId(idChat)
-                        .text(getNamedByTicket(e))
+//                        .text(getNamedByTicket(e))
+                        .text(getFullInformationByTicker(e))
                         .parseMode(ParseMode.HTML)
                         .disableWebPagePreview(true)
                         .build());

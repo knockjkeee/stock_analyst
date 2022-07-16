@@ -151,12 +151,11 @@ public class Endpoint {
     @GetMapping("{ticker}")
     public Ticker getDataByTicker(@PathVariable String ticker) {
         Ticker ticket = tickerDataService.getDataByTicker(ticker);
-        String text = getNamedByTicket(ticket);
-        String indicatorByTicket = getIndicatorByTicket(text, ticket);
+        String text = getFullInformationByTicker(ticket);
 
         stockBot.execute(SendMessage.builder()
                 .chatId(idChat)
-                .text(indicatorByTicket)
+                .text(text)
                 .parseMode(ParseMode.HTML)
                 .disableWebPagePreview(true)
                 .build());

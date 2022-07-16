@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static org.rostovpavel.base.utils.Stock.getNameTickers;
-import static org.rostovpavel.webservice.telegram.utils.Messages.getNamedByTicket;
+import static org.rostovpavel.webservice.telegram.utils.Messages.getFullInformationByTicker;
 
 @Component
 public class StockBot extends TelegramLongPollingBot{
@@ -45,10 +45,10 @@ public class StockBot extends TelegramLongPollingBot{
     public void onUpdateReceived(Update update) {
         String text = update.getMessage()
                 .getText();
-        if (text.equals("ticketlist")) {
+        if (text.equals("tickerlist")) {
             execute(SendMessage.builder()
                     .chatId(String.valueOf(update.getMessage().getChatId()))
-                    .text("<pre>"+ Arrays.toString(getNameTickers()) +"</pre>")
+                    .text("<pre>CURRENT SIZE - " + getNameTickers().length + "\n" + Arrays.toString(getNameTickers()) +"</pre>")
                     .parseMode(ParseMode.HTML)
                     .disableWebPagePreview(true)
                     .replyToMessageId(update.getMessage().getMessageId())
@@ -60,7 +60,7 @@ public class StockBot extends TelegramLongPollingBot{
             Ticker ticket = tickerDataService.getDataByTicker(query);
             execute(SendMessage.builder()
                     .chatId(String.valueOf(update.getMessage().getChatId()))
-                    .text(getNamedByTicket(ticket))
+                    .text(getFullInformationByTicker(ticket))
                     .parseMode(ParseMode.HTML)
                     .disableWebPagePreview(true)
                     .replyToMessageId(update.getMessage().getMessageId())
