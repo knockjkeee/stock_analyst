@@ -118,4 +118,17 @@ public class SuperTrend implements IndicatorMove {
         setScoreKey(getScoreKey() + key);
         return sum;
     }
+
+    public String graphicItem() {
+        StringBuilder stringBuilder = new StringBuilder("\n");
+        stringBuilder.append("Main(30,5): ");
+        stringBuilder.append(getMainTrend()).append("\t\t");
+        stringBuilder.append(get_keyMain());
+        stringBuilder.append("\t\t\t\t");
+        stringBuilder.append("\nSecond(10,2): ");
+        stringBuilder.append(getSecondTrend()).append("\t\t");
+        stringBuilder.append(get_keySecond());
+        return stringBuilder.toString().trim();
+    }
+
 }

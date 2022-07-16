@@ -1,10 +1,7 @@
 package org.rostovpavel.base.models.move.BB;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Type;
 import org.rostovpavel.base.models.IndicatorMove;
 import org.rostovpavel.base.models.Signal;
@@ -12,6 +9,8 @@ import org.rostovpavel.base.models.Signal;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -119,4 +118,69 @@ public class BollingerBands implements IndicatorMove {
             return middleBand.subtract(diff);
         }
     }
+
+    public String graphicItem(BigDecimal price) {
+        StringBuilder stringBuilder = new StringBuilder("\n");
+        stringBuilder.append("(");
+        stringBuilder.append(getWbProcent().setScale(1, RoundingMode.UP));
+        stringBuilder.append(" %");
+        stringBuilder.append(" /");
+        stringBuilder.append(" ");
+        stringBuilder.append(getWidthBand().setScale(1, RoundingMode.UP));
+        stringBuilder.append(")");
+        stringBuilder.append("\t");
+        List<BBData> emaData = intiData(price);
+        List<BBData> sorted = emaData.stream()
+                .sorted((a,b) -> b.item.compareTo(a.item))
+                .collect(Collectors.toList());
+        sorted.forEach(e -> stringBuilder.append(Graphic.getContent(e.name()))
+                .append("\t"));
+        return stringBuilder.toString().trim();
+    }
+
+    private List<BBData> intiData(BigDecimal price) {
+        return List.of(
+                new BBData("upperBand", getUpperBand()),
+                new BBData("middleBand", getMiddleBand()),
+                new BBData("lowerBand", getLowerBand()),
+                new BBData("doublemiddleup", generateDiffMiddle(getUpperBand(), getMiddleBand(), "UP")),
+                new BBData("doublemiddledown", generateDiffMiddle(getMiddleBand(), getLowerBand(), "DOWN")),
+                new BBData("price", price)
+        );
+    }
+
+    private record BBData(String name, BigDecimal item) {}
+
+    @Getter
+    private enum Graphic {
+        UPPERBAND("upperBand","◾️"),
+        MIDDLEBAND("middleBand","\uD83D\uDFE0"),
+        LOWERBAND("lowerBand","◾️"),
+        DOUBLEMIDDLEUP("doublemiddleup","\uD83D\uDD39"),
+        DOUBLEMIDDLEDOWN("doublemiddledown","\uD83D\uDD38"),
+        PRICE("price","\uD83D\uDCB0")
+        ;
+        private String name;
+        private String content;
+
+        Graphic(String name, String content) {
+            this.name = name;
+            this.content = content;
+        }
+
+        public static String getContent(String value) {
+            return switch (value) {
+                case "upperBand" -> UPPERBAND.getContent();
+                case "middleBand" -> MIDDLEBAND.getContent();
+                case "lowerBand" -> LOWERBAND.getContent();
+                case "doublemiddleup" -> DOUBLEMIDDLEUP.getContent();
+                case "doublemiddledown" -> DOUBLEMIDDLEDOWN.getContent();
+                case "price" -> PRICE.getContent();
+                default -> throw new IllegalStateException("Unexpected value");
+            };
+        }
+
+    }
+
+
 }

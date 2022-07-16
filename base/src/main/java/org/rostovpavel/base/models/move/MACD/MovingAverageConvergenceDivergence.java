@@ -1,16 +1,16 @@
 package org.rostovpavel.base.models.move.MACD;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Type;
 import org.rostovpavel.base.models.IndicatorMove;
 import org.rostovpavel.base.models.Signal;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.rostovpavel.base.utils.Math.calculateGrowthAsPercentage;
 
@@ -128,5 +128,61 @@ public class MovingAverageConvergenceDivergence implements IndicatorMove {
         }
         setScoreToSignal(scoreSignal);
         return sum;
+    }
+
+    public String graphicItem() {
+        StringBuilder stringBuilder = new StringBuilder("\n");
+        stringBuilder.append("(");
+        stringBuilder.append(getProcent().setScale(1, RoundingMode.UP));
+        stringBuilder.append(" %)");
+        stringBuilder.append("\t\t\t\t");
+        List<MACDData> emaData = intiData();
+        List<MACDData> sorted = emaData.stream()
+                .sorted((a,b) -> b.item.compareTo(a.item))
+                .collect(Collectors.toList());
+        sorted.forEach(e -> stringBuilder.append(Graphic.getContent(e.name()))
+                .append("\t\t\t\t"));
+        stringBuilder.append(Graphic.getDirectionHistogram(getHistogram()));
+        return stringBuilder.toString();
+    }
+
+    private List<MACDData> intiData() {
+        return List.of(
+                new MACDData("signal", getSignal()),
+                new MACDData("macd", getMACD())
+//                new MACDData("histogram", getHistogram())
+        );
+    }
+
+    private record MACDData(String name, BigDecimal item) {}
+
+    @Getter
+    private enum Graphic {
+        SIGNAL("signal","\uD83D\uDFE0"),
+        MACD("macd","🔵"),
+        HISTOGRAM("histogram","⬜️"),
+        PRICE("price","\uD83D\uDCB0")
+        ;
+        private String name;
+        private String content;
+
+        Graphic(String name, String content) {
+            this.name = name;
+            this.content = content;
+        }
+
+        public static String getContent(String value) {
+            return switch (value) {
+                case "signal" -> SIGNAL.getContent();
+                case "macd" -> MACD.getContent();
+                case "histogram" -> HISTOGRAM.getContent();
+                case "price" -> PRICE.getContent();
+                default -> throw new IllegalStateException("Unexpected value");
+            };
+        }
+
+        private  static String getDirectionHistogram(BigDecimal histogram) {
+            return histogram.compareTo(BigDecimal.valueOf(0)) > 0 ? "🟩" : "🟥";
+        }
     }
 }

@@ -31,11 +31,11 @@ public class Messages {
                 ticker.getScorePowerTrend() + " / " + ticker.getScorePurchases() + "</pre>" + "\n(" +
                 ticker.getHMACD() + "/" + ticker.getHMACDHistogram() + ") " + "\t\t\t" + ticker.getHMACDProcent() +
                 "\n<pre>(" + ticker.getHMACDProcentResult() + ") " + ticker.getHMACDProcentHis() + "</pre>" + "\n" +
-                "(" + ticker.getHBB() + ") " + "\t\t\t\t" + ticker.getHAO() + " / " + ticker.getHAODirection() + " / " +
-                ticker.getHAOColor() + "\t\t" + PowerState.getState(ticker.getHMACDProcentResult() != null &&
-                        ticker.getHMACDProcentResult()
-                                .abs()
-                                .intValue() > 5)
+                "(" + ticker.getHBB() + ") " + (ticker.getHBB() == 1 || ticker.getHBB() == -1 ? "❗❗❗" : "") +
+                "\t\t\t\t" + ticker.getHAO() + " / " + ticker.getHAODirection() + " / " + ticker.getHAOColor() +
+                "\t\t" + PowerState.getState(ticker.getHMACDProcentResult() != null && ticker.getHMACDProcentResult()
+                        .abs()
+                        .intValue() > 5)
                 .getLabel();
     }
 
@@ -43,7 +43,28 @@ public class Messages {
         return text + "\n\n<pre>Moving Average (" + ticker.getMovingAverage()
                 .getInnerScore() + ")</pre>" + ticker.getMovingAverage()
                 .getSma()
-                .getGraphic(ticker.getPrice());
+                .graphicItem(ticker.getPrice())
+                + "\n<pre>BollingerBands (" + (ticker.getBollingerBands()
+                .getScoreToLine() + ticker.getBollingerBands()
+                .getScoreToKeys() + ticker.getBollingerBands()
+                .getScoreToSignal()) + ")</pre>" + ticker.getBollingerBands().graphicItem(ticker.getPrice())
+
+//                BollingerBands
+
+                +"\n<pre>MACD (" + (ticker.getMacd()
+                .getScoreToLine() + ticker.getMacd()
+                .getScoreToKeys() + ticker.getMacd()
+                .getScoreToSignal()) + ")</pre>" + ticker.getMacd()
+                .graphicItem()
+
+                +"\n<pre>AwesomeOscillator (" + (ticker.getAwesomeOscillator()
+                .getScoreLine() + ticker.getAwesomeOscillator()
+                .getScoreKey() + ticker.getAwesomeOscillator()
+                .getScoreSignal()) + ")</pre>" + ticker.getAwesomeOscillator()
+                .graphicItem()
+
+                +"\n<pre>SuperTrend (" + ticker.getSuperTrend().getScoreKey() + ")</pre>" + ticker.getSuperTrend()
+                .graphicItem();
     }
 
 

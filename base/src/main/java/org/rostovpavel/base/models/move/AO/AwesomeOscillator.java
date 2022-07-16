@@ -120,4 +120,22 @@ public class AwesomeOscillator implements IndicatorMove {
         setScoreSignal(signal);
         return sum;
     }
+
+    public String graphicItem() {
+        StringBuilder stringBuilder = new StringBuilder("\n");
+        stringBuilder.append("(");
+        stringBuilder.append(getAo());
+        stringBuilder.append(")");
+        stringBuilder.append("\t");
+        stringBuilder.append(getColor().equals("Red") ? "\uD83D\uDD34" :"\uD83D\uDFE2");
+        stringBuilder.append("\t\t");
+        stringBuilder.append(getDirection().equals("Up")? "⬆️" :"⬇️");
+        stringBuilder.append("\t");
+        stringBuilder.append("sS:")
+                .append(getSaucerScanner());
+        stringBuilder.append("\t");
+        stringBuilder.append("tP:")
+                .append(getTwinPeakScanner());
+        return stringBuilder.toString().trim();
+    }
 }
