@@ -1,7 +1,9 @@
 package org.rostovpavel.webservice.telegram;
 
 import lombok.SneakyThrows;
+import org.apache.commons.io.FileUtils;
 import org.rostovpavel.base.models.Ticker;
+import org.rostovpavel.webservice.TEMPO.GenerateFile;
 import org.rostovpavel.webservice.services.TickerDataService;
 import org.rostovpavel.webservice.telegram.query.UpdateHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +11,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import javax.annotation.PostConstruct;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -56,6 +64,8 @@ public class StockBot extends TelegramLongPollingBot{
     @Override
     public void onUpdateReceived(Update update) {
 
+
+
         if (update.hasCallbackQuery()) {
             for (UpdateHandler updateHandler : updateHandlers) {
                 try {
@@ -78,6 +88,23 @@ public class StockBot extends TelegramLongPollingBot{
                     .disableWebPagePreview(true)
                     .replyToMessageId(update.getMessage().getMessageId())
                     .build());
+        } else if (text.equals("docsitem")){
+            List<String> nameD = List.of("All_stocks", "history", "superTrend");
+            nameD.forEach(name -> {
+                String resNamed = GenerateFile.generateCSV(name, this, idChat);
+                if (resNamed != null && resNamed.length() > 0) {
+                    try {
+                        byte[] bytesFile = FileUtils.readFileToByteArray(new File(resNamed));
+                        execute(SendDocument.builder()
+                                .chatId(idChat)
+                                .document(new InputFile(new ByteArrayInputStream(bytesFile), resNamed))
+                                .build());
+                    } catch (IOException | TelegramApiException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
         } else if(text.length() <= 4){
             String query = update.getMessage()
                     .getText()

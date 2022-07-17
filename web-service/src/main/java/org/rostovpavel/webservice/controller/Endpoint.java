@@ -45,9 +45,9 @@ public class Endpoint {
     @Contract(" -> new")
     @GetMapping("/csv")
     public @NotNull ResponseEntity<String> generateCSV() {
-        GenerateFile.generateCSV("All_stocks");
-        GenerateFile.generateCSV("history");
-        GenerateFile.generateCSV("superTrend");
+        GenerateFile.generateCSV("All_stocks", stockBot, idChat);
+        GenerateFile.generateCSV("history", stockBot, idChat);
+        GenerateFile.generateCSV("superTrend", stockBot, idChat);
 
         return new ResponseEntity<>("Success filter and All_stocks", HttpStatus.OK);
     }

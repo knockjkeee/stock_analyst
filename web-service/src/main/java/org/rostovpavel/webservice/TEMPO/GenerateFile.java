@@ -3,8 +3,10 @@ package org.rostovpavel.webservice.TEMPO;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.opencsv.CSVWriter;
+import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.rostovpavel.base.models.Ticker;
+import org.rostovpavel.webservice.telegram.StockBot;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -16,12 +18,15 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import static org.rostovpavel.webservice.telegram.utils.Messages.sendExceptionToBot;
+
 
 public class GenerateFile {
 //    String url = "http://localhost:8888/v1/api/up";
 //    RestTemplate rest = new RestTemplate();
 
-    public static void generateCSV(String name) {
+    @SneakyThrows
+    public static String generateCSV(String name, StockBot bot, String chatid) {
         Gson gson = new Gson();
         String timeStamp = getTimeStamp();
         String fileName = name + "_" + timeStamp + "_.";
@@ -30,7 +35,7 @@ public class GenerateFile {
         try {
             current = gson.fromJson(new FileReader(fileName + "json"), listType);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            sendExceptionToBot(e, bot, chatid);
         }
 
         List<String[]> dataToLines = new ArrayList<>();
@@ -68,12 +73,14 @@ public class GenerateFile {
                 });
             });
         }
-
-        try (CSVWriter writer = new CSVWriter(new FileWriter(fileName + "csv"))) {
+        String file = fileName + "csv";
+        try (CSVWriter writer = new CSVWriter(new FileWriter(file))) {
             writer.writeAll(dataToLines);
+            return file;
         } catch (IOException e) {
-            e.printStackTrace();
+            sendExceptionToBot(e, bot, chatid);
         }
+        return "";
     }
 
     public static void writeToJson(@NotNull List<Ticker> stocks, String name) {
