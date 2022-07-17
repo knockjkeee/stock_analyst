@@ -15,9 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import static org.rostovpavel.base.utils.Stock.getNameTickers;
@@ -45,6 +47,7 @@ public class Endpoint {
     public @NotNull ResponseEntity<String> generateCSV() {
         GenerateFile.generateCSV("All_stocks");
         GenerateFile.generateCSV("history");
+        GenerateFile.generateCSV("superTrend");
 
         return new ResponseEntity<>("Success filter and All_stocks", HttpStatus.OK);
     }
@@ -143,6 +146,12 @@ public class Endpoint {
 
         if (collect.size() > 0) {
             sendDataToBot(collect, stockBot, idChat);
+        } else {
+            try {
+                sendData(stockBot, idChat, stocks.get(new Random().nextInt(stocks.size() -1)));
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
         }
         return new TickersDTO(collect);
     }
@@ -152,6 +161,7 @@ public class Endpoint {
     public Ticker getDataByTicker(@PathVariable String ticker) {
         Ticker ticket = tickerDataService.getDataByTicker(ticker);
         String text = getFullInformationByTicker(ticket);
+
 
         stockBot.execute(SendMessage.builder()
                 .chatId(idChat)

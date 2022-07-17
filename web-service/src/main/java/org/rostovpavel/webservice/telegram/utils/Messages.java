@@ -7,11 +7,15 @@ import org.rostovpavel.base.models.state.DirectionState;
 import org.rostovpavel.base.models.state.GroupState;
 import org.rostovpavel.base.models.state.PowerState;
 import org.rostovpavel.webservice.telegram.StockBot;
+import org.rostovpavel.webservice.telegram.query.dto.IndicatorDTO;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -114,16 +118,25 @@ public class Messages {
 
         data.forEach(e -> {
             try {
-                stockBot.execute(SendMessage.builder()
-                        .chatId(idChat)
-//                        .text(getNamedByTicket(e))
-                        .text(getFullInformationByTicker(e))
-                        .parseMode(ParseMode.HTML)
-                        .disableWebPagePreview(true)
-                        .build());
+                sendData(stockBot, idChat, e);
             } catch (TelegramApiException ex) {
                 ex.printStackTrace();
             }
         });
+    }
+
+    public static void sendData(StockBot stockBot, String idChat, Ticker ticker) throws TelegramApiException {
+        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+        buttons.add(List.of(InlineKeyboardButton.builder()
+                .text("Индикаторы")
+                .callbackData(StringUtil.serialize(new IndicatorDTO(ticker.getId())))
+                .build()));
+        stockBot.execute(SendMessage.builder()
+                .chatId(idChat)
+                .text(getNamedByTicket(ticker))
+                .parseMode(ParseMode.HTML)
+                .replyMarkup(InlineKeyboardMarkup.builder().keyboard(buttons).build())
+                .disableWebPagePreview(true)
+                .build());
     }
 }
