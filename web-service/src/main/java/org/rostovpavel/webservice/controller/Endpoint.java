@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.rostovpavel.base.dto.TickersDTO;
 import org.rostovpavel.base.models.Ticker;
 import org.rostovpavel.base.models.TickerRequestBody;
+import org.rostovpavel.base.repo.TickerRepo;
 import org.rostovpavel.webservice.TEMPO.GenerateFile;
 import org.rostovpavel.webservice.services.TickerDataService;
 import org.rostovpavel.webservice.telegram.StockBot;
@@ -15,11 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 import static org.rostovpavel.base.utils.Stock.getNameTickers;
@@ -32,14 +31,16 @@ public class Endpoint {
 
     private final TickerDataService tickerDataService;
     private final StockBot stockBot;
+    private final TickerRepo repo;
 
     @Value("${telegram.idChat}")
     private String idChat;
 
 
-    public Endpoint(TickerDataService tickerDataService, StockBot stockBot) {
+    public Endpoint(TickerDataService tickerDataService, StockBot stockBot, TickerRepo repo) {
         this.tickerDataService = tickerDataService;
         this.stockBot = stockBot;
+        this.repo = repo;
     }
 
     @Contract(" -> new")
@@ -132,10 +133,10 @@ public class Endpoint {
                 .getStocks();
         GenerateFile.writeToJson(stocks, "All_stocks");
 
-        List<Ticker> superTrend = getSuperTrend(stocks);
+        List<Ticker> superTrend = getSuperTrend(stocks, repo);
         GenerateFile.writeToJson(superTrend, "superTrend");
 
-        List<Ticker> history = getHistory(stocks);
+        List<Ticker> history = getHistory(stocks, repo);
         GenerateFile.writeToJson(history, "history");
 
         history.addAll(superTrend);
@@ -147,11 +148,11 @@ public class Endpoint {
         if (collect.size() > 0) {
             sendDataToBot(collect, stockBot, idChat);
         } else {
-            try {
-                sendData(stockBot, idChat, stocks.get(new Random().nextInt(stocks.size() -1)));
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
+//            try {
+//               // sendData(stockBot, idChat, stocks.get(new Random().nextInt(stocks.size() -1)));
+//            } catch (TelegramApiException e) {
+//                e.printStackTrace();
+//            }
         }
         return new TickersDTO(collect);
     }
