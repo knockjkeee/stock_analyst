@@ -35,6 +35,10 @@ public class TinkoffService {
         //TODO log getTradingStatusResponse
 //        GetTradingStatusResponse getTradingStatusResponse = api.getMarketDataService().getTradingStatus(figi).join();
 //        log.info("TradingStatus: " + getTradingStatusResponse.getTradingStatus().getNumber() + " " + getTradingStatusResponse.getTradingStatus().name());
+
+        //TODO
+//        api.getInstrumentsService().getInstrumentByFigi(figi).join()
+
         return dataHistoryCandleByDate
                 .stream()
                 .map(CompletableFuture::join)
