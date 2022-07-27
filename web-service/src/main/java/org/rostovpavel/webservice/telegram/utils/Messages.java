@@ -80,7 +80,7 @@ public class Messages {
     @NotNull
     public static List<Ticker> getSuperTrend(List<Ticker> stocks, TickerRepo repo) {
         return stocks.stream()
-//                .filter(e -> e.getHMACDProcentHis() != null)
+                .filter(e -> e.getHMACDProcentHis() != null)
                 .filter(e -> (((e.getSuperTrend().get_keyMain().equals("BUY++") ||
                         e.getSuperTrend().get_keyMain().equals("SELL--")) &&
                         (e.getHMACDProcentHis().contains("+Up") || e.getHMACDProcentHis().contains("-Up")) &&

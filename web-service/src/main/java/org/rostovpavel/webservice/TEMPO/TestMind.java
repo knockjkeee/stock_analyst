@@ -35,7 +35,7 @@ public class TestMind {
             String currentSS = new SimpleDateFormat("ss").format(Calendar.getInstance().getTime());
             if (mmStart.contains(currentMM) && ssStart.contains(currentSS)) {
                 System.out.println("Start -> " + new SimpleDateFormat("HH.mm.ss").format(Calendar.getInstance().getTime()));
-                ScheduledFuture<?> schedule = executor.scheduleAtFixedRate(testMytest, 0, 900000, TimeUnit.MILLISECONDS);
+                ScheduledFuture<?> schedule = executor.scheduleAtFixedRate(testMytest, 0, 15, TimeUnit.MINUTES);
                 break;
             }
             try {
