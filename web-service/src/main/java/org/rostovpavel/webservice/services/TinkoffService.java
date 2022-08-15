@@ -37,7 +37,11 @@ public class TinkoffService {
 //        log.info("TradingStatus: " + getTradingStatusResponse.getTradingStatus().getNumber() + " " + getTradingStatusResponse.getTradingStatus().name());
 
         //TODO
-//        api.getInstrumentsService().getInstrumentByFigi(figi).join()
+        //api.getInstrumentsService().getInstrumentByFigi(figi).join()   - есть ли позиция шорт
+        //api.getOrdersService().postOrder() - лимитки
+        //api.getOrdersService().cancelOrder() - отмена лимитки
+        //2081433050
+        //BBG004730RP0
 
         return dataHistoryCandleByDate
                 .stream()
