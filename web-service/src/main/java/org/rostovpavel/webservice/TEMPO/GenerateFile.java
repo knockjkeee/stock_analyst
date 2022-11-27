@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import static org.rostovpavel.webservice.telegram.utils.Messages.sendExceptionToBot;
+import static org.rostovpavel.webservice.telegram.query.command.Messages.sendExceptionToBot;
 
 
 public class GenerateFile {

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.rostovpavel.webservice.telegram.utils.Messages.getFullInformationByTicker;
+import static org.rostovpavel.webservice.telegram.query.command.Messages.getFullInformationByTicker;
 
 @Component
 public class IndicatorHandler extends CallbackUpdateHandler<IndicatorDTO> {

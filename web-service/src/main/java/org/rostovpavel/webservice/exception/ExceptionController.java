@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import static org.rostovpavel.webservice.telegram.utils.Messages.sendExceptionToBot;
+import static org.rostovpavel.webservice.telegram.query.command.Messages.sendExceptionToBot;
 
 @ControllerAdvice
 public class ExceptionController extends ResponseEntityExceptionHandler {

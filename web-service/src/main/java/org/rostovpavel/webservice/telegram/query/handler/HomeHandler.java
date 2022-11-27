@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.rostovpavel.webservice.telegram.utils.Messages.getNamedByTicket;
+import static org.rostovpavel.webservice.telegram.query.command.Messages.getNamedByTicket;
 
 @Component
 public class HomeHandler extends CallbackUpdateHandler<HomeDTO> {

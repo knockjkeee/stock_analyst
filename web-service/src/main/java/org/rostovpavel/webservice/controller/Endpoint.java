@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 import static org.rostovpavel.base.utils.Stock.getNameTickers;
 import static org.rostovpavel.base.utils.TickerUtils.getHistory;
-import static org.rostovpavel.webservice.telegram.utils.Messages.*;
+import static org.rostovpavel.webservice.telegram.query.command.Messages.*;
 
 @RestController
 @RequestMapping("/v1/api")

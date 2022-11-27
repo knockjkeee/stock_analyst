@@ -7,33 +7,35 @@ import org.rostovpavel.webservice.TEMPO.GenerateFile;
 import org.rostovpavel.webservice.TEMPO.MyTask;
 import org.rostovpavel.webservice.services.TickerDataService;
 import org.rostovpavel.webservice.telegram.query.UpdateHandler;
+import org.rostovpavel.webservice.telegram.query.command.Command;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
+import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import javax.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static org.rostovpavel.base.utils.Stock.getNameTickers;
-import static org.rostovpavel.webservice.telegram.utils.Messages.getFullInformationByTicker;
+import static org.rostovpavel.webservice.telegram.query.command.Messages.getFullInformationByTicker;
 
 @Component
 public class StockBot extends TelegramLongPollingBot{
@@ -74,17 +76,17 @@ public class StockBot extends TelegramLongPollingBot{
     @Override
     public void onUpdateReceived(Update update) {
 
-        if (update.hasCallbackQuery()) {
-            for (UpdateHandler updateHandler : updateHandlers) {
-                try {
-                    if (updateHandler.handleUpdate(update)) {
-                        return;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+//        if (update.hasCallbackQuery()) {
+        for (UpdateHandler updateHandler : updateHandlers) {
+            try {
+                if (updateHandler.handleUpdate(update)) {
+                    return;
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
+//        }
 
         String text = update.getMessage()
                 .getText();
@@ -147,7 +149,6 @@ public class StockBot extends TelegramLongPollingBot{
     }
 
     @SneakyThrows
-//    @PostConstruct
     public void init() {
         String currentDate = LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         execute(SendMessage.builder()
@@ -173,9 +174,6 @@ public class StockBot extends TelegramLongPollingBot{
         List<String> ssStart = Arrays.asList("50", "51",  "52",  "53",  "54", "55",  "56", "57", "58", "59");
         MyTask testMytest = new MyTask("testMytest");
 
-//        ForkJoinPool executor = ForkJoinPool.commonPool();
-        //ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(2);
-//        test("test", executor);
         while (true) {
             String currentMM = new SimpleDateFormat("mm").format(Calendar.getInstance().getTime());
             String currentSS = new SimpleDateFormat("ss").format(Calendar.getInstance().getTime());
@@ -195,5 +193,22 @@ public class StockBot extends TelegramLongPollingBot{
 
     private void stop() {
         schedule.cancel(true);
+    }
+
+    @PostConstruct
+    private void setupCommands() {
+        try {
+            List<BotCommand> commands =
+                    Arrays.stream(Command.values())
+                            .map(c -> BotCommand.builder().command(c.getName()).description(c.getDesc()).build())
+                            .collect(Collectors.toList());
+            //TODO add my command
+            execute(SetMyCommands.builder().commands(commands).build());
+            commands.forEach(e -> {
+                System.out.println(e.getCommand() + " - " + e.getDescription());
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

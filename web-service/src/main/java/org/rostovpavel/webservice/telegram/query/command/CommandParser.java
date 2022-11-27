@@ -1,0 +1,52 @@
+package org.rostovpavel.webservice.telegram.query.command;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.rostovpavel.webservice.telegram.query.dto.ParseDTO;
+import org.rostovpavel.webservice.telegram.query.dto.Parser;
+import org.rostovpavel.webservice.telegram.utils.StringUtil;
+import org.springframework.stereotype.Component;
+
+import java.util.Optional;
+
+@Component
+public class CommandParser implements Parser {
+
+    private final String PREFIX_FOR_COMMAND = "/";
+    private final String DELIMITER_COMMAND_BOTNAME = "@";
+
+    @Override
+    public Optional<ParseDTO> parseCommand(String msg) {
+        if (StringUtil.isBlank(msg)) {
+            return Optional.empty();
+        }
+        String trimText = StringUtil.trim(msg);
+        ImmutablePair<String, String> commandAndText = getDelimitedCommandFromText(trimText);
+        if (isCommand(commandAndText.getKey())) {
+            String commandForParse = cutCommandFromGroup(commandAndText.getKey());
+            Optional<Command> command = Command.parseCommand(commandForParse);
+            return command.map(com -> new ParseDTO(com, commandAndText.getValue()));
+        }
+        return Optional.empty();
+    }
+
+
+    private ImmutablePair<String, String> getDelimitedCommandFromText(String trimText) {
+        ImmutablePair<String, String> commandText;
+        if (trimText.contains(" ")) {
+            int indexOfSpace = trimText.indexOf(" ");
+            commandText = new ImmutablePair<>(trimText.substring(0, indexOfSpace), trimText.substring(indexOfSpace
+                    + 1));
+        } else commandText = new ImmutablePair<>(trimText, "");
+        return commandText;
+    }
+
+    private boolean isCommand(String text) {
+        return text.startsWith(PREFIX_FOR_COMMAND);
+    }
+
+    private String cutCommandFromGroup(String text) {
+        return text.contains(DELIMITER_COMMAND_BOTNAME)
+                ? text.substring(0, text.indexOf(DELIMITER_COMMAND_BOTNAME))
+                : text;
+    }
+}

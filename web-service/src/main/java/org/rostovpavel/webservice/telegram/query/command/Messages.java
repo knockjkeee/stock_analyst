@@ -1,4 +1,4 @@
-package org.rostovpavel.webservice.telegram.utils;
+package org.rostovpavel.webservice.telegram.query.command;
 
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
@@ -9,8 +9,11 @@ import org.rostovpavel.base.models.state.PowerState;
 import org.rostovpavel.base.repo.TickerRepo;
 import org.rostovpavel.webservice.telegram.StockBot;
 import org.rostovpavel.webservice.telegram.query.dto.IndicatorDTO;
+import org.rostovpavel.webservice.telegram.utils.StringUtil;
 import org.telegram.telegrambots.meta.api.methods.ParseMode;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -21,6 +24,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Messages {
+
+    public static Message getMessage(Update update) {
+        if (!update.hasMessage()) {
+            return null;
+        }
+        Message message = update.getMessage();
+        if (!message.hasText() && !message.hasPhoto()) {
+            if (!message.hasDocument()) {
+                return null;
+            }
+        }
+        return message;
+    }
 
     public static String getNamedByTicket(Ticker ticker) {
         String hrefName =
